@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "35373750516",
+    "project_id": "hearthealthscore",
+    "storage_bucket": "hearthealthscore.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:35373750516:android:170599bf1174c836faa6a1",
+        "android_client_info": {
+          "package_name": "com.heart_health_score.heart_health_score"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvQ7g4toahOKjfFSvmXTb9w4j0KbA8iPE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
