@@ -15,5 +15,5 @@ abstract class AppAssets {
   static const String google = '$_iconsBase/google.png';
   static const String physicalActivity = '$_iconsBase/physical_activity.png';
   static const String restingHeartRate = '$_iconsBase/resting_hr.png';
-  static const String sleep = '$_iconsBase/sleep.png';
+  static const String sleep = '$_iconsBase/sleepr.png';
 }

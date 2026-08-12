@@ -3,15 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/router/app_router.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/widgets/gradient_card.dart';
-import '../../../core/widgets/gradient_text_field.dart';
-import '../../../core/widgets/primary_button.dart';
-import '../../../core/widgets/selectable_chip.dart';
-import '../application/onboarding_providers.dart';
-import '../domain/onboarding_data.dart';
-import 'widgets/onboarding_scaffold.dart';
+import '../../../../core/router/app_router.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/gradient_card.dart';
+import '../../../../core/widgets/gradient_text_field.dart';
+import '../../../../core/widgets/primary_button.dart';
+import '../../../../core/widgets/selectable_chip.dart';
+import '../../application/onboarding_providers.dart';
+import '../../domain/onboarding_data.dart';
+import '../onboarding_scaffold.dart';
 
 class ProfileSetupScreen extends ConsumerStatefulWidget {
   const ProfileSetupScreen({super.key});

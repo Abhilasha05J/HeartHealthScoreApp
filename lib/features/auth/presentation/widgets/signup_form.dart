@@ -82,8 +82,15 @@ class _SignupFormState extends ConsumerState<SignupForm> {
           const SizedBox(height: 10),
           GradientTextField(
             controller: _phoneController,
-            hintText: '98765 43210',
-            prefixText: '+91  ',
+            hintText: '+91  ',
+            prefixIcon: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Image.asset(
+                'assets/icons/mobile.png',
+                width: 10,
+                height: 10,
+              ),
+            ),
             keyboardType: TextInputType.phone,
             readOnly: otpState.otpSent,
             inputFormatters: [

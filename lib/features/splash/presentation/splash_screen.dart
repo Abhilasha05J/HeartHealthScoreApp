@@ -84,9 +84,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
                         padding: const EdgeInsets.all(24),
                         child: Image.asset(
                           AppAssets.heartIcon,
-                          errorBuilder: (context, error, stackTrace) => const Icon(
+                          errorBuilder: (context, error, stackTrace) => Icon(
                             Icons.favorite,
-                            color: AppColors.redAccent,
+                            color: AppColors.accentColor,
                             size: 42,
                           ),
                         ),

@@ -30,10 +30,10 @@ class SelectableChip extends StatelessWidget {
         alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
         decoration: BoxDecoration(
-          color: selected ? AppColors.redAccent : Colors.transparent,
+          color: selected ? AppColors.accentColor : Colors.transparent,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: selected ? AppColors.redAccent : AppColors.unselectedChipBorder.withOpacity(0.4),
+            color: selected ? AppColors.accentColor : AppColors.unselectedChipBorder.withOpacity(0.4),
             width: 1.2,
           ),
         ),
@@ -117,7 +117,7 @@ class _SegmentButton extends StatelessWidget {
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(vertical: 18),
         decoration: BoxDecoration(
-          color: selected ? AppColors.redAccent : AppColors.fieldGradientMid.withOpacity(0.5),
+          color: selected ? AppColors.accentColor : AppColors.fieldGradientMid.withOpacity(0.5),
           borderRadius: BorderRadius.circular(14),
         ),
         child: Row(

@@ -11,9 +11,9 @@ abstract class AppTheme {
       brightness: Brightness.light,
       scaffoldBackgroundColor: AppColors.scaffoldBackground,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.greenPrimary,
-        primary: AppColors.greenPrimary,
-        secondary: AppColors.redAccent,
+        seedColor: AppColors.greenText,
+        primary: AppColors.greenText,
+        secondary: AppColors.accentColor,
         surface: AppColors.white,
       ),
     );
@@ -31,7 +31,7 @@ abstract class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.greenPrimary,
+          backgroundColor: AppColors.greenText,
           foregroundColor: AppColors.white,
           minimumSize: const Size.fromHeight(56),
           shape: RoundedRectangleBorder(

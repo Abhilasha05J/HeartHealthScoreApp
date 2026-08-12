@@ -64,7 +64,7 @@ class GradientTextField extends StatelessWidget {
                 gradient: AppColors.fieldGradient,
                 borderRadius: BorderRadius.circular(14),
                 border: field.hasError
-                    ? Border.all(color: AppColors.redAccent, width: 1.4)
+                    ? Border.all(color: AppColors.accentColor, width: 1.4)
                     : null,
               ),
               child: TextField(
@@ -104,7 +104,7 @@ class GradientTextField extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 6),
                 child: Text(
                   field.errorText!,
-                  style: const TextStyle(color: AppColors.redAccent, fontSize: 12),
+                  style: const TextStyle(color: AppColors.accentColor, fontSize: 12),
                 ),
               ),
             ],
@@ -141,7 +141,7 @@ class LabeledGradientField extends StatelessWidget {
             if (trailingLabel != null)
               Text(
                 trailingLabel!,
-                style: AppTextStyles.sectionLabel.copyWith(color: AppColors.redAccent),
+                style: AppTextStyles.sectionLabel.copyWith(color: AppColors.accentColor),
               ),
           ],
         ),

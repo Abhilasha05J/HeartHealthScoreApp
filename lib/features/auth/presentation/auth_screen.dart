@@ -31,7 +31,7 @@ class AuthScreen extends ConsumerWidget {
                   child: Image.asset(
                     AppAssets.heartIcon,
                     errorBuilder: (context, error, stackTrace) =>
-                        const Icon(Icons.favorite, color: AppColors.redAccent, size: 38),
+                        const Icon(Icons.favorite, color: AppColors.accentColor, size: 38),
                   ),
                 ),
               ),
@@ -113,7 +113,7 @@ class _TabButton extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           border: Border.all(
-            color: selected ? AppColors.redAccent.withOpacity(0.5) : Colors.transparent,
+            color: selected ? AppColors.accentColor.withOpacity(0.5) : Colors.transparent,
             width: 1.2,
           ),
           borderRadius: BorderRadius.circular(14),
@@ -121,7 +121,7 @@ class _TabButton extends StatelessWidget {
         child: Text(
           label,
           style: AppTextStyles.tabLabel.copyWith(
-            color: selected ? AppColors.redAccent : AppColors.redAccent.withOpacity(0.45),
+            color: selected ? AppColors.accentColor : AppColors.accentColor.withOpacity(0.45),
           ),
         ),
       ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// Shared layout for Profile Setup / Daily Activity / Basic Vitals:
 /// optional top bar (title + Skip), heading, subtitle, scrollable body,
@@ -40,7 +40,7 @@ class OnboardingScaffold extends StatelessWidget {
                       Text(
                         topBarTitle!,
                         style: AppTextStyles.cardTitle.copyWith(
-                          color: AppColors.greenPrimary,
+                          color: AppColors.greenText,
                           fontSize: 20,
                         ),
                       )

@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/constants/app_assets.dart';
-import '../../../core/router/app_router.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_text_styles.dart';
-import '../../../core/widgets/gradient_card.dart';
-import '../../../core/widgets/primary_button.dart';
-import '../../../core/widgets/stepper_field.dart';
-import '../application/onboarding_providers.dart';
-import 'widgets/onboarding_scaffold.dart';
+import '../../../../core/constants/app_assets.dart';
+import '../../../../core/router/app_router.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/widgets/gradient_card.dart';
+import '../../../../core/widgets/primary_button.dart';
+import '../../../../core/widgets/stepper_field.dart';
+import '../../application/onboarding_providers.dart';
+import '../onboarding_scaffold.dart';
 
 class BasicVitalsScreen extends ConsumerStatefulWidget {
   const BasicVitalsScreen({super.key});
@@ -133,17 +133,17 @@ class _BasicVitalsScreenState extends ConsumerState<BasicVitalsScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 4),
-                      child: Text('BPM', style: AppTextStyles.chipLabel.copyWith(color: AppColors.redAccent)),
+                      child: Text('BPM', style: AppTextStyles.chipLabel.copyWith(color: AppColors.accentColor)),
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
                 SliderTheme(
                   data: SliderTheme.of(context).copyWith(
-                    activeTrackColor: AppColors.redAccent,
-                    inactiveTrackColor: AppColors.redAccent.withOpacity(0.25),
-                    thumbColor: AppColors.redAccent,
-                    overlayColor: AppColors.redAccent.withOpacity(0.15),
+                    activeTrackColor: AppColors.divider,
+                    inactiveTrackColor: AppColors.divider.withOpacity(0.25),
+                    thumbColor: Color(0xFF3B3B3B),
+                    overlayColor: AppColors.accentColor.withOpacity(0.15),
                     trackHeight: 4,
                     thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12),
                   ),
@@ -189,7 +189,7 @@ class _IconBadge extends StatelessWidget {
       child: Image.asset(
         iconAsset,
         errorBuilder: (context, error, stackTrace) =>
-            const Icon(Icons.favorite, color: AppColors.redAccent, size: 18),
+            const Icon(Icons.favorite, color: AppColors.accentColor, size: 18),
       ),
     );
   }

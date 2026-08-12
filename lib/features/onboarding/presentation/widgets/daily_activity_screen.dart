@@ -3,17 +3,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/constants/app_assets.dart';
-import '../../../core/router/app_router.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_text_styles.dart';
-import '../../../core/widgets/gradient_card.dart';
-import '../../../core/widgets/gradient_text_field.dart';
-import '../../../core/widgets/primary_button.dart';
-import '../../../core/widgets/selectable_chip.dart';
-import '../application/onboarding_providers.dart';
-import '../domain/onboarding_data.dart';
-import 'widgets/onboarding_scaffold.dart';
+import '../../../../core/constants/app_assets.dart';
+import '../../../../core/router/app_router.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/widgets/gradient_card.dart';
+import '../../../../core/widgets/gradient_text_field.dart';
+import '../../../../core/widgets/primary_button.dart';
+import '../../../../core/widgets/selectable_chip.dart';
+import '../../application/onboarding_providers.dart';
+import '../../domain/onboarding_data.dart';
+import '../onboarding_scaffold.dart';
 
 class DailyActivityScreen extends ConsumerStatefulWidget {
   const DailyActivityScreen({super.key});
@@ -51,11 +51,11 @@ class _DailyActivityScreenState extends ConsumerState<DailyActivityScreen> {
 
   void _handleContinue() {
     ref.read(onboardingControllerProvider.notifier).updateDailyActivity(
-          sleepBand: _sleepBand,
-          customSleepHours: double.tryParse(_customSleepController.text.trim()),
-          activityBand: _activityBand,
-          customActivityHours: double.tryParse(_customActivityController.text.trim()),
-        );
+      sleepBand: _sleepBand,
+      customSleepHours: double.tryParse(_customSleepController.text.trim()),
+      activityBand: _activityBand,
+      customActivityHours: double.tryParse(_customActivityController.text.trim()),
+    );
     context.push(AppRoutes.basicVitals);
   }
 
@@ -116,16 +116,16 @@ class _DailyActivityScreenState extends ConsumerState<DailyActivityScreen> {
               children: [
                 _CardHeader(
                   iconAsset: AppAssets.physicalActivity,
-                  title: 'Hours of physical activity per week?',
+                  title: 'How active are you?',
                 ),
                 const SizedBox(height: 18),
                 _BandGrid(
                   crossAxisCount: 2,
                   items: const {
-                    ActivityBand.none: 'None',
-                    ActivityBand.oneToTwo: '1 - 2 hours',
-                    ActivityBand.threeToFive: '3 - 5 hours',
-                    ActivityBand.fivePlus: '5+ hours',
+                    ActivityBand.mostlySitting: 'Mostly Sitting',
+                    ActivityBand.oftenStanding: 'Often Standing',
+                    ActivityBand.regularlyWalking: 'Regularly Walking',
+                    ActivityBand.physicallyIntense: 'Physically Intense Work',
                   },
                   selected: _activityBand,
                   onSelected: (band) => setState(() {
@@ -170,12 +170,12 @@ class _CardHeader extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 45,
-          height: 45,
-          child: Image.asset(
+          width: 40,
+          height: 40,
+         child: Image.asset(
             iconAsset,
             errorBuilder: (context, error, stackTrace) =>
-                const Icon(Icons.circle, color: AppColors.greenPrimary, size: 18),
+            const Icon(Icons.circle, color: AppColors.buttonPrimary, size: 18),
           ),
         ),
         const SizedBox(width: 14),

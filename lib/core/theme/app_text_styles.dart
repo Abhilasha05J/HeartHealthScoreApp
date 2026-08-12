@@ -102,7 +102,7 @@ abstract class AppTextStyles {
     fontFamily: 'Manrope',
     fontSize: 20,
     fontWeight: FontWeight.w800,
-    color: AppColors.redAccent,
+    color: AppColors.accentColor,
   );
 
   static const TextStyle chipLabel = TextStyle(

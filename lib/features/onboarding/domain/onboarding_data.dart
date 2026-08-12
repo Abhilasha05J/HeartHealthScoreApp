@@ -4,7 +4,12 @@ enum BiologicalSex { female, male }
 
 enum SleepBand { lessThan6, sixToEight, eightToTen, moreThan10, custom }
 
-enum ActivityBand { none, oneToTwo, threeToFive, fivePlus, custom }
+/// Renamed from hour-range buckets (none/oneToTwo/threeToFive/fivePlus) to
+/// lifestyle-type buckets per the v2 mockup ("How active are you?" instead
+/// of "Hours of physical activity per week?"). See ASSUMPTION note on
+/// [_activityBandMidpoint] below — the hour-per-week mapping is an estimate
+/// since the exact PAL->hours conversion wasn't specified by the designer.
+enum ActivityBand { mostlySitting, oftenStanding, regularlyWalking, physicallyIntense, custom }
 
 /// Aggregated onboarding payload — Profile Setup + Daily Activity +
 /// Basic Vitals combined. This is exactly the shape the ML health-score
@@ -86,6 +91,11 @@ class OnboardingData extends Equatable {
       'weightKg': weightKg,
       'heightCm': heightCm,
       'sleepHoursPerDay': customSleepHours ?? _sleepBandMidpoint(),
+      // Sending both the categorical lifestyle level AND an estimated
+      // hours/week figure, since the ML contract isn't confirmed yet and
+      // the custom-hours field still lets the user override with an exact
+      // number regardless of which preset they picked.
+      'activityLevel': activityBand?.name,
       'activityHoursPerWeek': customActivityHours ?? _activityBandMidpoint(),
       'bloodPressure': {'systolic': systolic, 'diastolic': diastolic},
       'restingHeartRateBpm': restingHeartRate,
@@ -107,16 +117,21 @@ class OnboardingData extends Equatable {
     }
   }
 
+  /// ASSUMPTION: the designer's chip labels are lifestyle descriptions, not
+  /// hour ranges, so there's no exact hours/week given for each bucket.
+  /// These are reasonable estimates carried over from the original
+  /// hour-range buckets they replaced — confirm with the backend/ML team
+  /// before relying on this mapping.
   double? _activityBandMidpoint() {
     switch (activityBand) {
-      case ActivityBand.none:
-        return 0;
-      case ActivityBand.oneToTwo:
-        return 1.5;
-      case ActivityBand.threeToFive:
-        return 4;
-      case ActivityBand.fivePlus:
-        return 6;
+      case ActivityBand.mostlySitting:
+        return 1;
+      case ActivityBand.oftenStanding:
+        return 3;
+      case ActivityBand.regularlyWalking:
+        return 5;
+      case ActivityBand.physicallyIntense:
+        return 8;
       default:
         return null;
     }
@@ -124,17 +139,17 @@ class OnboardingData extends Equatable {
 
   @override
   List<Object?> get props => [
-        fullName,
-        sex,
-        age,
-        weightKg,
-        heightCm,
-        sleepBand,
-        customSleepHours,
-        activityBand,
-        customActivityHours,
-        systolic,
-        diastolic,
-        restingHeartRate,
-      ];
+    fullName,
+    sex,
+    age,
+    weightKg,
+    heightCm,
+    sleepBand,
+    customSleepHours,
+    activityBand,
+    customActivityHours,
+    systolic,
+    diastolic,
+    restingHeartRate,
+  ];
 }
