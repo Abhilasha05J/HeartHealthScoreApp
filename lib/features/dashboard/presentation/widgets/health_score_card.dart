@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../domain/dashboard_data.dart';
+import 'package:heart_health_score/core/theme/app_colors.dart';
+import 'package:heart_health_score/core/theme/app_text_styles.dart';
+import 'package:heart_health_score/features/dashboard/domain/dashboard_data.dart';
 
 /// The "Healthy Heart Score" card: score/100, confidence %, a two-tone
 /// progress bar (green filled portion -> dark unfilled portion), and a

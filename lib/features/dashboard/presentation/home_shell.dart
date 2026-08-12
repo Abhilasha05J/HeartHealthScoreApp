@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_text_styles.dart';
+import 'package:heart_health_score/core/theme/app_colors.dart';
+import 'package:heart_health_score/core/theme/app_text_styles.dart';
 import 'widgets/expandable_log_fab.dart';
 
 /// Persistent shell: bottom nav bar + expandable "+" FAB stay visible

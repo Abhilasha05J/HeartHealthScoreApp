@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-import '../services/local_notification_service.dart';
-import '../../domain/entities/app_notification.dart';
-import '../../domain/repositories/notification_repository.dart';
+import 'package:heart_health_score/features/notifications/data/services/local_notification_service.dart';
+import 'package:heart_health_score/features/notifications/domain/entities/app_notification.dart';
+import 'package:heart_health_score/features/notifications/domain/repositories/notification_repository.dart';
 
 class FirebaseNotificationRepository implements NotificationRepository {
   FirebaseNotificationRepository({FirebaseMessaging? messaging})

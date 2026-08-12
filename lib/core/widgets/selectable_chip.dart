@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
-import '../theme/app_text_styles.dart';
+import 'package:heart_health_score/core/theme/app_colors.dart';
+import 'package:heart_health_score/core/theme/app_text_styles.dart';
 
 /// Rounded selectable option used in Daily Activity
 /// ("Less than 6h", "6 - 8 hours", "None", "1 - 2 hours", ...).

@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_assets.dart';
-import '../../../../core/router/app_router.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/widgets/gradient_card.dart';
-import '../../../../core/widgets/primary_button.dart';
-import '../../../../core/widgets/stepper_field.dart';
-import '../../application/onboarding_providers.dart';
-import '../onboarding_scaffold.dart';
+import 'package:heart_health_score/core/constants/app_assets.dart';
+import 'package:heart_health_score/core/router/app_router.dart';
+import 'package:heart_health_score/core/theme/app_colors.dart';
+import 'package:heart_health_score/core/theme/app_text_styles.dart';
+import 'package:heart_health_score/core/widgets/gradient_card.dart';
+import 'package:heart_health_score/core/widgets/primary_button.dart';
+import 'package:heart_health_score/core/widgets/stepper_field.dart';
+import 'package:heart_health_score/features/onboarding/application/onboarding_providers.dart';
+import 'package:heart_health_score/features/onboarding/presentation/onboarding_scaffold.dart';
 
 class BasicVitalsScreen extends ConsumerStatefulWidget {
   const BasicVitalsScreen({super.key});

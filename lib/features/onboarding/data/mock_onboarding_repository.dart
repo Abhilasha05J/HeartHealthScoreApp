@@ -1,5 +1,5 @@
-import '../domain/onboarding_data.dart';
-import '../domain/onboarding_repository.dart';
+import 'package:heart_health_score/features/onboarding/domain/onboarding_data.dart';
+import 'package:heart_health_score/features/onboarding/domain/onboarding_repository.dart';
 
 /// TEMPORARY mock — always succeeds after a simulated network delay.
 ///

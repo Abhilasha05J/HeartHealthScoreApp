@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../theme/app_colors.dart';
-import '../theme/app_text_styles.dart';
+import 'package:heart_health_score/core/theme/app_colors.dart';
+import 'package:heart_health_score/core/theme/app_text_styles.dart';
 
-/// Text field with the 3-stop gradient background (#334D35 67% -> #D8DFE3
-/// -> #FFFFFF) used for every input across Auth / Profile Setup / Vitals.
 class GradientTextField extends StatelessWidget {
   const GradientTextField({
     super.key,

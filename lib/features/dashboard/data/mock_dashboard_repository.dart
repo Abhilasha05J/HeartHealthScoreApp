@@ -1,5 +1,5 @@
-import '../domain/dashboard_data.dart';
-import '../domain/dashboard_repository.dart';
+import 'package:heart_health_score/features/dashboard/domain/dashboard_data.dart';
+import 'package:heart_health_score/features/dashboard/domain/dashboard_repository.dart';
 
 /// TEMPORARY mock — returns the exact sample values shown in the
 /// designer's mockup, after a simulated network delay.

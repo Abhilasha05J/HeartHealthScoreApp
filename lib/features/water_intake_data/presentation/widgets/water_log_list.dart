@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../domain/water_intake_data.dart';
+import 'package:heart_health_score/core/theme/app_colors.dart';
+import 'package:heart_health_score/core/theme/app_text_styles.dart';
+import 'package:heart_health_score/features/water_intake_data/domain/water_intake_data.dart';
 
 /// "Today's Logs" list — each entry a light-blue rounded tile with a
 /// droplet icon, the amount + source, and the time on the right.

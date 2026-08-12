@@ -3,11 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/router/app_router.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/widgets/gradient_text_field.dart';
-import '../../../../core/widgets/primary_button.dart';
-import '../../application/auth_providers.dart';
+import 'package:heart_health_score/core/router/app_router.dart';
+import 'package:heart_health_score/core/theme/app_text_styles.dart';
+import 'package:heart_health_score/core/widgets/gradient_text_field.dart';
+import 'package:heart_health_score/core/widgets/primary_button.dart';
+import 'package:heart_health_score/features/auth/application/auth_providers.dart';
 
 /// Mobile Number + OTP sign-up flow, matching the Sign Up tab mock:
 /// step 1 -> enter mobile number, tap Send OTP

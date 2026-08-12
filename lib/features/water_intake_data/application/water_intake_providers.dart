@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../data/mock_water_intake_repository.dart';
-import '../domain/water_intake_data.dart';
-import '../domain/water_intake_repository.dart';
+import 'package:heart_health_score/features/water_intake_data/data/mock_water_intake_repository.dart';
+import 'package:heart_health_score/features/water_intake_data/domain/water_intake_data.dart';
+import 'package:heart_health_score/features/water_intake_data/domain/water_intake_repository.dart';
 
 final waterIntakeRepositoryProvider = Provider<WaterIntakeRepository>((ref) {
   return MockWaterIntakeRepository();

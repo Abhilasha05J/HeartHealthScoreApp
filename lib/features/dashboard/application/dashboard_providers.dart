@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../data/mock_dashboard_repository.dart';
-import '../domain/dashboard_data.dart';
-import '../domain/dashboard_repository.dart';
+import 'package:heart_health_score/features/dashboard/data/mock_dashboard_repository.dart';
+import 'package:heart_health_score/features/dashboard/domain/dashboard_data.dart';
+import 'package:heart_health_score/features/dashboard/domain/dashboard_repository.dart';
 
 /// Repository provider — the ONLY line to change when the backend is
 /// ready (swap MockDashboardRepository() for ApiDashboardRepository(dio)).

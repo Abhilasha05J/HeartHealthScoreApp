@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
+import 'package:heart_health_score/core/theme/app_colors.dart';
 
 /// The pink-to-grey gradient card container used behind every form
 /// section in the app (Auth card, Profile Setup, Daily Activity,

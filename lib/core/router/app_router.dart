@@ -1,80 +1,18 @@
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:go_router/go_router.dart';
-//
-// import '../../features/notifications/domain/entities/app_notification.dart';
-// import '../../features/notifications/domain/entities/notification_type.dart';
-// import '../../features/splash/presentation/splash_screen.dart';
-// import '../../features/auth/presentation/auth_screen.dart';
-// import '../../features/onboarding/presentation/widgets/profile_setup_screen.dart';
-// import '../../features/onboarding/presentation/widgets/daily_activity_screen.dart';
-// import '../../features/onboarding/presentation/widgets/basic_vitals_screen.dart';
-// import '../../features/dashboard/presentation/home_shell.dart';
-// import '../../features/water_intake_data/presentation/water_intake_screen.dart';
-//
-// abstract class AppRoutes {
-//   AppRoutes._();
-//
-//   static const splash = '/';
-//   static const auth = '/auth';
-//   static const profileSetup = '/onboarding/profile';
-//   static const dailyActivity = '/onboarding/activity';
-//   static const basicVitals = '/onboarding/vitals';
-//   static const home = '/home';
-//   static const waterIntake = '/water-intake';
-// }
-//
-// final appRouterProvider = Provider<GoRouter>((ref) {
-//   return GoRouter(
-//     initialLocation: AppRoutes.splash,
-//     routes: [
-//       GoRoute(
-//         path: AppRoutes.splash,
-//         builder: (context, state) => const SplashScreen(),
-//       ),
-//       GoRoute(
-//         path: AppRoutes.auth,
-//         builder: (context, state) => const AuthScreen(),
-//       ),
-//       GoRoute(
-//         path: AppRoutes.profileSetup,
-//         builder: (context, state) => const ProfileSetupScreen(),
-//       ),
-//       GoRoute(
-//         path: AppRoutes.dailyActivity,
-//         builder: (context, state) => const DailyActivityScreen(),
-//       ),
-//       GoRoute(
-//         path: AppRoutes.basicVitals,
-//         builder: (context, state) => const BasicVitalsScreen(),
-//       ),
-//       GoRoute(
-//         path: AppRoutes.home,
-//         builder: (context, state) => const HomeShell(),
-//       ),
-//       GoRoute(
-//         path: AppRoutes.waterIntake,
-//         builder: (context, state) => const WaterIntakeScreen(),
-//       ),
-//     ],
-//   );
-// });
-//
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../features/notifications/domain/entities/app_notification.dart';
-import '../../features/notifications/domain/entities/notification_type.dart';
-import '../../features/onboarding/presentation/widgets/basic_vitals_screen.dart';
-import '../../features/onboarding/presentation/widgets/daily_activity_screen.dart';
-import '../../features/onboarding/presentation/widgets/profile_setup_screen.dart';
-import '../../features/splash/presentation/splash_screen.dart';
-import '../../features/auth/presentation/auth_screen.dart';
-import '../../features/dashboard/presentation/home_shell.dart';
-import '../../features/dashboard/presentation/home_dashboard_screen.dart';
-import '../../features/dashboard/presentation/placeholder_tab_screen.dart';
-import '../../features/water_intake_data/presentation/water_intake_screen.dart';
+import 'package:heart_health_score/features/notifications/domain/entities/app_notification.dart';
+import 'package:heart_health_score/features/notifications/domain/entities/notification_type.dart';
+import 'package:heart_health_score/features/onboarding/presentation/widgets/basic_vitals_screen.dart';
+import 'package:heart_health_score/features/onboarding/presentation/widgets/daily_activity_screen.dart';
+import 'package:heart_health_score/features/onboarding/presentation/widgets/profile_setup_screen.dart';
+import 'package:heart_health_score/features/splash/presentation/splash_screen.dart';
+import 'package:heart_health_score/features/auth/presentation/auth_screen.dart';
+import 'package:heart_health_score/features/dashboard/presentation/home_shell.dart';
+import 'package:heart_health_score/features/dashboard/presentation/home_dashboard_screen.dart';
+import 'package:heart_health_score/features/dashboard/presentation/placeholder_tab_screen.dart';
+import 'package:heart_health_score/features/water_intake_data/presentation/water_intake_screen.dart';
 
 abstract class AppRoutes {
   AppRoutes._();

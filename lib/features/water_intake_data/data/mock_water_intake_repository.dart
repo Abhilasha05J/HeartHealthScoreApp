@@ -1,5 +1,5 @@
-import '../domain/water_intake_data.dart';
-import '../domain/water_intake_repository.dart';
+import 'package:heart_health_score/features/water_intake_data/domain/water_intake_data.dart';
+import 'package:heart_health_score/features/water_intake_data/domain/water_intake_repository.dart';
 
 /// TEMPORARY mock — in-memory only, seeded with the exact sample values
 /// from the mockup (goal 4.0L, current 2.5L, 3 log entries, reminder

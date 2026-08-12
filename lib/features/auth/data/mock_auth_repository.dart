@@ -1,5 +1,5 @@
-import '../domain/app_user.dart';
-import '../domain/auth_repository.dart';
+import 'package:heart_health_score/features/auth/domain/app_user.dart';
+import 'package:heart_health_score/features/auth/domain/auth_repository.dart';
 
 /// TEMPORARY mock implementation used while the backend is not yet wired
 /// up (per project status: "no backend access yet").

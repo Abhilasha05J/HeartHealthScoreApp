@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
-import '../theme/app_text_styles.dart';
+import 'package:heart_health_score/core/theme/app_colors.dart';
+import 'package:heart_health_score/core/theme/app_text_styles.dart';
 
 /// Numeric value + up/down chevrons + unit label, matching the
 /// Systolic / Diastolic "120 ↕ mmHg" control in Basic Vitals.

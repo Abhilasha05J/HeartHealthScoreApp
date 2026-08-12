@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../data/mock_onboarding_repository.dart';
-import '../domain/onboarding_data.dart';
-import '../domain/onboarding_repository.dart';
+import 'package:heart_health_score/features/onboarding/data/mock_onboarding_repository.dart';
+import 'package:heart_health_score/features/onboarding/domain/onboarding_data.dart';
+import 'package:heart_health_score/features/onboarding/domain/onboarding_repository.dart';
 
 final onboardingRepositoryProvider = Provider<OnboardingRepository>((ref) {
   return MockOnboardingRepository();

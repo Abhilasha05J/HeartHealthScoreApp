@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../data/repositories/firebase_notification_repository.dart';
-import '../domain/entities/app_notification.dart';
-import '../domain/repositories/notification_repository.dart';
+import 'package:heart_health_score/features/notifications/data/repositories/firebase_notification_repository.dart';
+import 'package:heart_health_score/features/notifications/domain/entities/app_notification.dart';
+import 'package:heart_health_score/features/notifications/domain/repositories/notification_repository.dart';
 
 /// Single source of truth for the notification repository, following the
 /// project's rule: screens/controllers depend on the interface

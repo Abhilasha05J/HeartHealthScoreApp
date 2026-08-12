@@ -1,4 +1,4 @@
-import '../entities/app_notification.dart';
+import 'package:heart_health_score/features/notifications/domain/entities/app_notification.dart';
 
 /// Abstract contract for push + local notifications.
 ///

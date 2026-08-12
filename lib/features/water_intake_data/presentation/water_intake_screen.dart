@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_text_styles.dart';
-import '../application/water_intake_providers.dart';
+import 'package:heart_health_score/core/theme/app_colors.dart';
+import 'package:heart_health_score/core/theme/app_text_styles.dart';
+import 'package:heart_health_score/features/water_intake_data/application/water_intake_providers.dart';
 import 'widgets/quick_add_grid.dart';
 import 'widgets/reminder_settings_card.dart';
 import 'widgets/water_log_list.dart';

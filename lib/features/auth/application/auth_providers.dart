@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../data/mock_auth_repository.dart';
-import '../domain/app_user.dart';
-import '../domain/auth_repository.dart';
+import 'package:heart_health_score/features/auth/data/mock_auth_repository.dart';
+import 'package:heart_health_score/features/auth/domain/app_user.dart';
+import 'package:heart_health_score/features/auth/domain/auth_repository.dart';
 
 /// Repository provider — the ONLY line to change when the backend is
 /// ready (swap MockAuthRepository() for ApiAuthRepository(dio)).
