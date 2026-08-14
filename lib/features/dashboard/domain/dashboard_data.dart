@@ -107,7 +107,35 @@ class DashboardData extends Equatable {
   final List<DomainSummaryItem> domainSummary;
 
   double get scoreFraction => (healthyHeartScore / maxScore).clamp(0.0, 1.0);
-
+  DashboardData copyWith({
+    String? profileName,
+    int? age,
+    double? healthyHeartScore,
+    double? maxScore,
+    int? confidencePercent,
+    String? confidenceLabel,
+    int? restingHeartRateBpm,
+    String? sleepDurationLabel,
+    String? bloodPressureLabel,
+    int? stepCount,
+    List<BurdenItem>? burdenBreakdown,
+    List<DomainSummaryItem>? domainSummary,
+  }) {
+    return DashboardData(
+      profileName: profileName ?? this.profileName,
+      age: age ?? this.age,
+      healthyHeartScore: healthyHeartScore ?? this.healthyHeartScore,
+      maxScore: maxScore ?? this.maxScore,
+      confidencePercent: confidencePercent ?? this.confidencePercent,
+      confidenceLabel: confidenceLabel ?? this.confidenceLabel,
+      restingHeartRateBpm: restingHeartRateBpm ?? this.restingHeartRateBpm,
+      sleepDurationLabel: sleepDurationLabel ?? this.sleepDurationLabel,
+      bloodPressureLabel: bloodPressureLabel ?? this.bloodPressureLabel,
+      stepCount: stepCount ?? this.stepCount,
+      burdenBreakdown: burdenBreakdown ?? this.burdenBreakdown,
+      domainSummary: domainSummary ?? this.domainSummary,
+    );
+  }
   @override
   List<Object?> get props => [
     profileName,

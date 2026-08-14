@@ -5,6 +5,8 @@ import 'package:heart_health_score/features/dashboard/presentation/widgets/domai
 import 'package:heart_health_score/core/theme/app_colors.dart';
 import 'package:heart_health_score/core/theme/app_text_styles.dart';
 import 'package:heart_health_score/features/dashboard/application/dashboard_providers.dart';
+import 'package:heart_health_score/features/wearable/application/wearable_providers.dart';
+import 'package:heart_health_score/features/wearable/domain/wearable_models.dart' show WearableConnectionStatus;
 import 'widgets/burden_breakdown_chart.dart';
 import 'widgets/condition_card.dart';
 import 'widgets/health_score_card.dart';
@@ -14,7 +16,39 @@ class HomeDashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dashboardAsync = ref.watch(dashboardDataProvider);
+    //final dashboardAsync = ref.watch(dashboardDataProvider);
+    final dashboardAsync = ref.watch(mergedDashboardDataProvider);
+    final wearableState = ref.watch(wearableControllerProvider);
+
+    ref.listen(wearableControllerProvider, (previous, next) {
+      if (previous?.status == next.status && previous?.errorMessage == next.errorMessage) return;
+
+      switch (next.status) {
+        case WearableConnectionStatus.storeUnavailable:
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Health Connect isn\'t installed on this device.'),
+              action: SnackBarAction(
+                label: 'Install',
+                onPressed: () => ref.read(wearableControllerProvider.notifier).openStoreInstallPage(),
+              ),
+            ),
+          );
+          break;
+        case WearableConnectionStatus.permissionDenied:
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Permission wasn\'t granted. Tap Connect Wearable to try again.')),
+          );
+          break;
+        case WearableConnectionStatus.error:
+          if (next.errorMessage != null) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(next.errorMessage!)));
+          }
+          break;
+        default:
+          break;
+      }
+    });
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
@@ -57,13 +91,9 @@ class HomeDashboardScreen extends ConsumerWidget {
                   const SizedBox(height: 20),
                   HealthScoreCard(
                     data: data,
-                    onConnectWearable: () {
-                      // TODO: wire up Health Connect / HealthKit once that
-                      // integration starts — deferred per project scope.
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Wearable integration coming soon')),
-                      );
-                    },
+                    isSyncing: wearableState.isSyncing,
+                    isConnected: wearableState.status == WearableConnectionStatus.connected,
+                    onConnectWearable: () => ref.read(wearableControllerProvider.notifier).connectOrRefresh(),
                   ),
                   const SizedBox(height: 24),
                   Text('Your Condition', style: AppTextStyles.pageHeading.copyWith(fontSize: 18)),

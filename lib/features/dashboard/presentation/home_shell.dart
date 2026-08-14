@@ -1,9 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:heart_health_score/core/theme/app_colors.dart';
-import 'package:heart_health_score/core/theme/app_text_styles.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'widgets/expandable_log_fab.dart';
 
 /// Persistent shell: bottom nav bar + expandable "+" FAB stay visible
@@ -69,28 +68,23 @@ class _BottomNavBar extends StatelessWidget {
               selected: currentIndex == 1,
               onTap: () => onTap(1),
             ),
-            // NOTE: preserved exactly as you had it — this button also
-            // targets the Reminder branch (index 1), not a dedicated
-            // Profile screen. Still flagging this in case it's a
-            // copy-paste leftover rather than intentional; happy to add
-            // a real Profile branch instead once confirmed.
             _NavItem(
               label: 'Profile',
               path: 'assets/icons/profile.png',
-              selected: currentIndex == 1,
-              onTap: () => onTap(1),
-            ),
-            _NavItem(
-              label: 'Plans',
-              path: 'assets/icons/plans.png',
               selected: currentIndex == 2,
               onTap: () => onTap(2),
             ),
             _NavItem(
-              label: 'Setting',
-              path: 'assets/icons/settings.png',
+              label: 'Plans',
+              path: 'assets/icons/plans.png',
               selected: currentIndex == 3,
               onTap: () => onTap(3),
+            ),
+            _NavItem(
+              label: 'Setting',
+              path: 'assets/icons/settings.png',
+              selected: currentIndex == 4,
+              onTap: () => onTap(4),
             ),
           ],
         ),

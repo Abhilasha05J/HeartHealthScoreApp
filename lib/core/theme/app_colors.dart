@@ -61,7 +61,12 @@ abstract class AppColors {
   static const Color riskChipBackground = Color(0x33EF4444);
   static const Color moderateChipBackground = Color(0x33FACC15);
   static const Color normalChipBackground = Color(0x3332D74B);
-  static const Color chartGridLine = Color(0xFFE5E7EB); // new — confirm against your design system // ---------------------------------------------------------------------
+  static const Color chartGridLine = Color(0xFFE5E7EB);
+
+ // Score ring gauge gradient (Heart Score card)// ---------------------------------
+  static const Color scoreRingYellow = Color(0xFFFDE047);
+  static const Color scoreRingGreenLight = Color(0xFF34D399);
+  static const Color scoreRingGreenDark = Color(0xFF10B981);
   // Gradients (ready-to-use)
   // ---------------------------------------------------------------------
   static const LinearGradient splashRadialFallbackGradient = LinearGradient(
