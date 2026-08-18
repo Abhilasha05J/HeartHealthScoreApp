@@ -123,8 +123,6 @@ class LoginController extends StateNotifier<LoginState> {
   Future<AppUser?> loginWithGoogle() async {
     state = state.copyWith(isSubmitting: true, errorMessage: null);
     try {
-      // TODO(backend-integration): obtain a real idToken via the
-      // google_sign_in package, then pass it through here.
       final user = await _repository.loginWithGoogle(idToken: 'mock-id-token');
       state = state.copyWith(isSubmitting: false);
       return user;

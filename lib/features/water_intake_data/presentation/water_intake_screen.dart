@@ -173,19 +173,19 @@ class _TopBar extends StatelessWidget {
     return SafeArea(
       bottom: false,
       child: Container(
-        color: AppColors.darkSurface,
+        color: AppColors.darkSurface.withOpacity(0.11),
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Row(
           children: [
             IconButton(
-              icon: const Icon(Icons.arrow_back, color: AppColors.white),
+              icon: const Icon(Icons.arrow_back, color: AppColors.black),
               onPressed: () => context.pop(),
             ),
             Expanded(
               child: Text(
                 title,
                 textAlign: TextAlign.center,
-                style: AppTextStyles.cardTitle.copyWith(color: AppColors.white, fontSize: 18),
+                style: AppTextStyles.cardTitle.copyWith(color: AppColors.black, fontSize: 18),
               ),
             ),
             // Balances the back button's width so the title stays

@@ -1,16 +1,9 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:heart_health_score/core/theme/app_colors.dart';
 import 'package:heart_health_score/core/theme/app_text_styles.dart';
 import 'package:heart_health_score/features/dashboard/domain/dashboard_data.dart';
 
-/// The "Healthy Heart Score" card, redesigned per the updated mockup:
-/// gradient ring gauge (replaces the old linear ScoreBar) with a heartbeat
-/// squiggle graphic, a pill-style confidence badge, and the "Connect
-/// Wearable" CTA. Wearable sync button behavior (isSyncing/isConnected) is
-/// unchanged from the previous version — only the score visualization and
-/// confidence layout changed.
 class HealthScoreCard extends StatelessWidget {
   const HealthScoreCard({
     super.key,
@@ -239,8 +232,7 @@ class _HeartbeatDivider extends StatelessWidget {
   }
 }
 
-/// Pill-style confidence badge: "CONFIDENCE 87%" on the left, a status dot
-/// + label ("High"/"Moderate"/"Low") on the right, split by a thin divider.
+
 class _ConfidenceBadge extends StatelessWidget {
   const _ConfidenceBadge({required this.percent, required this.label});
 

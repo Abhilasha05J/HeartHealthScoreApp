@@ -37,7 +37,7 @@ abstract class AppColors {
   static const Color burdenBarYellow = Color(0xFFF2C230); // Burden Breakdown chart bars
   static const Color burdenBarRed = Color(0xFFE5484D); // "Inherited Risk" bar (highlighted)
 
-  static const Color darkSurface = Color(0xFF2B2B2E); // this screen's app bar
+  static const Color darkSurface = Color(0xFFC1C1C1); // this screen's app bar
   static const Color lightGreyFill = Color(0xFFF2F2F2); // manual-entry text field bg
   static const Color cardBorder = Color(0xFFE0E0E0); // Set Reminder card outline
   static const Color chipSelectedOrange = Color(0xFFF5A94C); // selected hour/day chip

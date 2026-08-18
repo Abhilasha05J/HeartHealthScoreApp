@@ -6,8 +6,11 @@ import 'package:heart_health_score/features/notifications/domain/entities/notifi
 import 'package:heart_health_score/features/onboarding/presentation/widgets/basic_vitals_screen.dart';
 import 'package:heart_health_score/features/onboarding/presentation/widgets/daily_activity_screen.dart';
 import 'package:heart_health_score/features/onboarding/presentation/widgets/profile_setup_screen.dart';
+import 'package:heart_health_score/features/profile/presentation/profile_screen.dart';
 import 'package:heart_health_score/features/water_intake_data/presentation/water_intake_screen.dart';
+import 'package:heart_health_score/features/workout/presentation/workout_detail_screen.dart';
 
+import '../../features/nutrition/presentation/nutrition_screen.dart';
 import '../../features/splash/presentation/splash_screen.dart';
 import '../../features/auth/presentation/auth_screen.dart';
 import '../../features/dashboard/presentation/home_shell.dart';
@@ -36,6 +39,8 @@ abstract class AppRoutes {
   // "all screens keep the bottom nav" actually work — see the
   // StatefulShellRoute setup below.
   static const waterIntake = '/home/water-intake';
+  static const workoutDetail = '/home/workout';
+  static const mealTracker = '/home/log-meal';
 }
 
 /// Root navigator — used for screens that should NOT show the persistent
@@ -96,6 +101,21 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                     path: 'water-intake',
                     builder: (context, state) => const WaterIntakeScreen(),
                   ),
+                  GoRoute(
+                    // Full path resolves to AppRoutes.workoutDetail ("/home/workout").
+                    // Push this from wherever the workout card/CTA lives on
+                    // HomeDashboardScreen — WorkoutDetailScreen brings its own
+                    // AppBar + back button (see workout_detail_screen.dart).
+                    path: 'workout',
+                    builder: (context, state) => const WorkoutDetailScreen(),
+                  ),
+                  GoRoute(
+                    // Full path resolves to AppRoutes.mealTracker ("/home/log-meal").
+                    // Wire ExpandableLogFab's "Log meal" action to
+                    // context.push(AppRoutes.mealTracker).
+                    path: 'log-meal',
+                    builder: (context, state) => const NutritionScreen(),
+                  ),
                 ],
               ),
             ],
@@ -115,10 +135,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: AppRoutes.profile,
-                builder: (context, state) => const PlaceholderTabScreen(
-                  title: 'Profile',
-                  path: 'assets/icons/profile.png',
-                ),
+                builder: (context, state) => const ProfileScreen(),
               ),
             ],
           ),

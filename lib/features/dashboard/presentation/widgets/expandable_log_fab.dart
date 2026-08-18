@@ -10,13 +10,17 @@ class ExpandableLogFab extends ConsumerWidget {
   const ExpandableLogFab({super.key});
 
   static const _actions = [
-    _FabActionSpec(label: 'Log Workout', assetPath: 'assets/icons/logworkout.png'),
+    _FabActionSpec(label: 'Log Workout', assetPath: 'assets/icons/logworkout.png', route: AppRoutes.workoutDetail,),
     _FabActionSpec(
       label: 'Log Water',
       assetPath: 'assets/icons/logwater.png',
       route: AppRoutes.waterIntake,
     ),
-    _FabActionSpec(label: 'Log Meal', assetPath: 'assets/icons/logmeal.png'),
+    _FabActionSpec(
+      label: 'Log Meal',
+      assetPath: 'assets/icons/logmeal.png',
+      route: AppRoutes.mealTracker,
+    ),
   ];
 
   @override
