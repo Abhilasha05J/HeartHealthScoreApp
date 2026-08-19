@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/fitness_palette.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../domain/workout_data.dart';
 
 /// Three concentric progress rings (outer -> inner: steps green, active-time
@@ -25,7 +25,7 @@ class ActivityRings extends StatelessWidget {
           caloriesProgress: summary.caloriesProgress,
         ),
         child: const Center(
-          child: Icon(Icons.local_fire_department, color: FitnessPalette.ringSteps, size: 40),
+          child: Icon(Icons.local_fire_department, color: AppColors.ringGreen, size: 40),
         ),
       ),
     );
@@ -51,19 +51,19 @@ class _RingsPainter extends CustomPainter {
     final center = size.center(Offset.zero);
     final outerRadius = (size.shortestSide - _strokeWidth) / 2;
 
-    _drawRing(canvas, center, outerRadius, FitnessPalette.ringSteps, stepsProgress);
+    _drawRing(canvas, center, outerRadius, AppColors.ringGreen, stepsProgress);
     _drawRing(
       canvas,
       center,
       outerRadius - _strokeWidth - _ringGap,
-      FitnessPalette.ringActiveTime,
+      AppColors.accentColor,
       activeMinutesProgress,
     );
     _drawRing(
       canvas,
       center,
       outerRadius - (_strokeWidth + _ringGap) * 2,
-      FitnessPalette.ringCalories,
+      AppColors.ringPurple,
       caloriesProgress,
     );
   }

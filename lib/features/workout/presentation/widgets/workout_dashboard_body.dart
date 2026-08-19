@@ -14,10 +14,6 @@ import 'summary_rule_card.dart';
 import 'weekly_steps_chart.dart';
 import 'workouts_week_banner.dart';
 
-/// The full ring/stats/chart/banner content, identical whether it's embedded
-/// under the Home tab (no AppBar) or pushed as the standalone "Workout"
-/// screen (with AppBar + back button) — see workout_dashboard_screen.dart
-/// and workout_detail_screen.dart.
 class WorkoutDashboardBody extends ConsumerWidget {
   const WorkoutDashboardBody({super.key});
 
@@ -26,39 +22,46 @@ class WorkoutDashboardBody extends ConsumerWidget {
     final activityAsync = ref.watch(dailyActivityProvider);
     final selectedDate = ref.watch(selectedActivityDateProvider);
 
-    return RefreshIndicator(
-      onRefresh: () async {
-        ref.invalidate(dailyActivityProvider);
-        await ref.read(dailyActivityProvider.future);
-      },
-      child: ListView(
-        padding: const EdgeInsets.fromLTRB(24, 20, 24, 40),
-        children: [
-          const _TopBar(title: 'Workout'),
-          DateNavHeader(
-            date: selectedDate,
-            onPrevious: () => ref.read(selectedActivityDateProvider.notifier).state =
-                selectedDate.subtract(const Duration(days: 1)),
-            onNext: () => ref.read(selectedActivityDateProvider.notifier).state =
-                selectedDate.add(const Duration(days: 1)),
-          ),
-          const SizedBox(height: 12),
-          activityAsync.when(
-            data: (summary) => _Content(summary: summary),
-            loading: () => const Padding(
-              padding: EdgeInsets.only(top: 80),
-              child: Center(child: CircularProgressIndicator()),
+    return Column(
+      children: [
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: () async {
+              ref.invalidate(dailyActivityProvider);
+              await ref.read(dailyActivityProvider.future);
+            },
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(24, 20, 24, 40),
+              children: [
+                DateNavHeader(
+                  date: selectedDate,
+                  onPrevious: () => ref.read(selectedActivityDateProvider.notifier).state =
+                      selectedDate.subtract(const Duration(days: 1)),
+                  onNext: () => ref.read(selectedActivityDateProvider.notifier).state =
+                      selectedDate.add(const Duration(days: 1)),
+                  onDateSelected: (picked) =>
+                  ref.read(selectedActivityDateProvider.notifier).state = picked,
+                ),
+                const SizedBox(height: 12),
+                activityAsync.when(
+                  data: (summary) => _Content(summary: summary),
+                  loading: () => const Padding(
+                    padding: EdgeInsets.only(top: 80),
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                  error: (error, stack) => Padding(
+                    padding: const EdgeInsets.only(top: 80),
+                    // User-facing copy is a placeholder — replace with a mapped,
+                    // human-readable message once real error codes exist
+                    // (see skill §6.1 Error handling & resilience).
+                    child: Center(child: Text('Could not load activity: $error')),
+                  ),
+                ),
+              ],
             ),
-            error: (error, stack) => Padding(
-              padding: const EdgeInsets.only(top: 80),
-              // User-facing copy is a placeholder — replace with a mapped,
-              // human-readable message once real error codes exist
-              // (see skill §6.1 Error handling & resilience).
-              child: Center(child: Text('Could not load activity: $error')),
-            ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -91,41 +94,6 @@ class _Content extends StatelessWidget {
         const SizedBox(height: 20),
         WorkoutsWeekBanner(sessions: summary.workoutSessionsThisWeek),
       ],
-    );
-  }
-}
-
-class _TopBar extends StatelessWidget {
-  const _TopBar({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      bottom: false,
-      child: Container(
-        color: AppColors.darkSurface.withOpacity(0.11),
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Row(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back, color: AppColors.black),
-              onPressed: () => context.pop(),
-            ),
-            Expanded(
-              child: Text(
-                title,
-                textAlign: TextAlign.center,
-                style: AppTextStyles.cardTitle.copyWith(color: AppColors.black, fontSize: 18),
-              ),
-            ),
-            // Balances the back button's width so the title stays
-            // visually centered instead of skewing right.
-            const SizedBox(width: 48),
-          ],
-        ),
-      ),
     );
   }
 }

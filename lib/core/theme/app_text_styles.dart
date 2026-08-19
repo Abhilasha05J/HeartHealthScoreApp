@@ -125,4 +125,10 @@ abstract class AppTextStyles {
     fontWeight: FontWeight.w500,
     color: AppColors.greenText,
   );
+  static const TextStyle dashboardcardheading = TextStyle(
+    fontFamily: 'Manrope',
+    fontSize: 18,
+    fontWeight: FontWeight.w500,
+    color: AppColors.headingColor,
+  );
 }

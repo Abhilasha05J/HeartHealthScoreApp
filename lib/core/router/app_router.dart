@@ -6,6 +6,7 @@ import 'package:heart_health_score/features/notifications/domain/entities/notifi
 import 'package:heart_health_score/features/onboarding/presentation/widgets/basic_vitals_screen.dart';
 import 'package:heart_health_score/features/onboarding/presentation/widgets/daily_activity_screen.dart';
 import 'package:heart_health_score/features/onboarding/presentation/widgets/profile_setup_screen.dart';
+import 'package:heart_health_score/features/plans/presentation/plans_screen.dart';
 import 'package:heart_health_score/features/profile/presentation/profile_screen.dart';
 import 'package:heart_health_score/features/water_intake_data/presentation/water_intake_screen.dart';
 import 'package:heart_health_score/features/workout/presentation/workout_detail_screen.dart';
@@ -143,10 +144,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: AppRoutes.plans,
-                builder: (context, state) => const PlaceholderTabScreen(
-                  title: 'Plans',
-                  path: 'assets/icons/plans.png',
-                ),
+                builder: (context, state) => const PlansScreen(),
               ),
             ],
           ),

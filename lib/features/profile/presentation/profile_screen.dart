@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../../core/theme/fitness_palette.dart';
+import 'package:heart_health_score/core/theme/app_colors.dart';
 import '../application/profile_providers.dart';
 import '../domain/profile_data.dart';
 import 'widgets/labeled_input_field.dart';
@@ -84,7 +83,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final profileAsync = ref.watch(profileControllerProvider);
 
     return Scaffold(
-      backgroundColor: FitnessPalette.profileHeaderEnd,
+      backgroundColor: AppColors.profileHeaderEnd,
       body: profileAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
@@ -101,7 +100,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   child: Container(
                     width: double.infinity,
                     decoration: const BoxDecoration(
-                      color: FitnessPalette.cardBackground,
+                      color:AppColors.white,
                       borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
                     ),
                     child: ListView(
@@ -109,7 +108,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       children: [
                         const Text(
                           'PERSONAL DETAILS',
-                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: FitnessPalette.textSecondary, letterSpacing: 0.6),
+                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: AppColors.textSecondary, letterSpacing: 0.6),
                         ),
                         const SizedBox(height: 18),
                         Row(

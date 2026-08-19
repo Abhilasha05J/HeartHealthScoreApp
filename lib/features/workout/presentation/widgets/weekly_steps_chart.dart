@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/fitness_palette.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_text_styles.dart';
 import '../../domain/workout_data.dart';
 
-/// "Steps over last 7 days" card: a "Target 6k" chip + dashed target line,
-/// bars in grey (below target) or green (at/above target), day labels below.
+
 class WeeklyStepsChart extends StatelessWidget {
   const WeeklyStepsChart({
     super.key,
@@ -24,7 +24,7 @@ class WeeklyStepsChart extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: FitnessPalette.cardBackground,
+        color: AppColors.workoutCardBg,
         borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
@@ -33,11 +33,11 @@ class WeeklyStepsChart extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Steps over last 7 days', style: FitnessTextStyles.sectionHeading),
+              Text('Steps over last 7 days', style: AppTextStyles.cardTitle.copyWith(fontSize: 16)),
               if (onSeeAll != null)
                 InkWell(
                   onTap: onSeeAll,
-                  child: const Icon(Icons.chevron_right, color: FitnessPalette.textSecondary),
+                  child: const Icon(Icons.chevron_right, color: AppColors.hintText),
                 ),
             ],
           ),
@@ -58,13 +58,13 @@ class WeeklyStepsChart extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
-                              color: FitnessPalette.chipTargetBg,
+                              color: AppColors.workoutTargetChipBg,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
                               'Target ${(target / 1000).toStringAsFixed(0)}k',
                               style: const TextStyle(
-                                color: FitnessPalette.ringSteps,
+                                color: AppColors.ringGreen,
                                 fontSize: 11,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -74,7 +74,7 @@ class WeeklyStepsChart extends StatelessWidget {
                           Expanded(
                             child: CustomPaint(
                               size: const Size(double.infinity, 1),
-                              painter: _DashedLinePainter(color: FitnessPalette.ringSteps.withOpacity(0.5)),
+                              painter: _DashedLinePainter(color: AppColors.ringGreen.withOpacity(0.5)),
                             ),
                           ),
                         ],
@@ -90,7 +90,7 @@ class WeeklyStepsChart extends StatelessWidget {
                           final atTarget = p.steps >= target;
                           return _Bar(
                             height: barHeight.clamp(6, double.infinity),
-                            color: atTarget ? FitnessPalette.ringSteps : FitnessPalette.trackGrey,
+                            color: atTarget ? AppColors.ringGreen : AppColors.chipUnselectedGrey,
                           );
                         }).toList(),
                       ),
@@ -110,7 +110,7 @@ class WeeklyStepsChart extends StatelessWidget {
                         p.dayLabel,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: p.steps >= target ? FitnessPalette.ringSteps : FitnessPalette.textSecondary,
+                          color: p.steps >= target ? AppColors.ringGreen : AppColors.hintText,
                           fontWeight: FontWeight.w700,
                           fontSize: 13,
                         ),

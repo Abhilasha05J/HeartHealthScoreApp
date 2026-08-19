@@ -5,6 +5,8 @@ import 'package:heart_health_score/features/dashboard/presentation/widgets/domai
 import 'package:heart_health_score/core/theme/app_colors.dart';
 import 'package:heart_health_score/core/theme/app_text_styles.dart';
 import 'package:heart_health_score/features/dashboard/application/dashboard_providers.dart';
+import 'package:heart_health_score/features/dashboard/presentation/widgets/rewards_milestone_section.dart';
+import 'package:heart_health_score/features/dashboard/presentation/widgets/weekly_achievements_section.dart';
 import 'package:heart_health_score/features/wearable/application/wearable_providers.dart';
 import 'package:heart_health_score/features/wearable/domain/wearable_models.dart' show WearableConnectionStatus;
 import 'widgets/burden_breakdown_chart.dart';
@@ -94,9 +96,18 @@ class HomeDashboardScreen extends ConsumerWidget {
                     isSyncing: wearableState.isSyncing,
                     isConnected: wearableState.status == WearableConnectionStatus.connected,
                     onConnectWearable: () => ref.read(wearableControllerProvider.notifier).connectOrRefresh(),
+                    onViewHistory: () {
+                      // TODO(score-history): swap for context.push('/home/score-history')
+                      // once that screen + route exist. Snackbar is a safe
+                      // placeholder in the meantime, same pattern as the
+                      // wearable error states above.
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Score history is coming soon.')),
+                      );
+                    },
                   ),
                   const SizedBox(height: 24),
-                  Text('Your Condition', style: AppTextStyles.pageHeading.copyWith(fontSize: 18)),
+                  Text('YOUR CONDITION', style: AppTextStyles.dashboardcardheading.copyWith(fontSize: 18)),
                   const SizedBox(height: 14),
                   GridView.count(
                     crossAxisCount: 2,
@@ -137,13 +148,23 @@ class HomeDashboardScreen extends ConsumerWidget {
                     ],
                   ),
                   const SizedBox(height: 28),
-                  Text('Burden Breakdown', style: AppTextStyles.pageHeading.copyWith(fontSize: 18)),
+                  Text('WEEKLY ACHIEVEMENTS', style: AppTextStyles.dashboardcardheading.copyWith(fontSize: 18)),
+                  const SizedBox(height: 14),
+                  WeeklyAchievementsSection(achievements: data.weeklyAchievements),
+                  const SizedBox(height: 28),
+                  RewardsMilestoneCard(progress: data.rewardsProgress),
+                  const SizedBox(height: 18),
+                  Text('UNLOCKED REWARDS', style: AppTextStyles.dashboardcardheading.copyWith(fontSize: 18)),
+                  const SizedBox(height: 14),
+                  UnlockedRewardsSection(unlocked: data.rewardsProgress.unlockedBadges),
+                  const SizedBox(height: 28),
+                  Text('BURDEN BREAKDOWN', style: AppTextStyles.dashboardcardheading.copyWith(fontSize: 18)),
                   const SizedBox(height: 18),
                   BurdenBreakdownChart(items: data.burdenBreakdown),
                   const SizedBox(height: 28),
-                  Text('Domain Summary', style: AppTextStyles.pageHeading.copyWith(fontSize: 18)),
+                  Text('DOMAIN SUMMARY', style: AppTextStyles.dashboardcardheading.copyWith(fontSize: 18)),
                   const SizedBox(height: 18),
-                  DomainSummarySection(items: data.domainSummary)
+                  DomainSummarySection(items: data.domainSummary),
                 ],
               ),
             ),

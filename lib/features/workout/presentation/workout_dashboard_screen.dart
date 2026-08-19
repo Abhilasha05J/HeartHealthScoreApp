@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/fitness_palette.dart';
+import '../../../core/theme/app_colors.dart';
 import 'widgets/workout_dashboard_body.dart';
 
 /// The "Home" branch content inside [HomeShell] — matches the mockup with
@@ -14,11 +14,8 @@ class WorkoutDashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-     // decoration: const BoxDecoration(gradient: FitnessPalette.screenBackground),
-      child: const SafeArea(
-        bottom: false,
-        child: WorkoutDashboardBody(),
-      ),
+      decoration: const BoxDecoration(gradient: AppColors.workoutScreenBackground),
+      child: const WorkoutDashboardBody(),
     );
   }
 }

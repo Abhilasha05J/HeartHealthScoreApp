@@ -17,24 +17,14 @@ class BurdenItem extends Equatable {
 
   final String label;
   final double value;
-
-  /// Risk/Moderate/Normal classification for this domain — same one shown
-  /// on the Domain Summary badge. Used to filter the Burden Breakdown list.
   final DomainStatus status;
-
-  /// True for the "Inherited Risk" row, which renders in red instead of
-  /// the standard yellow — per the mockup, it's visually called out as a
-  /// non-modifiable risk factor distinct from the lifestyle-driven ones.
   final bool highlighted;
 
   @override
   List<Object?> get props => [label, value, status, highlighted];
 }
 
-/// A single card in the "Domain Summary" list — one per health domain
-/// (Blood Pressure, Glucose, Lipids, etc.), showing its overall status,
-/// HHS severity, weight, and a normal/borderline/at-risk parameter
-/// breakdown.
+/// A single card in the "Domain Summary" list.
 class DomainSummaryItem extends Equatable {
   const DomainSummaryItem({
     required this.title,
@@ -69,15 +59,86 @@ class DomainSummaryItem extends Equatable {
   ];
 }
 
-/// Everything the Home dashboard needs to render. This is what
-/// [DashboardRepository.fetchDashboard] returns — eventually backed by the
-/// ML scoring endpoint's response, currently backed by
-/// [MockDashboardRepository] with the exact sample values from the mockup.
+/// The 4 "Weekly Achievements" mini-cards on Home.
+class WeeklyAchievements extends Equatable {
+  const WeeklyAchievements({
+    required this.hydrationLast7DaysMl,
+    required this.dailyActivityConsistencyPercent,
+    required this.sleepQualityScore,
+    required this.vitalsStable,
+  });
+
+  /// Exactly 7 values, oldest → newest (today last). Used to draw the
+  /// Hydration Master bar chart; today's bar renders in the highlight
+  /// color, the other 6 in the track color.
+  final List<double> hydrationLast7DaysMl;
+
+  /// 0–100. Drives the Daily Activity ring + "Consistency: High/Low" caption.
+  final int dailyActivityConsistencyPercent;
+
+  /// 0–100. Drives the Sleep Quality bar + big number.
+  final int sleepQualityScore;
+
+  /// Drives the Vitals Stability "STABLE" / not-stable caption.
+  final bool vitalsStable;
+
+  String get dailyActivityConsistencyLabel =>
+      dailyActivityConsistencyPercent >= 80 ? 'High' : 'Low';
+
+  @override
+  List<Object?> get props => [
+    hydrationLast7DaysMl,
+    dailyActivityConsistencyPercent,
+    sleepQualityScore,
+    vitalsStable,
+  ];
+}
+
+/// Which reward badges the user has unlocked — maps 1:1 to the icon +
+/// glow + border-color set in the design assets.
+enum RewardBadgeType { hydrationHero, deepSleeper, activeStreak }
+
+/// The "Rewards & Milestones" progress card + "Unlocked Rewards" strip.
+class RewardsProgress extends Equatable {
+  const RewardsProgress({
+    required this.nextTierName,
+    required this.progressPercent,
+    required this.segmentsCompleted,
+    required this.segmentsTotal,
+    required this.description,
+    required this.unlockedBadges,
+  });
+
+  final String nextTierName;
+
+  /// 0–100. Drives the green ring.
+  final int progressPercent;
+
+  /// Segmented pip bar under the description, e.g. 3 of 4 filled.
+  final int segmentsCompleted;
+  final int segmentsTotal;
+
+  final String description;
+  final List<RewardBadgeType> unlockedBadges;
+
+  @override
+  List<Object?> get props => [
+    nextTierName,
+    progressPercent,
+    segmentsCompleted,
+    segmentsTotal,
+    description,
+    unlockedBadges,
+  ];
+}
+
+/// Everything the Home dashboard needs to render.
 class DashboardData extends Equatable {
   const DashboardData({
     required this.profileName,
     required this.age,
     required this.healthyHeartScore,
+    required this.previousScore,
     required this.confidencePercent,
     required this.confidenceLabel,
     required this.restingHeartRateBpm,
@@ -86,6 +147,8 @@ class DashboardData extends Equatable {
     required this.stepCount,
     required this.burdenBreakdown,
     required this.domainSummary,
+    required this.weeklyAchievements,
+    required this.rewardsProgress,
     this.maxScore = 100,
   });
 
@@ -93,6 +156,7 @@ class DashboardData extends Equatable {
   final int age;
 
   final double healthyHeartScore;
+  final double previousScore;
   final double maxScore;
 
   final int confidencePercent;
@@ -106,11 +170,17 @@ class DashboardData extends Equatable {
   final List<BurdenItem> burdenBreakdown;
   final List<DomainSummaryItem> domainSummary;
 
+  final WeeklyAchievements weeklyAchievements;
+  final RewardsProgress rewardsProgress;
+
   double get scoreFraction => (healthyHeartScore / maxScore).clamp(0.0, 1.0);
+  double get scoreDelta => healthyHeartScore - previousScore;
+
   DashboardData copyWith({
     String? profileName,
     int? age,
     double? healthyHeartScore,
+    double? previousScore,
     double? maxScore,
     int? confidencePercent,
     String? confidenceLabel,
@@ -120,11 +190,14 @@ class DashboardData extends Equatable {
     int? stepCount,
     List<BurdenItem>? burdenBreakdown,
     List<DomainSummaryItem>? domainSummary,
+    WeeklyAchievements? weeklyAchievements,
+    RewardsProgress? rewardsProgress,
   }) {
     return DashboardData(
       profileName: profileName ?? this.profileName,
       age: age ?? this.age,
       healthyHeartScore: healthyHeartScore ?? this.healthyHeartScore,
+      previousScore: previousScore ?? this.previousScore,
       maxScore: maxScore ?? this.maxScore,
       confidencePercent: confidencePercent ?? this.confidencePercent,
       confidenceLabel: confidenceLabel ?? this.confidenceLabel,
@@ -134,13 +207,17 @@ class DashboardData extends Equatable {
       stepCount: stepCount ?? this.stepCount,
       burdenBreakdown: burdenBreakdown ?? this.burdenBreakdown,
       domainSummary: domainSummary ?? this.domainSummary,
+      weeklyAchievements: weeklyAchievements ?? this.weeklyAchievements,
+      rewardsProgress: rewardsProgress ?? this.rewardsProgress,
     );
   }
+
   @override
   List<Object?> get props => [
     profileName,
     age,
     healthyHeartScore,
+    previousScore,
     maxScore,
     confidencePercent,
     confidenceLabel,
@@ -150,5 +227,7 @@ class DashboardData extends Equatable {
     stepCount,
     burdenBreakdown,
     domainSummary,
+    weeklyAchievements,
+    rewardsProgress,
   ];
 }

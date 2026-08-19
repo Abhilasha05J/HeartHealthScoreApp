@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/fitness_palette.dart';
+import '../../../../core/theme/app_colors.dart';
 
 /// The mint "+ New Workout" / "+ Add Exercise" pill pair.
 class ActionPillButtons extends StatelessWidget {
@@ -35,7 +35,7 @@ class _Pill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: FitnessPalette.mintButtonBg,
+      color: AppColors.mintChipBg,
       borderRadius: BorderRadius.circular(20),
       child: InkWell(
         onTap: onTap,
@@ -45,12 +45,12 @@ class _Pill extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, color: FitnessPalette.mintButtonFg, size: 24),
+              Icon(icon, color: AppColors.mintChipText, size: 24),
               const SizedBox(height: 6),
               Text(
                 label,
                 style: const TextStyle(
-                  color: FitnessPalette.mintButtonFg,
+                  color: AppColors.mintChipText,
                   fontWeight: FontWeight.w700,
                   fontSize: 14,
                 ),

@@ -26,6 +26,7 @@ class MockDashboardRepository implements DashboardRepository {
       profileName: 'Profile Name',
       age: 34,
       healthyHeartScore: 62.2,
+      previousScore: 58.4,
       confidencePercent: 87,
       confidenceLabel: 'High',
       restingHeartRateBpm: 95,
@@ -156,6 +157,24 @@ class MockDashboardRepository implements DashboardRepository {
           atRiskCount: 0,
         ),
       ],
+      weeklyAchievements: const WeeklyAchievements(
+        hydrationLast7DaysMl: [1200, 900, 1100, 950, 1000, 1300, 2000],
+        dailyActivityConsistencyPercent: 92,
+        sleepQualityScore: 85,
+        vitalsStable: true,
+      ),
+      rewardsProgress: const RewardsProgress(
+        nextTierName: 'Heart Hero',
+        progressPercent: 75,
+        segmentsCompleted: 3,
+        segmentsTotal: 4,
+        description: 'Complete 3 more daily goals to unlock your next tier.',
+        unlockedBadges: [
+          RewardBadgeType.hydrationHero,
+          RewardBadgeType.deepSleeper,
+          RewardBadgeType.activeStreak,
+        ],
+      ),
     );
   }
 }

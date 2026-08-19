@@ -174,7 +174,7 @@ class _TopBar extends StatelessWidget {
       bottom: false,
       child: Container(
         color: AppColors.darkSurface.withOpacity(0.11),
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 10),
         child: Row(
           children: [
             IconButton(

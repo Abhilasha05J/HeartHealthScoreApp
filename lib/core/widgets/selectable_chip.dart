@@ -2,11 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:heart_health_score/core/theme/app_colors.dart';
 import 'package:heart_health_score/core/theme/app_text_styles.dart';
 
-/// Rounded selectable option used in Daily Activity
-/// ("Less than 6h", "6 - 8 hours", "None", "1 - 2 hours", ...).
-///
-/// Selected state -> solid maroon background + white bold text.
-/// Unselected state -> transparent/pink background + outlined border.
 class SelectableChip extends StatelessWidget {
   const SelectableChip({
     super.key,

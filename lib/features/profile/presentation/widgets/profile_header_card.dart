@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../../core/theme/fitness_palette.dart';
+import 'package:heart_health_score/core/theme/app_colors.dart';
 
 /// Soft blue gradient header with "Your Profile" title and the
 /// name/email/avatar card, matching the mockup.
@@ -17,28 +16,28 @@ class ProfileHeaderCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 40),
       decoration: const BoxDecoration(
-        gradient: FitnessPalette.profileHeaderGradient,
+        gradient: AppColors.profileHeaderGradient,
        // borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Your Profile', style: TextStyle(fontSize: 26, fontWeight: FontWeight.w800, color: FitnessPalette.textPrimary)),
+          const Text('Your Profile', style: TextStyle(fontSize: 26, fontWeight: FontWeight.w800, color: AppColors.textPrimary)),
           const SizedBox(height: 20),
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: FitnessPalette.cardBackground,
+              color: AppColors.white,
               borderRadius: BorderRadius.circular(24),
             ),
             child: Row(
               children: [
                 CircleAvatar(
                   radius: 26,
-                  backgroundColor: FitnessPalette.profileAvatarBg,
+                  backgroundColor: AppColors.profileAvatarBg,
                   child: Text(
                     initial,
-                    style: const TextStyle(color: FitnessPalette.profileAvatarFg, fontSize: 22, fontWeight: FontWeight.w800),
+                    style: const TextStyle(color: AppColors.profileAvatarFg, fontSize: 22, fontWeight: FontWeight.w800),
                   ),
                 ),
                 const SizedBox(width: 14),
@@ -46,9 +45,9 @@ class ProfileHeaderCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(fullName, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: FitnessPalette.textPrimary)),
+                      Text(fullName, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.textPrimary)),
                       const SizedBox(height: 2),
-                      Text(email, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: FitnessPalette.textSecondary)),
+                      Text(email, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.textSecondary)),
                     ],
                   ),
                 ),
