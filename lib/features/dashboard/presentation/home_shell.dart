@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_text_styles.dart';
+import 'package:heart_health_score/core/theme/app_colors.dart';
+import 'package:heart_health_score/core/theme/app_text_styles.dart';
 import 'widgets/expandable_log_fab.dart';
 
 /// Persistent shell: bottom nav bar + expandable "+" FAB stay visible
@@ -81,8 +81,8 @@ class _BottomNavBar extends StatelessWidget {
               onTap: () => onTap(3),
             ),
             _NavItem(
-              label: 'Setting',
-              path: 'assets/icons/settings.png',
+              label: 'Parameters',
+              path: 'assets/icons/parameters.png',
               selected: currentIndex == 4,
               onTap: () => onTap(4),
             ),
@@ -108,28 +108,43 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = selected ? AppColors.accentColor : AppColors.inputText.withOpacity(0.45);
+    final color = selected
+        ? AppColors.accentColor
+        : AppColors.inputText.withOpacity(0.45);
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 8,
+          vertical: 4,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(
-              path,
-              width: 24,
-              height: 24,
-              fit: BoxFit.contain,
+            ColorFiltered(
+              colorFilter: ColorFilter.mode(
+                color,
+                BlendMode.srcIn,
+              ),
+              child: Image.asset(
+                path,
+                width: 24,
+                height: 24,
+                fit: BoxFit.contain,
+              ),
             ),
+
             const SizedBox(height: 4),
+
             Text(
               label,
               style: AppTextStyles.chipLabel.copyWith(
                 fontSize: 11,
                 color: color,
-                fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
+                fontWeight:
+                selected ? FontWeight.w700 : FontWeight.w600,
               ),
             ),
           ],

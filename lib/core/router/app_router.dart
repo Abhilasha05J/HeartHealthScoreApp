@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:heart_health_score/features/assessment/presentation/assessment_screen.dart';
 import 'package:heart_health_score/features/notifications/domain/entities/app_notification.dart';
 import 'package:heart_health_score/features/notifications/domain/entities/notification_type.dart';
 import 'package:heart_health_score/features/onboarding/presentation/widgets/basic_vitals_screen.dart';
@@ -11,12 +12,12 @@ import 'package:heart_health_score/features/profile/presentation/profile_screen.
 import 'package:heart_health_score/features/water_intake_data/presentation/water_intake_screen.dart';
 import 'package:heart_health_score/features/workout/presentation/workout_detail_screen.dart';
 
-import '../../features/nutrition/presentation/nutrition_screen.dart';
-import '../../features/splash/presentation/splash_screen.dart';
-import '../../features/auth/presentation/auth_screen.dart';
-import '../../features/dashboard/presentation/home_shell.dart';
-import '../../features/dashboard/presentation/home_dashboard_screen.dart';
-import '../../features/dashboard/presentation/placeholder_tab_screen.dart';
+import 'package:heart_health_score/features/nutrition/presentation/nutrition_screen.dart';
+import 'package:heart_health_score/features/splash/presentation/splash_screen.dart';
+import 'package:heart_health_score/features/auth/presentation/auth_screen.dart';
+import 'package:heart_health_score/features/dashboard/presentation/home_shell.dart';
+import 'package:heart_health_score/features/dashboard/presentation/home_dashboard_screen.dart';
+import 'package:heart_health_score/features/dashboard/presentation/placeholder_tab_screen.dart';
 import 'package:heart_health_score/features/wearable/presentation/connect_wearable_screen.dart';
 
 abstract class AppRoutes {
@@ -31,7 +32,7 @@ abstract class AppRoutes {
   static const reminder = '/reminder';
   static const profile = '/profile';
   static const plans = '/plans';
-  static const settings = '/settings';
+  static const parameters = '/parameters';
   static const connectWearable = '/connect-wearable';
 
   // Nested UNDER /home (note: no leading slash on the child path below)
@@ -151,11 +152,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: AppRoutes.settings,
-                builder: (context, state) => const PlaceholderTabScreen(
-                  title: 'Setting',
-                  path: 'assets/icons/settings.png',
-                ),
+                path: AppRoutes.parameters,
+                builder: (context, state) => const AssessmentScreen(),
               ),
             ],
           ),

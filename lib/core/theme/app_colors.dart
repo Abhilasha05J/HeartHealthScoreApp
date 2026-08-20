@@ -133,7 +133,11 @@ abstract class AppColors {
   static const Color planButtonShadow = Color(0x40000000); // #000000 @ 25%
   static const Color planOuterCardBorder = Color(0xFFE7E7E7);
 
-
+  // parameters/assesments
+  static const Color assessmentGreen = Color(0xFF13791F);
+  static const Color assessmentFieldBorder = Color(0xFFBBCBB5);
+  static const Color assessmentFieldBackground = Color(0xFFF5F6F7);
+  static const Color assessmentMutedText = Color(0xFF9AA0A6);
   // ---------------------------------------------------------------------
   // Neutrals
   // ---------------------------------------------------------------------
