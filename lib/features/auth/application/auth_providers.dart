@@ -1,12 +1,27 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:heart_health_score/features/auth/data/mock_auth_repository.dart';
+
+import 'package:heart_health_score/core/local/onboarding_status_store.dart';
+import 'package:heart_health_score/core/network/api_client.dart';
+import 'package:heart_health_score/core/network/token_storage.dart';
+import 'package:heart_health_score/features/auth/data/api_auth_repository.dart';
 import 'package:heart_health_score/features/auth/domain/app_user.dart';
 import 'package:heart_health_score/features/auth/domain/auth_repository.dart';
 
-/// Repository provider — the ONLY line to change when the backend is
-/// ready (swap MockAuthRepository() for ApiAuthRepository(dio)).
+final tokenStorageProvider = Provider<TokenStorage>((ref) => TokenStorage());
+
+final dioProvider = Provider<Dio>((ref) {
+  return ApiClient(ref.watch(tokenStorageProvider)).dio;
+});
+
+/// Repository provider — the ONLY line to change to develop offline
+/// (swap `ApiAuthRepository(...)` for `MockAuthRepository()`).
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  return MockAuthRepository();
+  return ApiAuthRepository(
+    ref.watch(dioProvider),
+    ref.watch(tokenStorageProvider),
+    ref.watch(onboardingStatusStoreProvider),
+  );
 });
 
 /// Holds the currently authenticated user (or null when signed out).
@@ -15,60 +30,42 @@ final currentUserProvider = StateProvider<AppUser?>((ref) => null);
 enum AuthTab { login, signup }
 
 /// Which tab (Login / Sign Up) is active on the Auth screen.
-final authTabProvider = StateProvider<AuthTab>((ref) => AuthTab.signup);
+/// CHANGED default from `signup` to `login`: with the OTP flow gone,
+/// "signup by default" no longer serves a demo purpose — most opens of
+/// this screen are an existing user signing back in. Flag if you'd
+/// rather keep signup as the default tab.
+final authTabProvider = StateProvider<AuthTab>((ref) => AuthTab.login);
 
-/// Drives the OTP sign-up flow's UI state (has OTP been sent yet?).
-class OtpSignupState {
-  const OtpSignupState({
-    this.otpSent = false,
-    this.isSubmitting = false,
-    this.requestId,
-    this.errorMessage,
-  });
+/// Drives the email/password + name sign-up form's submitting/error
+/// state. Replaces the old OTP-based `OtpSignupState`/`OtpSignupController`
+/// — the backend has no phone/OTP endpoint, only `/auth/register`.
+class SignupState {
+  const SignupState({this.isSubmitting = false, this.errorMessage});
 
-  final bool otpSent;
   final bool isSubmitting;
-  final String? requestId;
   final String? errorMessage;
 
-  OtpSignupState copyWith({
-    bool? otpSent,
-    bool? isSubmitting,
-    String? requestId,
-    String? errorMessage,
-  }) {
-    return OtpSignupState(
-      otpSent: otpSent ?? this.otpSent,
+  SignupState copyWith({bool? isSubmitting, String? errorMessage}) {
+    return SignupState(
       isSubmitting: isSubmitting ?? this.isSubmitting,
-      requestId: requestId ?? this.requestId,
       errorMessage: errorMessage,
     );
   }
 }
 
-class OtpSignupController extends StateNotifier<OtpSignupState> {
-  OtpSignupController(this._repository) : super(const OtpSignupState());
+class SignupController extends StateNotifier<SignupState> {
+  SignupController(this._repository) : super(const SignupState());
 
   final AuthRepository _repository;
 
-  Future<void> sendOtp(String phoneNumber) async {
+  Future<AppUser?> register({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
     state = state.copyWith(isSubmitting: true, errorMessage: null);
     try {
-      final requestId = await _repository.sendOtp(phoneNumber: phoneNumber);
-      state = state.copyWith(isSubmitting: false, otpSent: true, requestId: requestId);
-    } catch (e) {
-      state = state.copyWith(isSubmitting: false, errorMessage: e.toString());
-    }
-  }
-
-  Future<AppUser?> verifyOtp(String phoneNumber, String otp) async {
-    state = state.copyWith(isSubmitting: true, errorMessage: null);
-    try {
-      final user = await _repository.verifyOtp(
-        phoneNumber: phoneNumber,
-        otp: otp,
-        requestId: state.requestId,
-      );
+      final user = await _repository.register(name: name, email: email, password: password);
       state = state.copyWith(isSubmitting: false);
       return user;
     } catch (e) {
@@ -76,16 +73,15 @@ class OtpSignupController extends StateNotifier<OtpSignupState> {
       return null;
     }
   }
-
-  void reset() => state = const OtpSignupState();
 }
 
-final otpSignupControllerProvider =
-    StateNotifierProvider<OtpSignupController, OtpSignupState>((ref) {
-  return OtpSignupController(ref.watch(authRepositoryProvider));
+final signupControllerProvider = StateNotifierProvider<SignupController, SignupState>((ref) {
+  return SignupController(ref.watch(authRepositoryProvider));
 });
 
-/// Drives the email/password + Google login flow's submitting/error state.
+/// Drives the email/password login flow's submitting/error state.
+/// CHANGED: `loginWithGoogle` removed — no OAuth endpoint exists on the
+/// backend (confirmed against the live OpenAPI spec).
 class LoginState {
   const LoginState({this.isSubmitting = false, this.errorMessage});
 
@@ -105,25 +101,10 @@ class LoginController extends StateNotifier<LoginState> {
 
   final AuthRepository _repository;
 
-  Future<AppUser?> loginWithPassword(String identifier, String password) async {
+  Future<AppUser?> login(String email, String password) async {
     state = state.copyWith(isSubmitting: true, errorMessage: null);
     try {
-      final user = await _repository.loginWithPassword(
-        identifier: identifier,
-        password: password,
-      );
-      state = state.copyWith(isSubmitting: false);
-      return user;
-    } catch (e) {
-      state = state.copyWith(isSubmitting: false, errorMessage: e.toString());
-      return null;
-    }
-  }
-
-  Future<AppUser?> loginWithGoogle() async {
-    state = state.copyWith(isSubmitting: true, errorMessage: null);
-    try {
-      final user = await _repository.loginWithGoogle(idToken: 'mock-id-token');
+      final user = await _repository.login(email: email, password: password);
       state = state.copyWith(isSubmitting: false);
       return user;
     } catch (e) {

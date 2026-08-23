@@ -119,7 +119,8 @@ class ReportUploadBox extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.darkSurface, width: 1.4),
+        border: Border.all(color: AppColors.darkSurface
+            , width: 1.4),
       ),
       child: Column(
         children: [

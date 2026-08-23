@@ -4,7 +4,7 @@ import '../../application/assessment_providers.dart';
 import '../../domain/assessment_models.dart';
 import 'assessment_widgets.dart';
 
-// ---------------------------------------------------------------- Lipids --
+// -------- Lipids --
 
 class LipidsTabBody extends ConsumerStatefulWidget {
   const LipidsTabBody({super.key});
@@ -402,7 +402,7 @@ class _BehaviorTabBodyState extends ConsumerState<BehaviorTabBody> {
 
         // -- Activity (target-tracked) --------------------------------------
         const SectionIconHeader(
-            iconAsset: 'assets/icons/assessment/header_activity.png', title: 'Activity'),
+            iconAsset: 'assets/icons/assessment/header_physical_activity.png', title: 'Activity'),
         AssessmentTargetProgressField(
           label: 'Moderate/Vigorous Activity',
           controller: _moderateVigorous,

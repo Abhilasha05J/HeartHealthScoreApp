@@ -1,37 +1,41 @@
+
 import 'app_user.dart';
 
 /// Contract the Auth feature depends on. Presentation/state layers never
-/// talk to Dio/HTTP directly — they depend on this interface, which keeps
-/// the UI fully decoupled from *how* auth is implemented (OOP:
-/// dependency inversion). Swap [MockAuthRepository] for a real
-/// [ApiAuthRepository] once backend endpoints are available — nothing
-/// above this layer needs to change.
+/// talk to Dio/HTTP directly — they depend on this interface, so swapping
+/// [ApiAuthRepository] back for a mock (e.g. to develop without backend
+/// access) is a one-line provider override, nothing else changes.
+///
+/// CHANGED from the mock-era version: the backend has no phone/OTP
+/// signup endpoint and no Google OAuth endpoint (confirmed against the
+/// live OpenAPI spec — only email+password `/auth/register` exists).
+/// `sendOtp`/`verifyOtp`/`loginWithGoogle` are removed rather than kept
+/// as unimplemented stubs, since a stale interface method is worse than
+/// no method — it invites someone to wire up a button against it later
+/// without noticing there's no backend behind it.
 abstract class AuthRepository {
-  /// Sends an OTP to [phoneNumber] (E.164 or local number, country code
-  /// handled separately). Returns a requestId/session token some backends
-  /// require to verify the OTP later.
-  Future<String> sendOtp({required String phoneNumber});
+  /// Email + password login. Throws [AuthException] with a
+  /// user-presentable message on failure (wrong credentials, deactivated
+  /// account, network error, etc).
+  Future<AppUser> login({required String email, required String password});
 
-  /// Verifies the OTP for a previously requested [phoneNumber]/[requestId].
-  /// Returns the authenticated user on success.
-  Future<AppUser> verifyOtp({
-    required String phoneNumber,
-    required String otp,
-    String? requestId,
-  });
-
-  /// Email/mobile + password login.
-  Future<AppUser> loginWithPassword({
-    required String identifier, // email or mobile number
+  /// Self-serve patient registration. The backend returns a signed-in
+  /// session directly (no separate login call needed after this
+  /// succeeds). Throws [AuthException] on failure (e.g. email already
+  /// registered, password too short).
+  Future<AppUser> register({
+    required String name,
+    required String email,
     required String password,
   });
 
-  /// Google OAuth sign-in. [idToken] is the token obtained from the
-  /// google_sign_in package once it's wired up.
-  Future<AppUser> loginWithGoogle({required String idToken});
-
+  /// Revokes the current session. Best-effort against the backend —
+  /// always clears the local session even if the network call fails, so
+  /// the user is never stuck "logged in" locally after tapping logout.
   Future<void> logout();
 
-  /// Restores a persisted session on app start, if any.
+  /// Restores a persisted session on app start, if any. Returns null if
+  /// there's no stored session, or if the stored session is no longer
+  /// valid (refresh token expired/revoked).
   Future<AppUser?> restoreSession();
 }

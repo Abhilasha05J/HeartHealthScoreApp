@@ -22,7 +22,7 @@ class WeeklyAchievementsSection extends StatelessWidget {
       children: [
         _AchievementCardShell(
           iconAsset: 'assets/icons/hydration_drop.png',
-          title: 'Hydration Master',
+          title: 'Hydration Meter',
           content: _HydrationBarChart(last7DaysMl: achievements.hydrationLast7DaysMl),
           caption: 'Last 7 Days',
         ),

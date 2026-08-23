@@ -23,10 +23,10 @@ dependencies:
   go_router: ^14.2.0
 
   # Networking (wired up when backend integration starts)
-  dio: ^5.5.0+1
+  dio: ^5.11.0
 
   # Local persistence (auth token / onboarding draft cache)
-  shared_preferences: ^2.2.3
+  shared_preferences: ^2.5.5
 
   # Value equality for models (repositories, state classes)
   equatable: ^2.0.5
@@ -37,6 +37,7 @@ dependencies:
   flutter_local_notifications: ^18.0.1
   timezone: ^0.10.0
   health: ^13.3.1
+  flutter_secure_storage: ^10.3.1
 
 dev_dependencies:
   flutter_test:
