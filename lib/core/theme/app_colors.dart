@@ -40,11 +40,11 @@ abstract class AppColors {
   static const Color scoreCardGradientTop = Color(0xFFF0FDF4);
 
   // ── Score Gauge (semicircle tick dial) ───────────────────────────────
-  static const Color scoreGaugeRed = Color(0xFFF87171);
-  static const Color scoreGaugeOrange = Color(0xFFFB923C);
-  static const Color scoreGaugeYellow = Color(0xFFFDE047);
-  static const Color scoreGaugeLightGreen = Color(0xFF86EFAC);
-  static const Color scoreGaugeDarkGreen = Color(0xFF16A34A);
+  static const Color scoreGaugeRed = Color(0xFFFF3434);
+  static const Color scoreGaugeOrange = Color(0xFFFF6B6B);
+  static const Color scoreGaugeYellow = Color(0xFFCADBFF);
+  static const Color scoreGaugeLightGreen = Color(0xFFC6D8FF);
+  static const Color scoreGaugeDarkGreen = Color(0xFF5D85D9);
   static const Color scoreGaugeLabelGrey = Color(0xFFB0B7B4);
 
 // ── Improvement delta chip ────────────────────────────────────────────

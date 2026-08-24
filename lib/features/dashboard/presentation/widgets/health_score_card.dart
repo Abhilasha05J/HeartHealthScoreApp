@@ -243,6 +243,26 @@ class _GaugePainter extends CustomPainter {
     _drawPointer(canvas, center);
   }
 
+  // void _drawTicks(Canvas canvas, Offset center) {
+  //   final paint = Paint()
+  //     ..strokeWidth = 3
+  //     ..strokeCap = StrokeCap.round;
+  //
+  //   for (int i = 0; i < _tickCount; i++) {
+  //     final t = i / (_tickCount - 1);
+  //     final angle = pi - (t * pi);
+  //     final outer = Offset(
+  //       center.dx + _GaugeGeometry.radiusOuter * cos(angle),
+  //       center.dy - _GaugeGeometry.radiusOuter * sin(angle),
+  //     );
+  //     final inner = Offset(
+  //       center.dx + (_GaugeGeometry.radiusOuter - _GaugeGeometry.tickLength) * cos(angle),
+  //       center.dy - (_GaugeGeometry.radiusOuter - _GaugeGeometry.tickLength) * sin(angle),
+  //     );
+  //     paint.color = _gaugeColorAt(t);
+  //     canvas.drawLine(inner, outer, paint);
+  //   }
+  // }
   void _drawTicks(Canvas canvas, Offset center) {
     final paint = Paint()
       ..strokeWidth = 3
@@ -250,17 +270,35 @@ class _GaugePainter extends CustomPainter {
 
     for (int i = 0; i < _tickCount; i++) {
       final t = i / (_tickCount - 1);
+
+      // 0% = left, 100% = right.
       final angle = pi - (t * pi);
+
       final outer = Offset(
-        center.dx + _GaugeGeometry.radiusOuter * cos(angle),
-        center.dy - _GaugeGeometry.radiusOuter * sin(angle),
+        center.dx +
+            _GaugeGeometry.radiusOuter * cos(angle),
+        center.dy -
+            _GaugeGeometry.radiusOuter * sin(angle),
       );
+
       final inner = Offset(
-        center.dx + (_GaugeGeometry.radiusOuter - _GaugeGeometry.tickLength) * cos(angle),
-        center.dy - (_GaugeGeometry.radiusOuter - _GaugeGeometry.tickLength) * sin(angle),
+        center.dx +
+            (_GaugeGeometry.radiusOuter -
+                _GaugeGeometry.tickLength) *
+                cos(angle),
+        center.dy -
+            (_GaugeGeometry.radiusOuter -
+                _GaugeGeometry.tickLength) *
+                sin(angle),
       );
+
       paint.color = _gaugeColorAt(t);
-      canvas.drawLine(inner, outer, paint);
+
+      canvas.drawLine(
+        inner,
+        outer,
+        paint,
+      );
     }
   }
 
@@ -294,10 +332,39 @@ class _GaugePainter extends CustomPainter {
     }
   }
 
+  // void _drawPointer(Canvas canvas, Offset center) {
+  //   final t = fraction.clamp(0.0, 1.0);
+  //   final angle = pi - (t * pi);
+  //   final pointerRadius = _GaugeGeometry.radiusOuter - _GaugeGeometry.tickLength - _GaugeGeometry.pointerInset;
+  //   final pos = Offset(
+  //     center.dx + pointerRadius * cos(angle),
+  //     center.dy - pointerRadius * sin(angle),
+  //   );
+  //
+  //   const double h = 11;
+  //   const double w = 11;
+  //
+  //   final path = Path()
+  //     ..moveTo(-h, 0)
+  //     ..lineTo(0, -w / 2)
+  //     ..lineTo(0, w / 2)
+  //     ..close();
+  //
+  //   canvas.save();
+  //   canvas.translate(pos.dx, pos.dy);
+  //   canvas.rotate(-angle);
+  //   canvas.drawPath(path, Paint()..color = _gaugeColorAt(t));
+  //   canvas.restore();
+  // }
   void _drawPointer(Canvas canvas, Offset center) {
     final t = fraction.clamp(0.0, 1.0);
     final angle = pi - (t * pi);
-    final pointerRadius = _GaugeGeometry.radiusOuter - _GaugeGeometry.tickLength - _GaugeGeometry.pointerInset;
+
+    final pointerRadius =
+        _GaugeGeometry.radiusOuter -
+            _GaugeGeometry.tickLength -
+            _GaugeGeometry.pointerInset;
+
     final pos = Offset(
       center.dx + pointerRadius * cos(angle),
       center.dy - pointerRadius * sin(angle),
@@ -306,16 +373,25 @@ class _GaugePainter extends CustomPainter {
     const double h = 11;
     const double w = 11;
 
+    // Triangle tip points outward.
     final path = Path()
-      ..moveTo(-h, 0)
+      ..moveTo(h, 0) // tip → outward
       ..lineTo(0, -w / 2)
       ..lineTo(0, w / 2)
       ..close();
 
     canvas.save();
+
     canvas.translate(pos.dx, pos.dy);
+
+    // Rotate the outward-facing pointer along the gauge arc.
     canvas.rotate(-angle);
-    canvas.drawPath(path, Paint()..color = _gaugeColorAt(t));
+
+    canvas.drawPath(
+      path,
+      Paint()..color = _gaugeColorAt(t),
+    );
+
     canvas.restore();
   }
 

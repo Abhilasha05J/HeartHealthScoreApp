@@ -1,8 +1,6 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:heart_health_score/core/theme/app_colors.dart';
 import '../../application/assessment_providers.dart';
 import '../../domain/assessment_models.dart';
 import 'assessment_widgets.dart';
@@ -33,7 +31,7 @@ class PressureTabBody extends ConsumerWidget {
                   ),
                 );
               },
-              showFreshness: true, // ← Shows "2 months ago" if > 0 months old
+              showFreshness: true,
             ),
             const SizedBox(height: 16),
             AssessmentTextField(
@@ -93,7 +91,7 @@ class GlucoseTabBody extends ConsumerWidget {
           children: [
         const SectionIconHeader(
              iconAsset: 'assets/icons/assessment/header_glucose.png', title: 'Glucose / Diabetes'),
-            AssessmentChipSelector<DiabetesStatus>(
+            AssessmentDropdown<DiabetesStatus>(
               label: 'Diabetes Status',
               value: draft.glucose.diabetesStatus,
               options: DiabetesStatus.values,
@@ -106,8 +104,7 @@ class GlucoseTabBody extends ConsumerWidget {
                 );
               },
               showFreshness: true,
-            ),
-            const SizedBox(height: 16),
+            ), const SizedBox(height: 16),
             AssessmentTextField(
               label: 'HbA1c (%)',
               value: draft.glucose.hba1c,
@@ -258,8 +255,316 @@ class LipidsTabBody extends ConsumerWidget {
 // LIFESTYLE TAB BODY (example with multiple field types)
 // ─────────────────────────────────────────────────────────────────────────
 
+// class LifestyleFitnessTabBody extends ConsumerWidget {
+//   const LifestyleFitnessTabBody();
+//
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     final draftAsync = ref.watch(assessmentControllerProvider);
+//
+//     return draftAsync.when(
+//       data: (draft) {
+//         return SingleChildScrollView(
+//           child: Column(
+//             children: [
+//               // Adiposity Section
+//              const SectionIconHeader(
+//               iconAsset: 'assets/icons/assessment/header_adiposity.png', title: 'Adiposity'),
+//               const SizedBox(height: 12),
+//               AssessmentTextField(
+//                 label: 'Body Mass Index (BMI)',
+//                 value: draft.lifestyle.bmi,
+//                 hintText: '18–40 kg/m²',
+//                 keyboardType: TextInputType.number,
+//                 onChanged: (val) {
+//                   ref
+//                       .read(assessmentControllerProvider.notifier)
+//                       .updateLifestyle(
+//                         (l) => l.copyWith(
+//                       bmi: l.bmi.copyWith(value: double.tryParse(val)),
+//                     ),
+//                   );
+//                 },
+//                 showFreshness: true,
+//               ),
+//               const SizedBox(height: 16),
+//               AssessmentTextField(
+//                 label: 'Waist Circumference (cm)',
+//                 value: draft.lifestyle.waistCircumference,
+//                 hintText: '60–150 cm',
+//                 keyboardType: TextInputType.number,
+//                 onChanged: (val) {
+//                   ref
+//                       .read(assessmentControllerProvider.notifier)
+//                       .updateLifestyle(
+//                         (l) => l.copyWith(
+//                       waistCircumference: l.waistCircumference
+//                           .copyWith(value: double.tryParse(val)),
+//                     ),
+//                   );
+//                 },
+//                 showFreshness: true,
+//               ),
+//               const SizedBox(height: 30),
+//
+//
+//               //PHYSICAL ACTIVITY
+//               const SectionIconHeader(
+//                   iconAsset: 'assets/icons/assessment/header_physical_activity.png', title: 'Physical Activity'),
+//               const SizedBox(height: 12),
+//               AssessmentTextField(
+//                 label: 'Body Mass Index (BMI)',
+//                 value: draft.lifestyle.bmi,
+//                 hintText: '18–40 kg/m²',
+//                 keyboardType: TextInputType.number,
+//                 onChanged: (val) {
+//                   ref
+//                       .read(assessmentControllerProvider.notifier)
+//                       .updateLifestyle(
+//                         (l) => l.copyWith(
+//                       bmi: l.bmi.copyWith(value: double.tryParse(val)),
+//                     ),
+//                   );
+//                 },
+//                 showFreshness: true,
+//               ),
+//               const SizedBox(height: 16),
+//               AssessmentTextField(
+//                 label: 'Waist Circumference (cm)',
+//                 value: draft.lifestyle.waistCircumference,
+//                 hintText: '60–150 cm',
+//                 keyboardType: TextInputType.number,
+//                 onChanged: (val) {
+//                   ref
+//                       .read(assessmentControllerProvider.notifier)
+//                       .updateLifestyle(
+//                         (l) => l.copyWith(
+//                       waistCircumference: l.waistCircumference
+//                           .copyWith(value: double.tryParse(val)),
+//                     ),
+//                   );
+//                 },
+//                 showFreshness: true,
+//               ),
+//               const SizedBox(height: 30),
+//
+//
+//               //INHERITED RISK
+//               // Adiposity Section
+//               const SectionIconHeader(
+//                   iconAsset: 'assets/icons/assessment/header_inherited_risk.png', title: 'Inherited Risk'),
+//               const SizedBox(height: 12),
+//               AssessmentTextField(
+//                 label: 'Body Mass Index (BMI)',
+//                 value: draft.lifestyle.bmi,
+//                 hintText: '18–40 kg/m²',
+//                 keyboardType: TextInputType.number,
+//                 onChanged: (val) {
+//                   ref
+//                       .read(assessmentControllerProvider.notifier)
+//                       .updateLifestyle(
+//                         (l) => l.copyWith(
+//                       bmi: l.bmi.copyWith(value: double.tryParse(val)),
+//                     ),
+//                   );
+//                 },
+//                 showFreshness: true,
+//               ),
+//               const SizedBox(height: 16),
+//               AssessmentTextField(
+//                 label: 'Waist Circumference (cm)',
+//                 value: draft.lifestyle.waistCircumference,
+//                 hintText: '60–150 cm',
+//                 keyboardType: TextInputType.number,
+//                 onChanged: (val) {
+//                   ref
+//                       .read(assessmentControllerProvider.notifier)
+//                       .updateLifestyle(
+//                         (l) => l.copyWith(
+//                       waistCircumference: l.waistCircumference
+//                           .copyWith(value: double.tryParse(val)),
+//                     ),
+//                   );
+//                 },
+//                 showFreshness: true,
+//               ),
+//               const SizedBox(height: 30),
+//
+//               // Tobacco Section
+//              const SectionIconHeader(
+//              iconAsset: 'assets/icons/assessment/header_tobacco.png', title: 'Tobacco Use'),
+//               const SizedBox(height: 12),
+//               AssessmentChipSelector<SmokingStatus>(
+//                 label: 'Smoking Status',
+//                 value: draft.lifestyle.smokingStatus,
+//                 options: SmokingStatus.values,
+//                 optionLabel: (status) => status.label,
+//                 onChanged: (status) {
+//                   ref
+//                       .read(assessmentControllerProvider.notifier)
+//                       .updateLifestyle(
+//                         (l) => l.copyWith(
+//                       smokingStatus:
+//                       l.smokingStatus.copyWith(value: status),
+//                     ),
+//                   );
+//                 },
+//                 showFreshness: true,
+//               ),
+//               const SizedBox(height: 16),
+//               AssessmentTextField(
+//                 label: 'Pack Years',
+//                 value: draft.lifestyle.packYears,
+//                 hintText: '0–80',
+//                 keyboardType: TextInputType.number,
+//                 onChanged: (val) {
+//                   ref
+//                       .read(assessmentControllerProvider.notifier)
+//                       .updateLifestyle(
+//                         (l) => l.copyWith(
+//                       packYears:
+//                       l.packYears.copyWith(value: int.tryParse(val)),
+//                     ),
+//                   );
+//                 },
+//                 showFreshness: true,
+//               ),
+//
+//               //ACTIVITY
+//               const SizedBox(height: 30),
+//               const SectionIconHeader(
+//                   iconAsset: 'assets/icons/assessment/header_physical_activity.png', title: 'Activity'),
+//               const SizedBox(height: 12),
+//               AssessmentTextField(
+//                 label: 'Body Mass Index (BMI)',
+//                 value: draft.lifestyle.bmi,
+//                 hintText: '18–40 kg/m²',
+//                 keyboardType: TextInputType.number,
+//                 onChanged: (val) {
+//                   ref
+//                       .read(assessmentControllerProvider.notifier)
+//                       .updateLifestyle(
+//                         (l) => l.copyWith(
+//                       bmi: l.bmi.copyWith(value: double.tryParse(val)),
+//                     ),
+//                   );
+//                 },
+//                 showFreshness: true,
+//               ),
+//               const SizedBox(height: 16),
+//               AssessmentTextField(
+//                 label: 'Waist Circumference (cm)',
+//                 value: draft.lifestyle.waistCircumference,
+//                 hintText: '60–150 cm',
+//                 keyboardType: TextInputType.number,
+//                 onChanged: (val) {
+//                   ref
+//                       .read(assessmentControllerProvider.notifier)
+//                       .updateLifestyle(
+//                         (l) => l.copyWith(
+//                       waistCircumference: l.waistCircumference
+//                           .copyWith(value: double.tryParse(val)),
+//                     ),
+//                   );
+//                 },
+//                 showFreshness: true,
+//               ),
+//               const SizedBox(height: 30),
+// //DIET
+//               const SectionIconHeader(
+//              iconAsset: 'assets/icons/assessment/header_diet.png', title: 'Diet / Nutrition'),
+//
+//               AssessmentTextField(
+//                 label: 'Diet Quality Score',
+//                 value: draft.lifestyle.dietQualityScore,
+//                 hintText: '0–100',
+//                 keyboardType: TextInputType.number,
+//                 onChanged: (val) {
+//                   ref
+//                       .read(assessmentControllerProvider.notifier)
+//                       .updateLifestyle(
+//                         (l) => l.copyWith(
+//                       dietQualityScore: l.dietQualityScore
+//                           .copyWith(value: double.tryParse(val)),
+//                     ),
+//                   );
+//                 },
+//                 showFreshness: true,
+//               ),
+//               const SizedBox(height: 30),
+//           const SectionIconHeader(
+//              iconAsset: 'assets/icons/assessment/header_sleep.png', title: 'Sleep'),
+//               AssessmentTextField(
+//                 label: 'Sleep Hours per Night',
+//                 value: draft.lifestyle.sleepHoursPerNight,
+//                 hintText: '4–12 hours',
+//                 keyboardType: TextInputType.number,
+//                 onChanged: (val) {
+//                   ref
+//                       .read(assessmentControllerProvider.notifier)
+//                       .updateLifestyle(
+//                         (l) => l.copyWith(
+//                       sleepHoursPerNight: l.sleepHoursPerNight
+//                           .copyWith(value: double.tryParse(val)),
+//                     ),
+//                   );
+//                 },
+//                 showFreshness: true,
+//               ),
+//               const SizedBox(height: 30),
+//           const SectionIconHeader(
+//           iconAsset: 'assets/icons/assessment/header_alcohol.png', title: 'Alcohol'),
+//
+//               AssessmentTextField(
+//                 label: 'Alcohol AUDIT Score',
+//                 value: draft.lifestyle.alcoholAudit,
+//                 hintText: '0–40',
+//                 keyboardType: TextInputType.number,
+//                 onChanged: (val) {
+//                   ref
+//                       .read(assessmentControllerProvider.notifier)
+//                       .updateLifestyle(
+//                         (l) => l.copyWith(
+//                       alcoholAudit:
+//                       l.alcoholAudit.copyWith(value: double.tryParse(val)),
+//                     ),
+//                   );
+//                 },
+//                 showFreshness: true,
+//               ),
+//               const SizedBox(height: 30),
+//               //stress
+//               const SectionIconHeader(
+//                   iconAsset: 'assets/icons/assessment/header_stress.png', title: 'Stress / Psychosocial'),
+//
+//               AssessmentTextField(
+//                 label: 'Alcohol AUDIT Score',
+//                 value: draft.lifestyle.alcoholAudit,
+//                 hintText: '0–40',
+//                 keyboardType: TextInputType.number,
+//                 onChanged: (val) {
+//                   ref
+//                       .read(assessmentControllerProvider.notifier)
+//                       .updateLifestyle(
+//                         (l) => l.copyWith(
+//                       alcoholAudit:
+//                       l.alcoholAudit.copyWith(value: double.tryParse(val)),
+//                     ),
+//                   );
+//                 },
+//                 showFreshness: true,
+//               ),
+//             ],
+//           ),
+//         );
+//       },
+//       loading: () => const Center(child: CircularProgressIndicator()),
+//       error: (e, st) => Center(child: Text('Error: $e')),
+//     );
+//   }
+// }
 class LifestyleFitnessTabBody extends ConsumerWidget {
-  const LifestyleFitnessTabBody();
+  const LifestyleFitnessTabBody({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -267,157 +572,475 @@ class LifestyleFitnessTabBody extends ConsumerWidget {
 
     return draftAsync.when(
       data: (draft) {
+        final lifestyle = draft.lifestyle;
+        final controller =
+        ref.read(assessmentControllerProvider.notifier);
+
         return SingleChildScrollView(
           child: Column(
             children: [
-              // Adiposity Section
-          const SectionIconHeader(
-            iconAsset: 'assets/icons/assessment/header_adiposity.png', title: 'Adiposity'),
+              // ============================================================
+              // ADIPOSITY
+              // ============================================================
+
+              const SectionIconHeader(
+                iconAsset:
+                'assets/icons/assessment/header_adiposity.png',
+                title: 'Adiposity',
+              ),
+
               const SizedBox(height: 12),
+
               AssessmentTextField(
                 label: 'Body Mass Index (BMI)',
-                value: draft.lifestyle.bmi,
+                value: lifestyle.bmi,
                 hintText: '18–40 kg/m²',
                 keyboardType: TextInputType.number,
                 onChanged: (val) {
-                  ref
-                      .read(assessmentControllerProvider.notifier)
-                      .updateLifestyle(
+                  controller.updateLifestyle(
                         (l) => l.copyWith(
-                      bmi: l.bmi.copyWith(value: double.tryParse(val)),
+                      bmi: l.bmi.copyWith(
+                        value: double.tryParse(val),
+                      ),
                     ),
                   );
                 },
                 showFreshness: true,
               ),
+
               const SizedBox(height: 16),
+
               AssessmentTextField(
                 label: 'Waist Circumference (cm)',
-                value: draft.lifestyle.waistCircumference,
+                value: lifestyle.waistCircumference,
                 hintText: '60–150 cm',
                 keyboardType: TextInputType.number,
                 onChanged: (val) {
-                  ref
-                      .read(assessmentControllerProvider.notifier)
-                      .updateLifestyle(
+                  controller.updateLifestyle(
                         (l) => l.copyWith(
-                      waistCircumference: l.waistCircumference
-                          .copyWith(value: double.tryParse(val)),
+                      waistCircumference:
+                      l.waistCircumference.copyWith(
+                        value: double.tryParse(val),
+                      ),
                     ),
                   );
                 },
                 showFreshness: true,
               ),
+
+              const SizedBox(height: 16),
+
+              AssessmentTextField(
+                label: 'Waist-Hip Ratio',
+                value: lifestyle.waistHipRatio,
+                hintText: '0.5–1.5',
+                keyboardType: TextInputType.number,
+                onChanged: (val) {
+                  controller.updateLifestyle(
+                        (l) => l.copyWith(
+                      waistHipRatio:
+                      l.waistHipRatio.copyWith(
+                        value: double.tryParse(val),
+                      ),
+                    ),
+                  );
+                },
+                showFreshness: true,
+              ),
+
               const SizedBox(height: 30),
 
-              // Tobacco Section
-          const SectionIconHeader(
-             iconAsset: 'assets/icons/assessment/header_tobacco.png', title: 'Tobacco Use'),
+              // ============================================================
+              // PHYSICAL ACTIVITY
+              // ============================================================
+
+              const SectionIconHeader(
+                iconAsset:
+                'assets/icons/assessment/header_physical_activity.png',
+                title: 'Physical Activity',
+              ),
 
               const SizedBox(height: 12),
-              AssessmentChipSelector<SmokingStatus>(
+
+              AssessmentTextField(
+                label: 'Weekly Activity Minutes',
+                value: lifestyle.weeklyActivityMinutes,
+                hintText: '0–2000 min/week',
+                keyboardType: TextInputType.number,
+                onChanged: (val) {
+                  controller.updateLifestyle(
+                        (l) => l.copyWith(
+                      weeklyActivityMinutes:
+                      l.weeklyActivityMinutes.copyWith(
+                        value: double.tryParse(val),
+                      ),
+                    ),
+                  );
+                },
+                showFreshness: true,
+              ),
+
+              const SizedBox(height: 16),
+
+              AssessmentTextField(
+                label: 'Structured Activity Score',
+                value: lifestyle.structuredActivityScore,
+                hintText: '0–100',
+                keyboardType: TextInputType.number,
+                onChanged: (val) {
+                  controller.updateLifestyle(
+                        (l) => l.copyWith(
+                      structuredActivityScore:
+                      l.structuredActivityScore.copyWith(
+                        value: double.tryParse(val),
+                      ),
+                    ),
+                  );
+                },
+                showFreshness: true,
+              ),
+
+              const SizedBox(height: 30),
+// ============================================================
+// INHERITED RISK
+// ============================================================
+
+              const SectionIconHeader(
+                iconAsset:
+                'assets/icons/assessment/header_inherited_risk.png',
+                title: 'Inherited Risk',
+              ),
+
+              const SizedBox(height: 12),
+
+// Family History
+              AssessmentToggleSelector<String>(
+                label: 'Family History of Premature CVD',
+                value: lifestyle.familyHistory.value,
+                options: const [
+                  'Yes',
+                  'No',
+                ],
+                optionLabel: (option) => option,
+                onChanged: (value) {
+                  controller.updateLifestyle(
+                        (l) => l.copyWith(
+                      familyHistory: l.familyHistory.copyWith(
+                        value: value,
+                      ),
+                    ),
+                  );
+                },
+              ),
+
+              const SizedBox(height: 4),
+
+// Genetic Mutation
+              AssessmentToggleSelector<String>(
+                label: 'Genetic Mutation',
+                value: lifestyle.geneticMutation.value,
+                options: const [
+                  'Low',
+                  'Medium',
+                  'High',
+                ],
+                optionLabel: (option) => option,
+                onChanged: (value) {
+                  controller.updateLifestyle(
+                        (l) => l.copyWith(
+                      geneticMutation: l.geneticMutation.copyWith(
+                        value: value,
+                      ),
+                    ),
+                  );
+                },
+              ),
+
+              const SizedBox(height: 4),
+
+// Genetic Risk Score
+              AssessmentTextField(
+                label: 'Genetic Risk Score Percentile',
+                value: lifestyle.geneticRiskScorePercent,
+                hintText: '0–100%',
+                keyboardType: TextInputType.number,
+                onChanged: (val) {
+                  controller.updateLifestyle(
+                        (l) => l.copyWith(
+                      geneticRiskScorePercent:
+                      l.geneticRiskScorePercent.copyWith(
+                        value: double.tryParse(val),
+                      ),
+                    ),
+                  );
+                },
+                showFreshness: true,
+              ),
+
+              const SizedBox(height: 30),
+              // ============================================================
+              // TOBACCO USE
+              // ============================================================
+
+              const SectionIconHeader(
+                iconAsset:
+                'assets/icons/assessment/header_tobacco.png',
+                title: 'Tobacco Use',
+              ),
+
+              const SizedBox(height: 12),
+              AssessmentDropdown<SmokingStatus>(
                 label: 'Smoking Status',
                 value: draft.lifestyle.smokingStatus,
                 options: SmokingStatus.values,
                 optionLabel: (status) => status.label,
                 onChanged: (status) {
-                  ref
-                      .read(assessmentControllerProvider.notifier)
-                      .updateLifestyle(
-                        (l) => l.copyWith(
-                      smokingStatus:
-                      l.smokingStatus.copyWith(value: status),
-                    ),
-                  );
+                  if (status != null) {
+                    ref.read(assessmentControllerProvider.notifier).updateLifestyle(
+                          (l) => l.copyWith(
+                        smokingStatus: l.smokingStatus.copyWith(value: status),
+                      ),
+                    );
+                  }
                 },
                 showFreshness: true,
               ),
               const SizedBox(height: 16),
+
               AssessmentTextField(
                 label: 'Pack Years',
-                value: draft.lifestyle.packYears,
+                value: lifestyle.packYears,
                 hintText: '0–80',
                 keyboardType: TextInputType.number,
                 onChanged: (val) {
-                  ref
-                      .read(assessmentControllerProvider.notifier)
-                      .updateLifestyle(
+                  controller.updateLifestyle(
                         (l) => l.copyWith(
                       packYears:
-                      l.packYears.copyWith(value: int.tryParse(val)),
+                      l.packYears.copyWith(
+                        value: int.tryParse(val),
+                      ),
                     ),
                   );
                 },
                 showFreshness: true,
               ),
+
+              const SizedBox(height: 16),
+
+              AssessmentTextField(
+                label: 'Years Since Quit',
+                value: lifestyle.quitDurationYears,
+                hintText: '0–50 years',
+                keyboardType: TextInputType.number,
+                onChanged: (val) {
+                  controller.updateLifestyle(
+                        (l) => l.copyWith(
+                      quitDurationYears:
+                      l.quitDurationYears.copyWith(
+                        value: int.tryParse(val),
+                      ),
+                    ),
+                  );
+                },
+                showFreshness: true,
+              ),
+
+              const SizedBox(height: 16),
+
+              AssessmentChipSelector<bool>(
+                label: 'Smokeless Tobacco',
+                value: lifestyle.smokelessTobacco,
+                options: const [true, false],
+                optionLabel: (value) =>
+                value ? 'Yes' : 'No',
+                onChanged: (value) {
+                  controller.updateLifestyle(
+                        (l) => l.copyWith(
+                      smokelessTobacco:
+                      l.smokelessTobacco.copyWith(
+                        value: value,
+                      ),
+                    ),
+                  );
+                },
+                showFreshness: true,
+              ),
+
               const SizedBox(height: 30),
-          const SectionIconHeader(
-             iconAsset: 'assets/icons/assessment/header_diet.png', title: 'Diet / Nutrition'),
+
+              // ============================================================
+              // ACTIVITY
+              // ============================================================
+
+              const SectionIconHeader(
+                iconAsset:
+                'assets/icons/assessment/header_physical_activity.png',
+                title: 'Activity',
+              ),
+
+              const SizedBox(height: 12),
+
+              AssessmentTextField(
+                label:
+                'Moderate–Vigorous Activity Minutes',
+                value: FieldValue<double>(
+                  value:
+                  lifestyle.moderateVigorousActivityMinutes,
+                ),
+                hintText: '0–2000 min/week',
+                keyboardType: TextInputType.number,
+                onChanged: (val) {
+                  controller.updateLifestyle(
+                        (l) => l.copyWith(
+                      moderateVigorousActivityMinutes:
+                      double.tryParse(val) ?? 0,
+                    ),
+                  );
+                },
+                showFreshness: false,
+              ),
+
+              const SizedBox(height: 30),
+
+              // ============================================================
+              // DIET / NUTRITION
+              // ============================================================
+
+              const SectionIconHeader(
+                iconAsset:
+                'assets/icons/assessment/header_diet.png',
+                title: 'Diet / Nutrition',
+              ),
+
+              const SizedBox(height: 12),
 
               AssessmentTextField(
                 label: 'Diet Quality Score',
-                value: draft.lifestyle.dietQualityScore,
+                value: lifestyle.dietQualityScore,
                 hintText: '0–100',
                 keyboardType: TextInputType.number,
                 onChanged: (val) {
-                  ref
-                      .read(assessmentControllerProvider.notifier)
-                      .updateLifestyle(
+                  controller.updateLifestyle(
                         (l) => l.copyWith(
-                      dietQualityScore: l.dietQualityScore
-                          .copyWith(value: double.tryParse(val)),
+                      dietQualityScore:
+                      l.dietQualityScore.copyWith(
+                        value: double.tryParse(val),
+                      ),
                     ),
                   );
                 },
                 showFreshness: true,
               ),
+
               const SizedBox(height: 30),
-          const SectionIconHeader(
-             iconAsset: 'assets/icons/assessment/header_sleep.png', title: 'Sleep'),
+
+              // ============================================================
+              // SLEEP
+              // ============================================================
+
+              const SectionIconHeader(
+                iconAsset:
+                'assets/icons/assessment/header_sleep.png',
+                title: 'Sleep',
+              ),
+
+              const SizedBox(height: 12),
+
               AssessmentTextField(
                 label: 'Sleep Hours per Night',
-                value: draft.lifestyle.sleepHoursPerNight,
+                value: lifestyle.sleepHoursPerNight,
                 hintText: '4–12 hours',
                 keyboardType: TextInputType.number,
                 onChanged: (val) {
-                  ref
-                      .read(assessmentControllerProvider.notifier)
-                      .updateLifestyle(
+                  controller.updateLifestyle(
                         (l) => l.copyWith(
-                      sleepHoursPerNight: l.sleepHoursPerNight
-                          .copyWith(value: double.tryParse(val)),
+                      sleepHoursPerNight:
+                      l.sleepHoursPerNight.copyWith(
+                        value: double.tryParse(val),
+                      ),
                     ),
                   );
                 },
                 showFreshness: true,
               ),
+
               const SizedBox(height: 30),
-          const SectionIconHeader(
-        iconAsset: 'assets/icons/assessment/header_alcohol.png', title: 'Alcohol'),
+
+              // ============================================================
+              // ALCOHOL
+              // ============================================================
+
+              const SectionIconHeader(
+                iconAsset:
+                'assets/icons/assessment/header_alcohol.png',
+                title: 'Alcohol',
+              ),
+
+              const SizedBox(height: 12),
 
               AssessmentTextField(
                 label: 'Alcohol AUDIT Score',
-                value: draft.lifestyle.alcoholAudit,
+                value: lifestyle.alcoholAudit,
                 hintText: '0–40',
                 keyboardType: TextInputType.number,
                 onChanged: (val) {
-                  ref
-                      .read(assessmentControllerProvider.notifier)
-                      .updateLifestyle(
+                  controller.updateLifestyle(
                         (l) => l.copyWith(
                       alcoholAudit:
-                      l.alcoholAudit.copyWith(value: double.tryParse(val)),
+                      l.alcoholAudit.copyWith(
+                        value: double.tryParse(val),
+                      ),
                     ),
                   );
                 },
                 showFreshness: true,
               ),
+
+              const SizedBox(height: 30),
+
+              // ============================================================
+              // STRESS / PSYCHOSOCIAL
+              // ============================================================
+
+              const SectionIconHeader(
+                iconAsset:
+                'assets/icons/assessment/header_stress.png',
+                title: 'Stress / Psychosocial',
+              ),
+
+              const SizedBox(height: 12),
+
+              AssessmentTextField(
+                label: 'Stress Score',
+                value: lifestyle.stressScore,
+                hintText: '0–100',
+                keyboardType: TextInputType.number,
+                onChanged: (val) {
+                  controller.updateLifestyle(
+                        (l) => l.copyWith(
+                      stressScore:
+                      l.stressScore.copyWith(
+                        value: double.tryParse(val),
+                      ),
+                    ),
+                  );
+                },
+                showFreshness: true,
+              ),
+
+              const SizedBox(height: 30),
             ],
           ),
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, st) => Center(child: Text('Error: $e')),
+
+      loading: () => const Center(
+        child: CircularProgressIndicator(),
+      ),
+
+      error: (e, st) => Center(
+        child: Text('Error: $e'),
+      ),
     );
   }
 }
@@ -497,54 +1120,322 @@ class KidneyTabBody extends ConsumerWidget {
 // HEART TESTS TAB BODY
 // ─────────────────────────────────────────────────────────────────────────
 
+// class HeartTestsTabBody extends ConsumerWidget {
+//   const HeartTestsTabBody();
+//
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     final draftAsync = ref.watch(assessmentControllerProvider);
+//
+//     return draftAsync.when(
+//       data: (draft) {
+//         return Column(
+//           children: [
+//             const SectionIconHeader(
+//                 iconAsset: 'assets/icons/assessment/tab_hearttest.png', title: 'Heart Tests'),
+//             AssessmentTextField(
+//               label: 'High-Sensitivity CRP (mg/L)',
+//               value: draft.heartTests.hsCrp,
+//               hintText: '0–10 mg/L',
+//               keyboardType: TextInputType.number,
+//               onChanged: (val) {
+//                 ref
+//                     .read(assessmentControllerProvider.notifier)
+//                     .updateHeartTests(
+//                       (h) => h.copyWith(
+//                     hsCrp: h.hsCrp.copyWith(value: double.tryParse(val)),
+//                   ),
+//                 );
+//               },
+//               showFreshness: true,
+//             ),
+//             const SizedBox(height: 16),
+//             AssessmentTextField(
+//               label: 'Coronary Artery Calcium Score',
+//               value: draft.heartTests.cacScore,
+//               hintText: '0–2500+',
+//               keyboardType: TextInputType.number,
+//               onChanged: (val) {
+//                 ref
+//                     .read(assessmentControllerProvider.notifier)
+//                     .updateHeartTests(
+//                       (h) => h.copyWith(
+//                     cacScore:
+//                     h.cacScore.copyWith(value: double.tryParse(val)),
+//                   ),
+//                 );
+//               },
+//               showFreshness: true,
+//             ),
+//           ],
+//         );
+//       },
+//       loading: () => const Center(child: CircularProgressIndicator()),
+//       error: (e, st) => Center(child: Text('Error: $e')),
+//     );
+//   }
+// }
+
 class HeartTestsTabBody extends ConsumerWidget {
   const HeartTestsTabBody();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final draftAsync = ref.watch(assessmentControllerProvider);
+    final ecgAnalyzing = ref.watch(ecgAnalyzingProvider);
 
     return draftAsync.when(
       data: (draft) {
-        return Column(
-          children: [
-            const SectionIconHeader(
-                iconAsset: 'assets/icons/assessment/tab_hearttest.png', title: 'Heart Tests'),
-            AssessmentTextField(
-              label: 'High-Sensitivity CRP (mg/L)',
-              value: draft.heartTests.hsCrp,
-              hintText: '0–10 mg/L',
-              keyboardType: TextInputType.number,
-              onChanged: (val) {
-                ref
-                    .read(assessmentControllerProvider.notifier)
-                    .updateHeartTests(
-                      (h) => h.copyWith(
-                    hsCrp: h.hsCrp.copyWith(value: double.tryParse(val)),
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              const SectionIconHeader(
+                iconAsset: 'assets/icons/assessment/tab_hearttest.png',
+                title: 'Heart Tests',
+              ),
+
+              // ─── LVH ───
+              AssessmentToggleSelector<bool>(
+                label: 'Left Ventricular Hypertrophy (LVH)',
+                value: draft.heartTests.lvh.value,
+                options: const [
+                  true,
+                  false,
+                ],
+                optionLabel: (value) => value ? 'Yes' : 'No',
+                onChanged: (value) {
+                  ref
+                      .read(assessmentControllerProvider.notifier)
+                      .updateHeartTests(
+                        (h) => h.copyWith(
+                      lvh: h.lvh.copyWith(value: value),
+                    ),
+                  );
+                },
+              ),
+
+              // ─── hs-CRP ───
+              AssessmentTextField(
+                label: 'High-Sensitivity CRP (mg/L)',
+                value: draft.heartTests.hsCrp,
+                hintText: '0–10 mg/L',
+                keyboardType: TextInputType.number,
+                onChanged: (val) {
+                  ref.read(assessmentControllerProvider.notifier).updateHeartTests(
+                        (h) => h.copyWith(
+                      hsCrp: h.hsCrp.copyWith(value: double.tryParse(val)),
+                    ),
+                  );
+                },
+                showFreshness: true,
+              ),
+              const SizedBox(height: 16),
+
+              // ─── BNP / NT-proBNP ───
+              AssessmentTextField(
+                label: 'BNP / NT-proBNP (pg/mL)',
+                value: draft.heartTests.bnpNtProBnp,
+                hintText: '0–500 pg/mL',
+                keyboardType: TextInputType.number,
+                onChanged: (val) {
+                  ref.read(assessmentControllerProvider.notifier).updateHeartTests(
+                        (h) => h.copyWith(
+                      bnpNtProBnp: h.bnpNtProBnp.copyWith(value: double.tryParse(val)),
+                    ),
+                  );
+                },
+                showFreshness: true,
+              ),
+              const SizedBox(height: 16),
+
+              // ─── hs-Troponin ───
+              AssessmentTextField(
+                label: 'High-Sensitivity Troponin (pg/mL)',
+                value: draft.heartTests.hsTroponin,
+                hintText: '0–50 pg/mL',
+                keyboardType: TextInputType.number,
+                onChanged: (val) {
+                  ref.read(assessmentControllerProvider.notifier).updateHeartTests(
+                        (h) => h.copyWith(
+                      hsTroponin: h.hsTroponin.copyWith(value: double.tryParse(val)),
+                    ),
+                  );
+                },
+                showFreshness: true,
+              ),
+              const SizedBox(height: 16),
+
+              // ─── CAC Score ───
+              AssessmentTextField(
+                label: 'Coronary Artery Calcium (CAC) Score',
+                value: draft.heartTests.cacScore,
+                hintText: '0–2500+',
+                keyboardType: TextInputType.number,
+                onChanged: (val) {
+                  ref.read(assessmentControllerProvider.notifier).updateHeartTests(
+                        (h) => h.copyWith(
+                      cacScore: h.cacScore.copyWith(value: double.tryParse(val)),
+                    ),
+                  );
+                },
+                showFreshness: true,
+              ),
+              const SizedBox(height: 16),
+
+              // ─── Carotid Plaque ───
+              AssessmentToggleSelector<bool>(
+                label: 'Carotid Plaque',
+                value: draft.heartTests.carotidPlaque.value,
+                options: const [
+                  true,
+                  false,
+                ],
+                optionLabel: (value) => value ? 'Yes' : 'No',
+                onChanged: (value) {
+                  ref
+                      .read(assessmentControllerProvider.notifier)
+                      .updateHeartTests(
+                        (h) => h.copyWith(
+                      carotidPlaque:
+                      h.carotidPlaque.copyWith(value: value),
+                    ),
+                  );
+                },
+              ),
+
+              // ─── Carotid Stenosis % ───
+              AssessmentTextField(
+                label: 'Carotid Stenosis (%)',
+                value: draft.heartTests.carotidStenosisPercent,
+                hintText: '0–100% (optional)',
+                keyboardType: TextInputType.number,
+                onChanged: (val) {
+                  ref.read(assessmentControllerProvider.notifier).updateHeartTests(
+                        (h) => h.copyWith(
+                      carotidStenosisPercent: h.carotidStenosisPercent.copyWith(value: double.tryParse(val)),
+                    ),
+                  );
+                },
+                showFreshness: true,
+              ),
+              const SizedBox(height: 16),
+
+              // ─── ABI Left ───
+              AssessmentTextField(
+                label: 'Ankle-Brachial Index (ABI) - Left',
+                value: draft.heartTests.abiLeft,
+                hintText: '0.9–1.3',
+                keyboardType: TextInputType.number,
+                onChanged: (val) {
+                  ref.read(assessmentControllerProvider.notifier).updateHeartTests(
+                        (h) => h.copyWith(
+                      abiLeft: h.abiLeft.copyWith(value: double.tryParse(val)),
+                    ),
+                  );
+                },
+                showFreshness: true,
+              ),
+              const SizedBox(height: 16),
+
+              // ─── ABI Right ───
+              AssessmentTextField(
+                label: 'Ankle-Brachial Index (ABI) - Right',
+                value: draft.heartTests.abiRight,
+                hintText: '0.9–1.3',
+                keyboardType: TextInputType.number,
+                onChanged: (val) {
+                  ref.read(assessmentControllerProvider.notifier).updateHeartTests(
+                        (h) => h.copyWith(
+                      abiRight: h.abiRight.copyWith(value: double.tryParse(val)),
+                    ),
+                  );
+                },
+                showFreshness: true,
+              ),
+              const SizedBox(height: 24),
+
+              // ─── ECG Upload Section ───
+              const _SectionHeader(label: 'ECG Analysis'),
+              const SizedBox(height: 12),
+              if (draft.heartTests.ecgFileName != null)
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.green[50],
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.green[300]!),
                   ),
-                );
-              },
-              showFreshness: true,
-            ),
-            const SizedBox(height: 16),
-            AssessmentTextField(
-              label: 'Coronary Artery Calcium Score',
-              value: draft.heartTests.cacScore,
-              hintText: '0–2500+',
-              keyboardType: TextInputType.number,
-              onChanged: (val) {
-                ref
-                    .read(assessmentControllerProvider.notifier)
-                    .updateHeartTests(
-                      (h) => h.copyWith(
-                    cacScore:
-                    h.cacScore.copyWith(value: double.tryParse(val)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '✓ ${draft.heartTests.ecgFileName}',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.green[700],
+                        ),
+                      ),
+                      if (draft.heartTests.ecgAnalysisResult != null) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          draft.heartTests.ecgAnalysisResult!,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
-                );
-              },
-              showFreshness: true,
-            ),
-          ],
+                )
+              else
+                ElevatedButton.icon(
+                  onPressed: ecgAnalyzing
+                      ? null
+                      : () {
+                    // TODO: implement ECG file picker & upload
+                    // ref.read(assessmentControllerProvider.notifier)
+                    //     .analyzeEcg(localPath, fileName);
+                  },
+                  icon: ecgAnalyzing
+                      ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation(Colors.white),
+                    ),
+                  )
+                      : const Icon(
+                    Icons.upload_file,
+                    size: 17,
+                  ),
+                  label: Text(
+                    ecgAnalyzing ? 'Analyzing...' : 'Upload & Analyze ECG',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.navActive,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(0, 36),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 20,
+                      horizontal: 30,
+                    ),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    visualDensity: VisualDensity.compact,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                ),
+              SizedBox(height: 10,)
+            ],
+          ),
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),

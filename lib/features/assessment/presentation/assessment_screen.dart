@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:heart_health_score/core/theme/app_colors.dart';
 import '../application/assessment_providers.dart';
 import '../domain/assessment_models.dart';
 import 'widgets/report_upload_box.dart';
@@ -348,7 +349,7 @@ class _BottomActions extends ConsumerWidget {
             ),
             label: Text(tab.nextLabel),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green[600],
+              backgroundColor: AppColors.mealCaloriesProteinGreen,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
@@ -365,3 +366,5 @@ class _BottomActions extends ConsumerWidget {
     );
   }
 }
+
+

@@ -229,7 +229,6 @@ class AssessmentTextField extends StatefulWidget {
   @override
   State<AssessmentTextField> createState() => _AssessmentTextFieldState();
 }
-
 class _AssessmentTextFieldState extends State<AssessmentTextField> {
   late final TextEditingController _controller;
 
@@ -401,7 +400,7 @@ class AssessmentDropdown<T extends Enum> extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide:
-              const BorderSide(color: Color(0xFF007AFF), width: 2),
+              const BorderSide(color:AppColors.assessmentFieldBorder, width: 2),
             ),
           ),
         ),
@@ -465,8 +464,6 @@ class AssessmentCheckbox extends StatelessWidget {
     );
   }
 }
-
-
 class AssessmentChipSelector<T> extends StatelessWidget {
   const AssessmentChipSelector({
     super.key,
@@ -539,8 +536,6 @@ class AssessmentChipSelector<T> extends StatelessWidget {
     );
   }
 }
-
-
 class FreshnessBadge extends StatelessWidget {
   const FreshnessBadge({
     super.key,
@@ -571,7 +566,6 @@ class FreshnessBadge extends StatelessWidget {
     );
   }
 }
-
 class AssessmentToggleSelector<T> extends StatelessWidget {
   const AssessmentToggleSelector({
     super.key,
@@ -607,7 +601,7 @@ class AssessmentToggleSelector<T> extends StatelessWidget {
                   onTap: () => onChanged(opt),
                   child: Container(
                     alignment: Alignment.center,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
                       color: selected ? AppColors.assessmentGreen : AppColors.assessmentFieldBackground,
                       borderRadius: BorderRadius.circular(14),
@@ -631,8 +625,6 @@ class AssessmentToggleSelector<T> extends StatelessWidget {
     );
   }
 }
-
-
 class AssessmentTargetProgressField extends StatelessWidget {
   const AssessmentTargetProgressField({
     super.key,

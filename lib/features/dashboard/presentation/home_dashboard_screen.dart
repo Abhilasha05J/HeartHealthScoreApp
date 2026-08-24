@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heart_health_score/features/dashboard/presentation/widgets/domain_summary_card.dart';
-
 import 'package:heart_health_score/core/theme/app_colors.dart';
 import 'package:heart_health_score/core/theme/app_text_styles.dart';
 import 'package:heart_health_score/features/dashboard/application/dashboard_providers.dart';
