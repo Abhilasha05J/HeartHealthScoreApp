@@ -1,5 +1,8 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:heart_health_score/core/theme/app_colors.dart';
+import 'package:heart_health_score/core/theme/app_text_styles.dart';
 import '../../application/assessment_providers.dart';
 import '../../domain/assessment_models.dart';
 import 'assessment_widgets.dart';
@@ -98,7 +101,7 @@ class _PressureTabBodyState extends ConsumerState<PressureTabBody> {
     final p = ref.read(assessmentControllerProvider).value?.pressure ?? const PressureProfile();
     _systolic.text = p.systolicBp?.toString() ?? '';
     _diastolic.text = p.diastolicBp?.toString() ?? '';
-    _pulse.text = p.pulsePressure?.toString() ?? '';
+
   }
 
   @override
@@ -113,7 +116,7 @@ class _PressureTabBodyState extends ConsumerState<PressureTabBody> {
         (p) => p.copyWith(
       systolicBp: double.tryParse(_systolic.text),
       diastolicBp: double.tryParse(_diastolic.text),
-      pulsePressure: double.tryParse(_pulse.text),
+
     ),
   );
 
@@ -151,7 +154,7 @@ class _GlucoseTabBodyState extends ConsumerState<GlucoseTabBody> {
     final p = ref.read(assessmentControllerProvider).value?.glucose ?? const GlucoseProfile();
     _hba1c.text = p.hba1c?.toString() ?? '';
     _fasting.text = p.fastingGlucose?.toString() ?? '';
-    _homaIr.text = p.homaIr?.toString() ?? '';
+
   }
 
   @override
@@ -168,7 +171,7 @@ class _GlucoseTabBodyState extends ConsumerState<GlucoseTabBody> {
           diabetesStatus: status ?? p.diabetesStatus,
           hba1c: double.tryParse(_hba1c.text),
           fastingGlucose: double.tryParse(_fasting.text),
-          homaIr: double.tryParse(_homaIr.text),
+
         ),
       );
 
@@ -252,13 +255,13 @@ class _KidneyTabBodyState extends ConsumerState<KidneyTabBody> {
 
 // --------------------------------------------------------------- Behavior --
 
-class BehaviorTabBody extends ConsumerStatefulWidget {
-  const BehaviorTabBody({super.key});
+class LifestyleFitnessTabBody extends ConsumerStatefulWidget {
+  const LifestyleFitnessTabBody({super.key});
   @override
-  ConsumerState<BehaviorTabBody> createState() => _BehaviorTabBodyState();
+  ConsumerState<LifestyleFitnessTabBody> createState() => _LifestyleFitnessTabBodyState();
 }
 
-class _BehaviorTabBodyState extends ConsumerState<BehaviorTabBody> {
+class _LifestyleFitnessTabBodyState extends ConsumerState<LifestyleFitnessTabBody> {
   final _bmi = TextEditingController();
   final _waist = TextEditingController();
   final _waistHip = TextEditingController();
@@ -270,11 +273,14 @@ class _BehaviorTabBodyState extends ConsumerState<BehaviorTabBody> {
   final _alcohol = TextEditingController();
   final _sleep = TextEditingController();
   final _stressScore = TextEditingController();
+  final _restingHr = TextEditingController();
+  final _vo2Max = TextEditingController();
+  final _hrRecovery = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    final b = ref.read(assessmentControllerProvider).value?.behavior ?? const BehaviorProfile();
+    final b = ref.read(assessmentControllerProvider).value?.lifestyle ?? const LifestyleFitnessProfile();
     _bmi.text = b.bmi?.toString() ?? '';
     _waist.text = b.waistCircumference?.toString() ?? '';
     _waistHip.text = b.waistHipRatio?.toString() ?? '';
@@ -286,21 +292,24 @@ class _BehaviorTabBodyState extends ConsumerState<BehaviorTabBody> {
     _alcohol.text = b.alcoholDrinksPerWeek?.toString() ?? '';
     _sleep.text = b.sleepHoursPerNight?.toString() ?? '';
     _stressScore.text = b.stressIndexScore?.toString() ?? '';
+    _restingHr.text = b.restingHeartRate?.toString() ?? '';
+    _vo2Max.text = b.vo2Max?.toString() ?? '';
+    _hrRecovery.text = b.heartRateRecoveryBpm?.toString() ?? '';
   }
 
   @override
   void dispose() {
     for (final c in [
       _bmi, _waist, _waistHip, _weeklyActivity, _structuredActivity,
-      _geneticScore, _moderateVigorous, _dietScore, _alcohol, _sleep, _stressScore,
+      _geneticScore, _moderateVigorous, _dietScore, _alcohol, _sleep, _stressScore,_restingHr, _vo2Max, _hrRecovery,
     ]) {
       c.dispose();
     }
     super.dispose();
   }
 
-  void _patch(BehaviorProfile Function(BehaviorProfile) f) =>
-      ref.read(assessmentControllerProvider.notifier).updateBehavior(f);
+  void _patch(LifestyleFitnessProfile Function(LifestyleFitnessProfile) f) =>
+      ref.read(assessmentControllerProvider.notifier).updateLifestyle(f); // was: updateBehavior
 
   void _updateNumericFields() => _patch((b) => b.copyWith(
     bmi: double.tryParse(_bmi.text),
@@ -314,11 +323,14 @@ class _BehaviorTabBodyState extends ConsumerState<BehaviorTabBody> {
     alcoholDrinksPerWeek: double.tryParse(_alcohol.text),
     sleepHoursPerNight: double.tryParse(_sleep.text),
     stressIndexScore: double.tryParse(_stressScore.text),
+    restingHeartRate: double.tryParse(_restingHr.text),
+    vo2Max: double.tryParse(_vo2Max.text),
+    heartRateRecoveryBpm: double.tryParse(_hrRecovery.text),
   ));
 
   @override
   Widget build(BuildContext context) {
-    final b = ref.watch(assessmentControllerProvider).value?.behavior ?? const BehaviorProfile();
+    final b = ref.watch(assessmentControllerProvider).value?.lifestyle ?? const LifestyleFitnessProfile();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -445,6 +457,209 @@ class _BehaviorTabBodyState extends ConsumerState<BehaviorTabBody> {
           hintText: 'Score',
           onChanged: (_) => _updateNumericFields(),
         ),
+        // -- Cardiorespiratory Fitness (NEW) ------------------------------
+        const SectionIconHeader(iconData: Icons.monitor_heart_outlined, title: 'Cardiorespiratory Fitness'),
+        AssessmentTextField(label: 'Resting Heart Rate', controller: _restingHr, unit: 'bpm', onChanged: (_) => _updateNumericFields()),
+        AssessmentTextField(label: 'VO₂max / Cardiorespiratory Fitness', controller: _vo2Max, unit: 'mL/kg/min', onChanged: (_) => _updateNumericFields()),
+        AssessmentTextField(label: 'Heart Rate Recovery', subtitle: 'bpm drop after 1 minute', controller: _hrRecovery, unit: 'bpm', onChanged: (_) => _updateNumericFields()),
+      ],
+    );
+  }
+}
+
+// ------------------------------------------------------------- Heart Tests --
+
+class HeartTestsTabBody extends ConsumerStatefulWidget {
+  const HeartTestsTabBody({super.key});
+  @override
+  ConsumerState<HeartTestsTabBody> createState() => _HeartTestsTabBodyState();
+}
+
+class _HeartTestsTabBodyState extends ConsumerState<HeartTestsTabBody> {
+  final _hsCrp = TextEditingController();
+  final _bnp = TextEditingController();
+  final _troponin = TextEditingController();
+  final _cacScore = TextEditingController();
+  final _stenosis = TextEditingController();
+  final _abiLeft = TextEditingController();
+  final _abiRight = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    final h = ref.read(assessmentControllerProvider).value?.heartTests ?? const HeartTestsProfile();
+    _hsCrp.text = h.hsCrp?.toString() ?? '';
+    _bnp.text = h.bnpNtProBnp?.toString() ?? '';
+    _troponin.text = h.hsTroponin?.toString() ?? '';
+    _cacScore.text = h.cacScore?.toString() ?? '';
+    _stenosis.text = h.carotidStenosisPercent?.toString() ?? '';
+    _abiLeft.text = h.abiLeft?.toString() ?? '';
+    _abiRight.text = h.abiRight?.toString() ?? '';
+  }
+
+  @override
+  void dispose() {
+    for (final c in [_hsCrp, _bnp, _troponin, _cacScore, _stenosis, _abiLeft, _abiRight]) {
+      c.dispose();
+    }
+    super.dispose();
+  }
+
+  void _patch(HeartTestsProfile Function(HeartTestsProfile) f) =>
+      ref.read(assessmentControllerProvider.notifier).updateHeartTests(f);
+
+  void _updateNumericFields() => _patch((h) => h.copyWith(
+    hsCrp: double.tryParse(_hsCrp.text),
+    bnpNtProBnp: double.tryParse(_bnp.text),
+    hsTroponin: double.tryParse(_troponin.text),
+    cacScore: double.tryParse(_cacScore.text),
+    carotidStenosisPercent: double.tryParse(_stenosis.text),
+    abiLeft: double.tryParse(_abiLeft.text),
+    abiRight: double.tryParse(_abiRight.text),
+  ));
+
+  Future<void> _pickEcg() async {
+    // Single unified picker (PDF or photo of a printed strip) — simpler than
+    // ReportUploadBox's 3-way sheet since ECG only needs one file, not a list.
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+    );
+    final picked = result?.files.single;
+    if (picked?.path == null) return;
+    _patch((h) => h.copyWith(ecgLocalPath: picked!.path!, ecgFileName: picked.name, ecgAnalysisResult: null));
+  }
+
+  Future<void> _analyzeEcg(String path, String name) async {
+    ref.read(ecgAnalyzingProvider.notifier).state = true;
+    try {
+      await ref.read(assessmentControllerProvider.notifier).analyzeEcg(path, name);
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Couldn't analyze that ECG. Please try again.")));
+      }
+    } finally {
+      ref.read(ecgAnalyzingProvider.notifier).state = false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final h = ref.watch(assessmentControllerProvider).value?.heartTests ?? const HeartTestsProfile();
+    final analyzing = ref.watch(ecgAnalyzingProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // -- Structural & Imaging --------------------------------------
+        const SectionIconHeader(iconData: Icons.favorite_border, title: 'Structural & Imaging'),
+        AssessmentToggleSelector<bool>(
+          label: 'LVH',
+          value: h.lvh,
+          options: const [true, false],
+          optionLabel: (v) => v ? 'Yes' : 'No',
+          onChanged: (v) => _patch((p) => p.copyWith(lvh: v)),
+        ),
+        AssessmentTextField(label: 'CAC Score', controller: _cacScore, onChanged: (_) => _updateNumericFields()),
+        AssessmentToggleSelector<bool>(
+          label: 'Carotid Plaque',
+          value: h.carotidPlaque,
+          options: const [true, false],
+          optionLabel: (v) => v ? 'Yes' : 'No',
+          onChanged: (v) => _patch((p) => p.copyWith(carotidPlaque: v)),
+        ),
+        AssessmentTextField(
+            label: 'Carotid Stenosis %', subtitle: 'Optional', controller: _stenosis, unit: '%', onChanged: (_) => _updateNumericFields()),
+        Row(
+          children: [
+            Expanded(child: AssessmentTextField(label: 'ABI Left', controller: _abiLeft, hintText: 'e.g. 1.1', onChanged: (_) => _updateNumericFields())),
+            const SizedBox(width: 12),
+            Expanded(child: AssessmentTextField(label: 'ABI Right', controller: _abiRight, hintText: 'e.g. 1.1', onChanged: (_) => _updateNumericFields())),
+          ],
+        ),
+
+        // -- Biomarkers ---------------------------------------------------
+        const SectionIconHeader(iconData: Icons.biotech_outlined, title: 'Biomarkers'),
+        AssessmentTextField(label: 'hs-CRP', controller: _hsCrp, unit: 'mg/L', onChanged: (_) => _updateNumericFields()),
+        AssessmentTextField(label: 'BNP / NT-proBNP', controller: _bnp, unit: 'pg/mL', onChanged: (_) => _updateNumericFields()),
+        AssessmentTextField(label: 'hs-Troponin', controller: _troponin, unit: 'ng/L', onChanged: (_) => _updateNumericFields()),
+
+        // -- ECG -------------------------------------------------------------
+        const SectionIconHeader(iconData: Icons.monitor_heart_outlined, title: 'ECG'),
+        if (h.ecgFileName == null)
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: _pickEcg,
+              icon: const Icon(Icons.upload_file_outlined, color: AppColors.assessmentGreen),
+              label: const Text('Upload ECG'),
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                side: const BorderSide(color: AppColors.assessmentFieldBorder),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              ),
+            ),
+          )
+        else ...[
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: AppColors.assessmentFieldBackground,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: AppColors.assessmentFieldBorder),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.insert_drive_file_outlined, color: AppColors.assessmentGreen),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(h.ecgFileName!,
+                      maxLines: 1, overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.chipLabel.copyWith(fontSize: 13, color: AppColors.inputText)),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close, size: 18, color: AppColors.assessmentMutedText),
+                  onPressed: () => _patch((p) => const HeartTestsProfile().copyWith(
+                    lvh: p.lvh, hsCrp: p.hsCrp, bnpNtProBnp: p.bnpNtProBnp, hsTroponin: p.hsTroponin,
+                    cacScore: p.cacScore, carotidPlaque: p.carotidPlaque,
+                    carotidStenosisPercent: p.carotidStenosisPercent, abiLeft: p.abiLeft, abiRight: p.abiRight,
+                  )), // clears only the ECG fields, keeps the rest of the section
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: analyzing ? null : () => _analyzeEcg(h.ecgLocalPath!, h.ecgFileName!),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.assessmentGreen,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              ),
+              child: analyzing
+                  ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                  : const Text('Analyze'),
+            ),
+          ),
+          if (h.ecgAnalysisResult != null) ...[
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: AppColors.assessmentFieldBackground,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Text(h.ecgAnalysisResult!,
+                  style: AppTextStyles.chipLabel.copyWith(fontSize: 13, color: AppColors.inputText)),
+            ),
+          ],
+        ],
+        const SizedBox(height: 20),
       ],
     );
   }

@@ -42,7 +42,12 @@ class MockAssessmentRepository implements AssessmentRepository {
     _draft = _draft.copyWith(reports: [..._draft.reports, report]);
     return report;
   }
-
+  @override
+  Future<String> analyzeEcg(String localPath) async {
+    await Future.delayed(const Duration(seconds: 2)); // simulated model inference
+    // TODO(backend-integration): replace with a real POST to the ECG model endpoint.
+    return 'No acute abnormalities detected. Normal sinus rhythm.';
+  }
   @override
   Future<void> deleteReport(String reportId) async {
     await Future.delayed(const Duration(milliseconds: 150));

@@ -11,7 +11,7 @@ final activeAssessmentTabProvider =
 StateProvider<AssessmentTab>((ref) => AssessmentTab.lipids);
 
 final assessmentUploadingProvider = StateProvider<bool>((ref) => false);
-
+final ecgAnalyzingProvider = StateProvider<bool>((ref) => false); // NEW
 final assessmentControllerProvider =
 StateNotifierProvider<AssessmentController, AsyncValue<AssessmentDraft>>(
       (ref) => AssessmentController(ref.watch(assessmentRepositoryProvider))..load(),
@@ -44,9 +44,21 @@ class AssessmentController extends StateNotifier<AsyncValue<AssessmentDraft>> {
   void updateKidney(KidneyProfile Function(KidneyProfile) update) =>
       state = AsyncValue.data(_current.copyWith(kidney: update(_current.kidney)));
 
-  void updateBehavior(BehaviorProfile Function(BehaviorProfile) update) =>
-      state = AsyncValue.data(_current.copyWith(behavior: update(_current.behavior)));
+  void updateLifestyle(LifestyleFitnessProfile Function(LifestyleFitnessProfile) update) =>
+      state = AsyncValue.data(_current.copyWith(lifestyle: update(_current.lifestyle)));
 
+  void updateHeartTests(HeartTestsProfile Function(HeartTestsProfile) update) =>
+      state = AsyncValue.data(_current.copyWith(heartTests: update(_current.heartTests)));
+
+  Future<void> analyzeEcg(String localPath, String fileName) async {
+    state = AsyncValue.data(_current.copyWith(
+      heartTests: _current.heartTests.copyWith(ecgLocalPath: localPath, ecgFileName: fileName, ecgAnalysisResult: null),
+    ));
+    final result = await _repository.analyzeEcg(localPath);
+    state = AsyncValue.data(_current.copyWith(
+      heartTests: _current.heartTests.copyWith(ecgAnalysisResult: result),
+    ));
+  }
   // TODO(backend-integration): surface failures via a separate
   // isSavingProvider once a real repository can actually throw.
   Future<void> saveDraft() => _repository.saveDraft(_current);

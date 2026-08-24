@@ -1,4 +1,7 @@
-enum AssessmentTab { lipids, pressure, glucose, kidney, behavior }
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+enum AssessmentTab { lipids, pressure, glucose, kidney, lifestyle, heartTests }
 
 extension AssessmentTabX on AssessmentTab {
   String get label => switch (this) {
@@ -6,20 +9,23 @@ extension AssessmentTabX on AssessmentTab {
     AssessmentTab.pressure => 'Pressure',
     AssessmentTab.glucose => 'Glucose',
     AssessmentTab.kidney => 'Kidney',
-    AssessmentTab.behavior => 'Behavior',
+    AssessmentTab.lifestyle => 'Lifestyle',
+    AssessmentTab.heartTests => 'ECG',
   };
 
-  String get tabIcon => switch (this) {
+  /// Null for Heart Tests — no icon asset supplied yet; the tab bar falls
+  /// back to `Icons.monitor_heart_outlined` for that case (see tabIconFallback).
+  String? get tabIcon => switch (this) {
     AssessmentTab.lipids => 'assets/icons/assessment/tab_lipids.png',
     AssessmentTab.pressure => 'assets/icons/assessment/tab_pressure.png',
     AssessmentTab.glucose => 'assets/icons/assessment/tab_glucose.png',
     AssessmentTab.kidney => 'assets/icons/assessment/tab_kidney.png',
-    AssessmentTab.behavior => 'assets/icons/assessment/tab_behavior.png',
+    AssessmentTab.lifestyle => 'assets/icons/assessment/tab_behavior.png', // was: tab_behavior.png
+    AssessmentTab.heartTests => null,
   };
 
-  /// Pre-composed icon+circle-background for the page header row.
-  /// Lipids and Behavior render null — Lipids has no header in the mockup,
-  /// Behavior uses per-sub-section headers instead of one page header.
+  IconData get tabIconFallback => Icons.monitor_heart_outlined; // only used when tabIcon is null
+
   String? get headerIcon => switch (this) {
     AssessmentTab.pressure => 'assets/icons/assessment/header_pressure.png',
     AssessmentTab.glucose => 'assets/icons/assessment/header_glucose.png',
@@ -39,15 +45,17 @@ extension AssessmentTabX on AssessmentTab {
     AssessmentTab.pressure => 'Blood Pressure Profile',
     AssessmentTab.glucose => 'Glucose Profile',
     AssessmentTab.kidney => 'Kidney Profile',
-    AssessmentTab.behavior => 'Behavior Profile',
+    AssessmentTab.lifestyle => 'Lifestyle & Fitness Profile',
+    AssessmentTab.heartTests => 'Heart Tests Profile',
   };
 
   String get nextLabel => switch (this) {
     AssessmentTab.lipids => 'Next: Blood Pressure',
     AssessmentTab.pressure => 'Next: Glucose',
     AssessmentTab.glucose => 'Next: Kidney',
-    AssessmentTab.kidney => 'Next: Behavior',
-    AssessmentTab.behavior => 'Save Assessment',
+    AssessmentTab.kidney => 'Next: Lifestyle & Fitness',
+    AssessmentTab.lifestyle => 'Next: Heart Tests',
+    AssessmentTab.heartTests => 'Save Assessment',
   };
 
   AssessmentTab? get next {
@@ -156,58 +164,44 @@ class LipidProfile {
 class PressureProfile {
   final double? systolicBp;
   final double? diastolicBp;
-  final double? pulsePressure;
 
-  const PressureProfile({this.systolicBp, this.diastolicBp, this.pulsePressure});
+  const PressureProfile({this.systolicBp, this.diastolicBp});
 
   double get completion {
-    final f = [systolicBp, diastolicBp, pulsePressure];
+    final f = [systolicBp, diastolicBp];
     return f.where((e) => e != null).length / f.length;
   }
 
-  PressureProfile copyWith({double? systolicBp, double? diastolicBp, double? pulsePressure}) =>
-      PressureProfile(
-        systolicBp: systolicBp ?? this.systolicBp,
-        diastolicBp: diastolicBp ?? this.diastolicBp,
-        pulsePressure: pulsePressure ?? this.pulsePressure,
-      );
+  PressureProfile copyWith({double? systolicBp, double? diastolicBp}) => PressureProfile(
+    systolicBp: systolicBp ?? this.systolicBp,
+    diastolicBp: diastolicBp ?? this.diastolicBp,
+  );
 
-  Map<String, dynamic> toJson() =>
-      {'systolic_bp': systolicBp, 'diastolic_bp': diastolicBp, 'pulse_pressure': pulsePressure};
+  Map<String, dynamic> toJson() => {'systolic_bp': systolicBp, 'diastolic_bp': diastolicBp};
 }
 
 class GlucoseProfile {
   final DiabetesStatus? diabetesStatus;
   final double? hba1c;
   final double? fastingGlucose;
-  final double? homaIr;
+  // homaIr removed per request
 
-  const GlucoseProfile({this.diabetesStatus, this.hba1c, this.fastingGlucose, this.homaIr});
+  const GlucoseProfile({this.diabetesStatus, this.hba1c, this.fastingGlucose});
 
   double get completion {
-    final f = [diabetesStatus, hba1c, fastingGlucose, homaIr];
+    final f = [diabetesStatus, hba1c, fastingGlucose];
     return f.where((e) => e != null).length / f.length;
   }
 
-  GlucoseProfile copyWith({
-    DiabetesStatus? diabetesStatus,
-    double? hba1c,
-    double? fastingGlucose,
-    double? homaIr,
-  }) =>
+  GlucoseProfile copyWith({DiabetesStatus? diabetesStatus, double? hba1c, double? fastingGlucose}) =>
       GlucoseProfile(
         diabetesStatus: diabetesStatus ?? this.diabetesStatus,
         hba1c: hba1c ?? this.hba1c,
         fastingGlucose: fastingGlucose ?? this.fastingGlucose,
-        homaIr: homaIr ?? this.homaIr,
       );
 
-  Map<String, dynamic> toJson() => {
-    'diabetes_status': diabetesStatus?.name,
-    'hba1c': hba1c,
-    'fasting_glucose': fastingGlucose,
-    'homa_ir': homaIr,
-  };
+  Map<String, dynamic> toJson() =>
+      {'diabetes_status': diabetesStatus?.name, 'hba1c': hba1c, 'fasting_glucose': fastingGlucose};
 }
 
 class KidneyProfile {
@@ -231,7 +225,7 @@ class KidneyProfile {
   Map<String, dynamic> toJson() => {'egfr': eGfr, 'creatinine': creatinine, 'uacr': uacr};
 }
 
-class BehaviorProfile {
+class LifestyleFitnessProfile {
   // Adiposity
   final double? bmi;
   final double? waistCircumference;
@@ -258,8 +252,12 @@ class BehaviorProfile {
   // Stress / Psychosocial
   final StressLevel? stressLevel;
   final double? stressIndexScore;
+  //new
+  final double? restingHeartRate;
+  final double? vo2Max;
+  final double? heartRateRecoveryBpm;
 
-  const BehaviorProfile({
+  const LifestyleFitnessProfile({
     this.bmi,
     this.waistCircumference,
     this.waistHipRatio,
@@ -277,6 +275,9 @@ class BehaviorProfile {
     this.sleepHoursPerNight,
     this.stressLevel,
     this.stressIndexScore,
+    this.restingHeartRate,
+    this.vo2Max,
+    this.heartRateRecoveryBpm,
   });
 
   double get completion {
@@ -286,12 +287,12 @@ class BehaviorProfile {
       familyHistoryPrematureCvd, geneticRisk, geneticRiskScorePercent,
       smokingStatus, packYears, quitDurationYears,
       dietQualityScore, alcoholDrinksPerWeek, sleepHoursPerNight,
-      stressLevel, stressIndexScore,
+      stressLevel, stressIndexScore, restingHeartRate, vo2Max, heartRateRecoveryBpm,
     ];
     return f.where((e) => e != null).length / f.length;
   }
 
-  BehaviorProfile copyWith({
+  LifestyleFitnessProfile copyWith({
     double? bmi,
     double? waistCircumference,
     double? waistHipRatio,
@@ -309,8 +310,11 @@ class BehaviorProfile {
     double? sleepHoursPerNight,
     StressLevel? stressLevel,
     double? stressIndexScore,
+    double? restingHeartRate,
+    double? vo2Max,
+    double? heartRateRecoveryBpm,
   }) =>
-      BehaviorProfile(
+      LifestyleFitnessProfile(
         bmi: bmi ?? this.bmi,
         waistCircumference: waistCircumference ?? this.waistCircumference,
         waistHipRatio: waistHipRatio ?? this.waistHipRatio,
@@ -329,6 +333,9 @@ class BehaviorProfile {
         sleepHoursPerNight: sleepHoursPerNight ?? this.sleepHoursPerNight,
         stressLevel: stressLevel ?? this.stressLevel,
         stressIndexScore: stressIndexScore ?? this.stressIndexScore,
+        restingHeartRate: restingHeartRate ?? this.restingHeartRate,
+        vo2Max: vo2Max ?? this.vo2Max,
+        heartRateRecoveryBpm: heartRateRecoveryBpm ?? this.heartRateRecoveryBpm,
       );
 
   Map<String, dynamic> toJson() => {
@@ -349,9 +356,90 @@ class BehaviorProfile {
     'sleep_hours_per_night': sleepHoursPerNight,
     'stress_level': stressLevel?.name,
     'stress_index_score': stressIndexScore,
+    'resting_heart_rate': restingHeartRate,
+    'vo2_max': vo2Max,
+    'heart_rate_recovery_bpm': heartRateRecoveryBpm,
   };
 }
 
+class HeartTestsProfile {
+  final bool? lvh;
+  final double? hsCrp;
+  final double? bnpNtProBnp;
+  final double? hsTroponin;
+  final double? cacScore;
+  final bool? carotidPlaque;
+  final double? carotidStenosisPercent; // optional per spec
+  final double? abiLeft;
+  final double? abiRight;
+  final String? ecgFileName;
+  final String? ecgLocalPath;
+  final String? ecgAnalysisResult; // set once "Analyze" returns
+
+  const HeartTestsProfile({
+    this.lvh,
+    this.hsCrp,
+    this.bnpNtProBnp,
+    this.hsTroponin,
+    this.cacScore,
+    this.carotidPlaque,
+    this.carotidStenosisPercent,
+    this.abiLeft,
+    this.abiRight,
+    this.ecgFileName,
+    this.ecgLocalPath,
+    this.ecgAnalysisResult,
+  });
+
+  /// Carotid Stenosis % is optional per spec, so it's excluded from the
+  /// completion denominator rather than dragging the percentage down.
+  double get completion {
+    final f = [lvh, hsCrp, bnpNtProBnp, hsTroponin, cacScore, carotidPlaque, abiLeft, abiRight, ecgAnalysisResult];
+    return f.where((e) => e != null).length / f.length;
+  }
+
+  HeartTestsProfile copyWith({
+    bool? lvh,
+    double? hsCrp,
+    double? bnpNtProBnp,
+    double? hsTroponin,
+    double? cacScore,
+    bool? carotidPlaque,
+    double? carotidStenosisPercent,
+    double? abiLeft,
+    double? abiRight,
+    String? ecgFileName,
+    String? ecgLocalPath,
+    String? ecgAnalysisResult,
+  }) =>
+      HeartTestsProfile(
+        lvh: lvh ?? this.lvh,
+        hsCrp: hsCrp ?? this.hsCrp,
+        bnpNtProBnp: bnpNtProBnp ?? this.bnpNtProBnp,
+        hsTroponin: hsTroponin ?? this.hsTroponin,
+        cacScore: cacScore ?? this.cacScore,
+        carotidPlaque: carotidPlaque ?? this.carotidPlaque,
+        carotidStenosisPercent: carotidStenosisPercent ?? this.carotidStenosisPercent,
+        abiLeft: abiLeft ?? this.abiLeft,
+        abiRight: abiRight ?? this.abiRight,
+        ecgFileName: ecgFileName ?? this.ecgFileName,
+        ecgLocalPath: ecgLocalPath ?? this.ecgLocalPath,
+        ecgAnalysisResult: ecgAnalysisResult ?? this.ecgAnalysisResult,
+      );
+
+  Map<String, dynamic> toJson() => {
+    'lvh': lvh,
+    'hs_crp': hsCrp,
+    'bnp_nt_probnp': bnpNtProBnp,
+    'hs_troponin': hsTroponin,
+    'cac_score': cacScore,
+    'carotid_plaque': carotidPlaque,
+    'carotid_stenosis_percent': carotidStenosisPercent,
+    'abi_left': abiLeft,
+    'abi_right': abiRight,
+    'ecg_analysis_result': ecgAnalysisResult,
+  };
+}
 /// Aggregate root — one notifier holds this whole thing (see state-mgmt
 /// rules in SKILL.md: users jump between tabs and must not lose data).
 class AssessmentDraft {
@@ -359,7 +447,8 @@ class AssessmentDraft {
   final PressureProfile pressure;
   final GlucoseProfile glucose;
   final KidneyProfile kidney;
-  final BehaviorProfile behavior;
+  final LifestyleFitnessProfile lifestyle;
+  final HeartTestsProfile heartTests;
   final List<UploadedReport> reports;
 
   const AssessmentDraft({
@@ -367,8 +456,10 @@ class AssessmentDraft {
     this.pressure = const PressureProfile(),
     this.glucose = const GlucoseProfile(),
     this.kidney = const KidneyProfile(),
-    this.behavior = const BehaviorProfile(),
-    this.reports = const [],
+    this.lifestyle = const LifestyleFitnessProfile(),
+  this.heartTests = const HeartTestsProfile(),
+
+  this.reports = const [],
   });
 
   double completionFor(AssessmentTab tab) => switch (tab) {
@@ -376,7 +467,8 @@ class AssessmentDraft {
     AssessmentTab.pressure => pressure.completion,
     AssessmentTab.glucose => glucose.completion,
     AssessmentTab.kidney => kidney.completion,
-    AssessmentTab.behavior => behavior.completion,
+    AssessmentTab.lifestyle => lifestyle.completion,
+    AssessmentTab.heartTests => heartTests.completion,
   };
 
   AssessmentDraft copyWith({
@@ -384,7 +476,8 @@ class AssessmentDraft {
     PressureProfile? pressure,
     GlucoseProfile? glucose,
     KidneyProfile? kidney,
-    BehaviorProfile? behavior,
+    LifestyleFitnessProfile? lifestyle,
+    HeartTestsProfile? heartTests,
     List<UploadedReport>? reports,
   }) =>
       AssessmentDraft(
@@ -392,7 +485,8 @@ class AssessmentDraft {
         pressure: pressure ?? this.pressure,
         glucose: glucose ?? this.glucose,
         kidney: kidney ?? this.kidney,
-        behavior: behavior ?? this.behavior,
+        lifestyle: lifestyle ?? this.lifestyle,
+        heartTests: heartTests ?? this.heartTests,
         reports: reports ?? this.reports,
       );
 
@@ -401,7 +495,7 @@ class AssessmentDraft {
     'pressure': pressure.toJson(),
     'glucose': glucose.toJson(),
     'kidney': kidney.toJson(),
-    'behavior': behavior.toJson(),
+    'lifestyle': lifestyle.toJson(),
   };
 }
 
@@ -415,6 +509,8 @@ abstract class AssessmentRepository {
     required String fileName,
     required ReportFileType type,
   });
+
+  Future<String> analyzeEcg(String localPath);
 
   Future<void> deleteReport(String reportId);
 }

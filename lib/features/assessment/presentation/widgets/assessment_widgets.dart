@@ -79,12 +79,11 @@ class AssessmentTabBar extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    Image.asset(
-                      tab.tabIcon,
-                      width: 22,
-                      height: 22,
-                      color: selected ? Colors.white : AppColors.inputText.withOpacity(0.6),
-                    ),
+                    tab.tabIcon != null
+                        ? Image.asset(tab.tabIcon!, width: 22, height: 22,
+                        color: selected ? Colors.white : AppColors.inputText.withOpacity(0.6))
+                        : Icon(tab.tabIconFallback, size: 22,
+                        color: selected ? Colors.white : AppColors.inputText.withOpacity(0.6)),
                     const SizedBox(height: 4),
                     Text(
                       tab.label,
@@ -109,10 +108,46 @@ class AssessmentTabBar extends StatelessWidget {
 /// and each Behavior sub-section header. `iconAsset` is a pre-composed PNG
 /// (icon baked onto its circle background already — no Container styling
 /// needed on our end).
+// class SectionIconHeader extends StatelessWidget {
+//   const SectionIconHeader({super.key, required this.iconAsset, required this.title});
+//
+//   final String iconAsset;
+//   final String title;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Row(
+//           children: [
+//             Image.asset(iconAsset, width: 40, height: 40),
+//             const SizedBox(width: 12),
+//             Expanded(
+//               child: Text(
+//                 title,
+//                 style: AppTextStyles.chipLabel.copyWith(
+//                   fontSize: 18,
+//                   fontWeight: FontWeight.w800,
+//                   color: AppColors.headingColor,
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
+//         const SizedBox(height: 12),
+//         const Divider(height: 1, color: AppColors.divider),
+//         const SizedBox(height: 16),
+//       ],
+//     );
+//   }
+// }
 class SectionIconHeader extends StatelessWidget {
-  const SectionIconHeader({super.key, required this.iconAsset, required this.title});
+  const SectionIconHeader({super.key, this.iconAsset, this.iconData, required this.title})
+      : assert(iconAsset != null || iconData != null);
 
-  final String iconAsset;
+  final String? iconAsset;
+  final IconData? iconData;
   final String title;
 
   @override
@@ -122,17 +157,19 @@ class SectionIconHeader extends StatelessWidget {
       children: [
         Row(
           children: [
-            Image.asset(iconAsset, width: 40, height: 40),
+            if (iconAsset != null)
+              Image.asset(iconAsset!, width: 40, height: 40)
+            else
+              Container(
+                width: 40, height: 40,
+                decoration: const BoxDecoration(color: AppColors.assessmentFieldBackground, shape: BoxShape.circle),
+                child: Icon(iconData, size: 20, color: AppColors.assessmentGreen),
+              ),
             const SizedBox(width: 12),
             Expanded(
-              child: Text(
-                title,
-                style: AppTextStyles.chipLabel.copyWith(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.headingColor,
-                ),
-              ),
+              child: Text(title,
+                  style: AppTextStyles.chipLabel
+                      .copyWith(fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.headingColor)),
             ),
           ],
         ),
@@ -143,7 +180,6 @@ class SectionIconHeader extends StatelessWidget {
     );
   }
 }
-
 /// Top-of-form progress row: thin bar + "Current: X Profile" / "N% Complete".
 /// `completion` is computed live from filled fields in the active section
 /// (ASSUMPTION: mockup's static 20%/0% values read as demo placeholders,

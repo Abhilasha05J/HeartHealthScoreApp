@@ -70,7 +70,8 @@ class _TabBody extends StatelessWidget {
       AssessmentTab.pressure => const PressureTabBody(),
       AssessmentTab.glucose => const GlucoseTabBody(),
       AssessmentTab.kidney => const KidneyTabBody(),
-      AssessmentTab.behavior => const BehaviorTabBody(),
+      AssessmentTab.lifestyle => const LifestyleFitnessTabBody(), // was: AssessmentTab.behavior => BehaviorTabBody()
+      AssessmentTab.heartTests => const HeartTestsTabBody(),      // NEW
     };
   }
 }
