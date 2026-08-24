@@ -97,10 +97,7 @@ class SectionIconHeader extends StatelessWidget {
     );
   }
 }
-/// Top-of-form progress row: thin bar + "Current: X Profile" / "N% Complete".
-/// `completion` is computed live from filled fields in the active section
-/// (ASSUMPTION: mockup's static 20%/0% values read as demo placeholders,
-/// not a spec'd formula — flag if a different definition is intended).
+
 class AssessmentProgressHeader extends StatelessWidget {
   const AssessmentProgressHeader({super.key, required this.tab, required this.completion});
 
@@ -137,84 +134,81 @@ class AssessmentProgressHeader extends StatelessWidget {
   }
 }
 
-/// Flat, light-grey-bordered numeric/text field — the style used throughout
-/// this wizard. NOT `GradientTextField` (different design language here).
+//
 // class AssessmentTextField extends StatelessWidget {
 //   const AssessmentTextField({
 //     super.key,
 //     required this.label,
-//     this.subtitle,
-//     required this.controller,
-//     this.unit,
+//     required this.value,
+//     required this.onChanged,
 //     this.hintText,
-//     this.keyboardType = const TextInputType.numberWithOptions(decimal: true),
-//     this.readOnly = false,
-//     this.onChanged,
+//     this.keyboardType = TextInputType.number,
+//     this.showFreshness = true,
 //   });
 //
 //   final String label;
-//   final String? subtitle;
-//   final TextEditingController controller;
-//   final String? unit;
+//   final FieldValue value;
+//   final Function(String) onChanged;
 //   final String? hintText;
 //   final TextInputType keyboardType;
-//   final bool readOnly;
-//   final ValueChanged<String>? onChanged;
+//   final bool showFreshness;
 //
 //   @override
 //   Widget build(BuildContext context) {
 //     return Column(
 //       crossAxisAlignment: CrossAxisAlignment.start,
 //       children: [
-//         Text(label,
-//             style: AppTextStyles.chipLabel
-//                 .copyWith(fontSize: 15, color: AppColors.inputText, fontWeight: FontWeight.w600)),
-//         if (subtitle != null) ...[
-//           const SizedBox(height: 2),
-//           Text(subtitle!,
-//               style: AppTextStyles.chipLabel
-//                   .copyWith(fontSize: 12, color: AppColors.inputText.withOpacity(0.5))),
-//         ],
-//         const SizedBox(height: 10),
-//         Container(
-//           decoration: BoxDecoration(
-//             color: readOnly ? AppColors.assessmentFieldBackground : Colors.white,
-//             borderRadius: BorderRadius.circular(14),
-//             border: Border.all(color: AppColors.assessmentFieldBorder),
-//           ),
-//           padding: const EdgeInsets.symmetric(horizontal: 16),
-//           child: Row(
-//             children: [
-//               Expanded(
-//                 child: TextField(
-//                   controller: controller,
-//                   keyboardType: keyboardType,
-//                   readOnly: readOnly,
-//                   onChanged: onChanged,
-//                   style: AppTextStyles.chipLabel.copyWith(fontSize: 15, color: AppColors.inputText),
-//                   decoration: InputDecoration(
-//                     border: InputBorder.none,
-//                     isDense: true,
-//                     contentPadding: const EdgeInsets.symmetric(vertical: 16),
-//                     hintText: hintText ?? '0.0',
-//                     hintStyle: AppTextStyles.chipLabel
-//                         .copyWith(fontSize: 15, color: AppColors.assessmentMutedText),
-//                   ),
+//         Row(
+//           children: [
+//             Expanded(
+//               child: Text(
+//                 label,
+//                 style: const TextStyle(
+//                   fontSize: 13,
+//                   fontWeight: FontWeight.w600,
+//                   color: Color(0xFF333333),
 //                 ),
 //               ),
-//               if (unit != null)
-//                 Text(unit!,
-//                     style: AppTextStyles.chipLabel
-//                         .copyWith(fontSize: 14, color: AppColors.assessmentMutedText)),
-//             ],
+//             ),
+//             if (showFreshness && value.shouldShowFreshness)
+//               Text(
+//                 value.freshnessLabel,
+//                 style: TextStyle(
+//                   fontSize: 11,
+//                   fontWeight: FontWeight.w500,
+//                   color: Colors.grey[600],
+//                 ),
+//               ),
+//           ],
+//         ),
+//         const SizedBox(height: 6),
+//         TextField(
+//           controller: TextEditingController(text: value.value?.toString() ?? ''),
+//           keyboardType: keyboardType,
+//           onChanged: onChanged,
+//           decoration: InputDecoration(
+//             hintText: hintText,
+//             isDense: true,
+//             contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+//             border: OutlineInputBorder(
+//               borderRadius: BorderRadius.circular(8),
+//               borderSide: const BorderSide(color: AppColors.assessmentFieldBorder, width: 0.5),
+//             ),
+//             enabledBorder: OutlineInputBorder(
+//               borderRadius: BorderRadius.circular(8),
+//               borderSide: const BorderSide(color: AppColors.assessmentFieldBorder, width: 0.5),
+//             ),
+//             focusedBorder: OutlineInputBorder(
+//               borderRadius: BorderRadius.circular(8),
+//               borderSide: const BorderSide(color: AppColors.assessmentFieldBorder, width: 2),
+//             ),
 //           ),
 //         ),
-//         const SizedBox(height: 20),
 //       ],
 //     );
 //   }
 // }
-class AssessmentTextField extends StatelessWidget {
+class AssessmentTextField extends StatefulWidget {
   const AssessmentTextField({
     super.key,
     required this.label,
@@ -233,6 +227,49 @@ class AssessmentTextField extends StatelessWidget {
   final bool showFreshness;
 
   @override
+  State<AssessmentTextField> createState() => _AssessmentTextFieldState();
+}
+
+class _AssessmentTextFieldState extends State<AssessmentTextField> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: _formatValue(widget.value.value));
+  }
+
+  @override
+  void didUpdateWidget(covariant AssessmentTextField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Only overwrite the field if the underlying value actually changed
+    // from somewhere OTHER than this field's own typing (e.g. a refresh/prefill).
+    final newText = _formatValue(widget.value.value);
+    if (_controller.text != newText &&
+        double.tryParse(_controller.text) != widget.value.value) {
+      _controller.value = TextEditingValue(
+        text: newText,
+        selection: TextSelection.collapsed(offset: newText.length),
+      );
+    }
+  }
+
+  String _formatValue(dynamic v) {
+    if (v == null) return '';
+    if (v is double) {
+      // Drop trailing ".0" for whole numbers
+      return v == v.roundToDouble() ? v.toInt().toString() : v.toString();
+    }
+    return v.toString();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -241,7 +278,7 @@ class AssessmentTextField extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                label,
+                widget.label,
                 style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
@@ -249,9 +286,9 @@ class AssessmentTextField extends StatelessWidget {
                 ),
               ),
             ),
-            if (showFreshness && value.shouldShowFreshness)
+            if (widget.showFreshness && widget.value.shouldShowFreshness)
               Text(
-                value.freshnessLabel,
+                widget.value.freshnessLabel,
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
@@ -262,11 +299,11 @@ class AssessmentTextField extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         TextField(
-          controller: TextEditingController(text: value.value?.toString() ?? ''),
-          keyboardType: keyboardType,
-          onChanged: onChanged,
+          controller: _controller,
+          keyboardType: widget.keyboardType,
+          onChanged: widget.onChanged,
           decoration: InputDecoration(
-            hintText: hintText,
+            hintText: widget.hintText,
             isDense: true,
             contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             border: OutlineInputBorder(
@@ -287,60 +324,6 @@ class AssessmentTextField extends StatelessWidget {
     );
   }
 }
-/// Rounded dropdown field (Diabetes Status / Smoking Status / Stress level).
-// class AssessmentDropdownField<T> extends StatelessWidget {
-//   const AssessmentDropdownField({
-//     super.key,
-//     required this.label,
-//     required this.value,
-//     required this.items,
-//     required this.itemLabel,
-//     required this.onChanged,
-//     this.hintText = 'Select Status',
-//   });
-//
-//   final String label;
-//   final T? value;
-//   final List<T> items;
-//   final String Function(T) itemLabel;
-//   final ValueChanged<T?> onChanged;
-//   final String hintText;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         Text(label,
-//             style: AppTextStyles.chipLabel
-//                 .copyWith(fontSize: 15, color: AppColors.inputText, fontWeight: FontWeight.w600)),
-//         const SizedBox(height: 10),
-//         Container(
-//           decoration: BoxDecoration(
-//             color: Colors.white,
-//             borderRadius: BorderRadius.circular(14),
-//             border: Border.all(color: AppColors.assessmentFieldBorder),
-//           ),
-//           padding: const EdgeInsets.symmetric(horizontal: 16),
-//           child: DropdownButtonHideUnderline(
-//             child: DropdownButton<T>(
-//               value: value,
-//               isExpanded: true,
-//               hint: Text(hintText,
-//                   style: AppTextStyles.chipLabel
-//                       .copyWith(fontSize: 15, color: AppColors.assessmentMutedText)),
-//               icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.assessmentMutedText),
-//               items:
-//               items.map((e) => DropdownMenuItem(value: e, child: Text(itemLabel(e)))).toList(),
-//               onChanged: onChanged,
-//             ),
-//           ),
-//         ),
-//         const SizedBox(height: 20),
-//       ],
-//     );
-//   }
-// }
 class AssessmentDropdown<T extends Enum> extends StatelessWidget {
   const AssessmentDropdown({
     super.key,
@@ -589,11 +572,6 @@ class FreshnessBadge extends StatelessWidget {
   }
 }
 
-/// Filled-green segmented selector (Yes/No, Low/Med/High). Deliberately a
-/// NEW widget rather than reusing the global `SegmentedSelector`: that one
-/// is outlined per the v2 rebrand rule, but this screen's mockup shows a
-/// filled-solid selected state. Scoped to this feature only so v2 styling
-/// elsewhere is untouched.
 class AssessmentToggleSelector<T> extends StatelessWidget {
   const AssessmentToggleSelector({
     super.key,
@@ -654,9 +632,7 @@ class AssessmentToggleSelector<T> extends StatelessWidget {
   }
 }
 
-/// Numeric field + target-progress bar underneath — Moderate/Vigorous
-/// Activity (0 .. Target 150+ min/week). Wrapped in AnimatedBuilder so the
-/// bar updates live as the user types, without the parent needing setState.
+
 class AssessmentTargetProgressField extends StatelessWidget {
   const AssessmentTargetProgressField({
     super.key,

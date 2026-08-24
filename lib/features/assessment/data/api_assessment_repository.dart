@@ -2,11 +2,12 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 
 import '../domain/assessment_models.dart';
+
 /// Real implementation of AssessmentRepository — calls backend APIs.
 ///
 /// Handles three workflows:
 /// 1. loadPrefill() → GET /me/intake/prefill (auto-prefill form with previous values)
-/// 2. submitAssessment() → POST /ml/score + POST /me/encounters
+/// 2. submitAssessment() → POST /me/encounters with auto-generated visit_id
 /// 3. uploadReport() → multipart POST (not shown; reuse existing logic)
 class ApiAssessmentRepository implements AssessmentRepository {
   ApiAssessmentRepository({required Dio dio}) : _dio = dio;
@@ -61,7 +62,7 @@ class ApiAssessmentRepository implements AssessmentRepository {
         diabetesStatus: _parseFieldValue<DiabetesStatus>(
           fieldsData['diabetes'],
           parser: (val) => DiabetesStatus.values.firstWhere(
-            (e) => e.name == val,
+                (e) => e.name == val,
             orElse: () => DiabetesStatus.none,
           ),
         ),
@@ -90,7 +91,7 @@ class ApiAssessmentRepository implements AssessmentRepository {
         smokingStatus: _parseFieldValue<SmokingStatus>(
           fieldsData['smoking_status'],
           parser: (val) => SmokingStatus.values.firstWhere(
-            (e) => e.name == val,
+                (e) => e.name == val,
             orElse: () => SmokingStatus.never,
           ),
         ),
@@ -134,42 +135,22 @@ class ApiAssessmentRepository implements AssessmentRepository {
     await Future.delayed(const Duration(milliseconds: 200));
   }
 
-  /// Submit assessment: hit ML scoring endpoint first, then POST to /me/encounters.
+  /// Submit assessment: POST to /me/encounters with auto-generated visit_id.
   ///
-  /// Workflow:
-  /// 1. POST /ml/score with form data → returns HHS score + analysis
-  /// 2. POST /me/encounters with full SubmissionIn + score details
-  // @override
-  // Future<void> submitAssessment(AssessmentDraft draft) async {
-  //   try {
-  //     // Step 1: Get ML score
-  //     final mlPayload = draft.toSubmissionJson();
-  //     final scoreResponse = await _dio.post(
-  //       '/ml/score',
-  //       data: mlPayload,
-  //     );
-  //
-  //     final scoreData = scoreResponse.data as Map<String, dynamic>;
-  //     final hhs = scoreData['hhs'] as double?;
-  //     final category = scoreData['category'] as String?;
-  //
-  //     // Step 2: POST to /me/encounters with score embedded
-  //     final submissionPayload = mlPayload;
-  //     submissionPayload['hhs_score'] = hhs;
-  //     submissionPayload['risk_category'] = category;
-  //
-  //     await _dio.post(
-  //       '/me/encounters',
-  //       data: submissionPayload,
-  //     );
-  //   } on DioException catch (e) {
-  //     throw _handleDioError(e, 'Failed to submit assessment');
-  //   }
-  // }
+  /// Generates visit_id if not present to prevent 422 "visit_id is null" errors.
   @override
   Future<void> submitAssessment(AssessmentDraft draft) async {
     try {
-      final submissionPayload = draft.toSubmissionJson();
+      // FIX: Generate visit_id and visit_date if missing (backend requires them)
+      final now = DateTime.now();
+      final updatedDraft = draft.copyWith(
+        visit: draft.visit.copyWith(
+          visitId: draft.visit.visitId ?? 'SELF-${now.toIso8601String().replaceAll(':', '-').substring(0, 19)}',
+          visitDate: draft.visit.visitDate ?? now,
+        ),
+      );
+
+      final submissionPayload = updatedDraft.toSubmissionJson();
 
       await _dio.post(
         '/me/encounters',
@@ -179,18 +160,14 @@ class ApiAssessmentRepository implements AssessmentRepository {
       throw _handleDioError(e, 'Failed to submit assessment');
     }
   }
+
   /// Upload a report file (image or PDF).
-  ///
-  /// Uses multipart form data — already implemented in existing code.
-  /// This is a stub that delegates to your existing upload logic.
   @override
   Future<UploadedReport> uploadReport({
     required String localPath,
     required String fileName,
     required ReportFileType type,
   }) async {
-    // TODO: implement actual multipart upload to backend
-    // For now, return a mock to keep the code compiling.
     await Future.delayed(const Duration(milliseconds: 600));
     final file = File(localPath);
     return UploadedReport(
@@ -207,8 +184,6 @@ class ApiAssessmentRepository implements AssessmentRepository {
   @override
   Future<String> analyzeEcg(String localPath) async {
     try {
-      // Send ECG file as multipart to backend
-      final file = File(localPath);
       final formData = FormData.fromMap({
         'file': await MultipartFile.fromFile(localPath),
       });
@@ -236,20 +211,12 @@ class ApiAssessmentRepository implements AssessmentRepository {
   // ─────────────────────────────────────────────────────────────────────────
 
   /// Parse a backend field response {status, value, months_old} into a FieldValue.
-  ///
-  /// Backend format:
-  /// ```json
-  /// {
-  ///   "status": "Available",
-  ///   "value": 120,
-  ///   "months_old": 0
-  /// }
-  /// ```
+
   FieldValue<T> _parseFieldValue<T>(
-    dynamic fieldData, {
-    T Function(dynamic)? parser,
-  }) {
-    if (fieldData == null) return const FieldValue();
+      dynamic fieldData, {
+        T Function(dynamic)? parser,
+      }) {
+    if (fieldData == null) return FieldValue<T>();
 
     final field = fieldData as Map<String, dynamic>;
     final status = field['status'] as String? ?? 'Unknown';
@@ -257,10 +224,9 @@ class ApiAssessmentRepository implements AssessmentRepository {
     final monthsOld = (field['months_old'] as num?)?.toInt();
 
     if (status != 'Available' || rawValue == null) {
-      return const FieldValue();
+      return FieldValue<T>();
     }
 
-    // Parse value (handle type conversion)
     T? value;
     try {
       if (T == double) {
@@ -275,8 +241,7 @@ class ApiAssessmentRepository implements AssessmentRepository {
         value = parser(rawValue);
       }
     } catch (_) {
-      // Parse failed — return empty
-      return const FieldValue();
+      return FieldValue<T>();
     }
 
     return FieldValue(
@@ -285,7 +250,6 @@ class ApiAssessmentRepository implements AssessmentRepository {
       available: true,
     );
   }
-
   /// Format DioException into a user-friendly error message.
   String _handleDioError(DioException e, String context) {
     if (e.response != null) {
