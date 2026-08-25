@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:heart_health_score/features/dashboard/presentation/widgets/domain_summary_card.dart';
+
 import 'package:heart_health_score/core/theme/app_colors.dart';
 import 'package:heart_health_score/core/theme/app_text_styles.dart';
 import 'package:heart_health_score/features/dashboard/application/dashboard_providers.dart';
@@ -8,6 +10,7 @@ import 'package:heart_health_score/features/dashboard/presentation/widgets/rewar
 import 'package:heart_health_score/features/dashboard/presentation/widgets/weekly_achievements_section.dart';
 import 'package:heart_health_score/features/wearable/application/wearable_providers.dart';
 import 'package:heart_health_score/features/wearable/domain/wearable_models.dart' show WearableConnectionStatus;
+import '../../../core/router/app_router.dart';
 import 'widgets/burden_breakdown_chart.dart';
 import 'widgets/condition_card.dart';
 import 'widgets/health_score_card.dart';
@@ -89,6 +92,12 @@ class HomeDashboardScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
+                  if (!data.hasAssessmentData) ...[
+                    const SizedBox(height: 16),
+                    _NoAssessmentBanner(
+                      onTap: () => context.go(AppRoutes.parameters),
+                    ),
+                  ],
                   const SizedBox(height: 20),
                   HealthScoreCard(
                     data: data,
@@ -157,17 +166,61 @@ class HomeDashboardScreen extends ConsumerWidget {
                   const SizedBox(height: 14),
                   UnlockedRewardsSection(unlocked: data.rewardsProgress.unlockedBadges),
                   const SizedBox(height: 28),
-                  Text('BURDEN BREAKDOWN', style: AppTextStyles.dashboardcardheading.copyWith(fontSize: 18)),
-                  const SizedBox(height: 18),
-                  BurdenBreakdownChart(items: data.burdenBreakdown),
-                  const SizedBox(height: 28),
                   Text('DOMAIN SUMMARY', style: AppTextStyles.dashboardcardheading.copyWith(fontSize: 18)),
                   const SizedBox(height: 18),
                   DomainSummarySection(items: data.domainSummary),
+                  const SizedBox(height: 28),
+                  Text('BURDEN BREAKDOWN', style: AppTextStyles.dashboardcardheading.copyWith(fontSize: 18)),
+                  const SizedBox(height: 18),
+                  BurdenBreakdownChart(items: data.burdenBreakdown),
                 ],
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Shown on Home instead of a blank/erroring score card + empty Burden
+/// Breakdown/Domain Summary when the account hasn't submitted an
+/// assessment yet ([DashboardData.hasAssessmentData] is false). Everything
+/// else on the screen still renders as normal underneath it.
+class _NoAssessmentBanner extends StatelessWidget {
+  const _NoAssessmentBanner({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.accentColor.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppColors.accentColor.withOpacity(0.25)),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.favorite_border_rounded, color: AppColors.accentColor, size: 22),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Complete your assessment to see your Heart Health Score',
+                    style: AppTextStyles.chipLabel.copyWith(fontSize: 13.5, fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right_rounded, color: AppColors.accentColor),
+          ],
         ),
       ),
     );

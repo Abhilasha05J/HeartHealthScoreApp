@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:heart_health_score/features/auth/application/auth_providers.dart';
+import 'package:heart_health_score/features/dashboard/data/api_dashboard_repository.dart';
 import 'package:heart_health_score/features/wearable/application/wearable_providers.dart';
 import 'package:heart_health_score/features/wearable/domain/wearable_formatters.dart';
 import 'package:heart_health_score/features/wearable/domain/wearable_models.dart';
@@ -7,11 +9,15 @@ import '../data/mock_dashboard_repository.dart';
 import '../domain/dashboard_data.dart';
 import '../domain/dashboard_repository.dart';
 
+
+final dashboardRepositoryProvider = Provider<DashboardRepository>((ref) {
+  return ApiDashboardRepository(ref.watch(dioProvider), ref);
+});
 /// Repository provider — the ONLY line to change when the backend is
 /// ready (swap MockDashboardRepository() for ApiDashboardRepository(dio)).
-final dashboardRepositoryProvider = Provider<DashboardRepository>((ref) {
-  return MockDashboardRepository();
-});
+// final dashboardRepositoryProvider = Provider<DashboardRepository>((ref) {
+//   return MockDashboardRepository();
+// });
 
 /// FutureProvider is enough here — the dashboard has no complex
 /// multi-step mutable state like onboarding does, just an async fetch.

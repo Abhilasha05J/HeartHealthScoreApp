@@ -23,7 +23,25 @@ class BurdenItem extends Equatable {
   @override
   List<Object?> get props => [label, value, status, highlighted];
 }
+enum ParameterSeverity { normal, borderline, atRisk, missing, notApplicable }
+class DomainParameterDetail extends Equatable {
+  const DomainParameterDetail({
+    required this.label,
+    required this.valueLabel,
+    required this.severity,
+  });
 
+  /// Display name, e.g. "HbA1c" (from the backend's `excel_name`).
+  final String label;
+
+  /// Pre-formatted value + unit, e.g. "6.8 %", or "--" when missing.
+  final String valueLabel;
+
+  final ParameterSeverity severity;
+
+  @override
+  List<Object?> get props => [label, valueLabel, severity];
+}
 /// A single card in the "Domain Summary" list.
 class DomainSummaryItem extends Equatable {
   const DomainSummaryItem({
@@ -35,6 +53,7 @@ class DomainSummaryItem extends Equatable {
     required this.normalCount,
     required this.borderlineCount,
     required this.atRiskCount,
+    this.parameters = const [],
   });
 
   final String title;
@@ -45,6 +64,7 @@ class DomainSummaryItem extends Equatable {
   final int normalCount;
   final int borderlineCount;
   final int atRiskCount;
+  final List<DomainParameterDetail> parameters;
 
   @override
   List<Object?> get props => [
@@ -56,6 +76,7 @@ class DomainSummaryItem extends Equatable {
     normalCount,
     borderlineCount,
     atRiskCount,
+    parameters,
   ];
 }
 
@@ -150,6 +171,7 @@ class DashboardData extends Equatable {
     required this.weeklyAchievements,
     required this.rewardsProgress,
     this.maxScore = 100,
+    this.hasAssessmentData = true,
   });
 
   final String profileName;
@@ -158,6 +180,7 @@ class DashboardData extends Equatable {
   final double healthyHeartScore;
   final double previousScore;
   final double maxScore;
+  final bool hasAssessmentData;
 
   final int confidencePercent;
   final String confidenceLabel;
@@ -177,6 +200,7 @@ class DashboardData extends Equatable {
   double get scoreDelta => healthyHeartScore - previousScore;
 
   DashboardData copyWith({
+    bool? hasAssessmentData,
     String? profileName,
     int? age,
     double? healthyHeartScore,
@@ -194,6 +218,7 @@ class DashboardData extends Equatable {
     RewardsProgress? rewardsProgress,
   }) {
     return DashboardData(
+      hasAssessmentData: hasAssessmentData ?? this.hasAssessmentData,
       profileName: profileName ?? this.profileName,
       age: age ?? this.age,
       healthyHeartScore: healthyHeartScore ?? this.healthyHeartScore,
@@ -214,6 +239,7 @@ class DashboardData extends Equatable {
 
   @override
   List<Object?> get props => [
+    hasAssessmentData,
     profileName,
     age,
     healthyHeartScore,
@@ -231,3 +257,4 @@ class DashboardData extends Equatable {
     rewardsProgress,
   ];
 }
+
