@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:heart_health_score/core/theme/app_colors.dart';
+import '../../../core/router/app_router.dart';
 import '../application/assessment_providers.dart';
 import '../domain/assessment_models.dart';
 import 'widgets/report_upload_box.dart';
@@ -83,113 +85,116 @@ class AssessmentScreen extends ConsumerWidget {
           // ─────────────────────────────────────────────────────────────
           // DATA LOADED (render form)
           // ─────────────────────────────────────────────────────────────
-          data: (draft) => CustomScrollView(
-            slivers: [
-              // Header with title + refresh button
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate([
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'Heart Health Assessment',
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.grey[900],
+          data: (draft) => RefreshIndicator(
+            onRefresh: () async {
+              await ref.read(assessmentControllerProvider.notifier).refresh();
+            },
+            child: CustomScrollView(
+              slivers: [
+                // Header with title + refresh button
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'Heart Health Assessment',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.grey[900],
+                              ),
                             ),
                           ),
-                        ),
-                        // Refresh button — manual reload prefill
-                        IconButton(
-                          onPressed: () {
-                            ref
-                                .read(
-                                assessmentControllerProvider.notifier)
-                                .refresh();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Reloading previous data...'),
-                                duration: Duration(seconds: 1),
-                              ),
-                            );
-                          },
-                          icon: const Icon(Icons.refresh),
-                          tooltip: 'Reload previous assessment data',
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-
-                    // Info banner if any fields are stale (> 3 months)
-                    // if (_hasStaleData(draft))
-                    //   Container(
-                    //     width: double.infinity,
-                    //     padding: const EdgeInsets.all(12),
-                    //     decoration: BoxDecoration(
-                    //       color: Colors.orange[50],
-                    //       borderRadius: BorderRadius.circular(8),
-                    //       border: Border.all(color: Colors.orange[200]!),
-                    //     ),
-                    //     child: Row(
-                    //       children: [
-                    //         Icon(
-                    //           Icons.info_outline,
-                    //           size: 18,
-                    //           color: Colors.orange[700],
-                    //         ),
-                    //         const SizedBox(width: 8),
-                    //         Expanded(
-                    //           child: Text(
-                    //             'Some data is older than 3 months. Please review and update.',
-                    //             style: TextStyle(
-                    //               fontSize: 12,
-                    //               color: Colors.orange[700],
-                    //               fontWeight: FontWeight.w500,
-                    //             ),
-                    //           ),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // const SizedBox(height: 20),
-
-                    // Report upload box (shared across all tabs)
-                    ReportUploadBox(reports: draft.reports),
-                    const SizedBox(height: 20),
-
-                    // Tab bar for navigation
-                    AssessmentTabBar(
-                      active: activeTab,
-                      onChanged: (tab) {
-                        ref
-                            .read(activeAssessmentTabProvider.notifier)
-                            .state = tab;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-
-                    // Tab-specific progress indicator
-                    AssessmentProgressHeader(
-                      tab: activeTab,
-                      completion: draft.completionFor(activeTab),
-                    ),
-                    const SizedBox(height: 30),
-
-                    // Dynamic tab content
-                    _TabBody(tab: activeTab),
-                    const SizedBox(height: 24),
-
-                    // Bottom action buttons (Save/Next/Submit)
-                    _BottomActions(tab: activeTab),
-                    const SizedBox(height: 24),
-                  ]),
+                          // Refresh button — manual reload prefill
+                          TextButton.icon(
+                            onPressed: () => context.push(AppRoutes.reportsHistory),
+                            icon: const Icon(
+                              Icons.history_rounded,
+                              size: 18,
+                              color: AppColors.accentColor,
+                            ),
+                            label: const Text('Reports History'),
+                            style: TextButton.styleFrom(
+                              foregroundColor: AppColors.accentColor,
+                              padding: const EdgeInsets.symmetric(horizontal: 6),
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              textStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+            
+                      // Info banner if any fields are stale (> 3 months)
+                      // if (_hasStaleData(draft))
+                      //   Container(
+                      //     width: double.infinity,
+                      //     padding: const EdgeInsets.all(12),
+                      //     decoration: BoxDecoration(
+                      //       color: Colors.orange[50],
+                      //       borderRadius: BorderRadius.circular(8),
+                      //       border: Border.all(color: Colors.orange[200]!),
+                      //     ),
+                      //     child: Row(
+                      //       children: [
+                      //         Icon(
+                      //           Icons.info_outline,
+                      //           size: 18,
+                      //           color: Colors.orange[700],
+                      //         ),
+                      //         const SizedBox(width: 8),
+                      //         Expanded(
+                      //           child: Text(
+                      //             'Some data is older than 3 months. Please review and update.',
+                      //             style: TextStyle(
+                      //               fontSize: 12,
+                      //               color: Colors.orange[700],
+                      //               fontWeight: FontWeight.w500,
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // const SizedBox(height: 20),
+                      ReportUploadBox(reports: draft.reports),
+                      const SizedBox(height: 20),
+            
+                      // Tab bar for navigation
+                      AssessmentTabBar(
+                        active: activeTab,
+                        onChanged: (tab) {
+                          ref
+                              .read(activeAssessmentTabProvider.notifier)
+                              .state = tab;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+            
+                      // Tab-specific progress indicator
+                      AssessmentProgressHeader(
+                        tab: activeTab,
+                        completion: draft.completionFor(activeTab),
+                      ),
+                      const SizedBox(height: 30),
+            
+                      // Dynamic tab content
+                      _TabBody(tab: activeTab),
+                      const SizedBox(height: 24),
+            
+                      // Bottom action buttons (Save/Next/Submit)
+                      _BottomActions(tab: activeTab),
+                      const SizedBox(height: 24),
+                    ]),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

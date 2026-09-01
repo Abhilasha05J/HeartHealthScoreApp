@@ -149,7 +149,7 @@ class HomeDashboardScreen extends ConsumerWidget {
                       ConditionCard(
                         value: '${data.stepCount}',
                         label: 'Step Count',
-                        imagePath: 'assets/icons/stepcount.png',
+                        imagePath: 'assets/icons/steps.png',
                         tintColor: AppColors.conditionTintPurple,
                         iconColor: const Color(0xFF8B7BD8),
                       ),

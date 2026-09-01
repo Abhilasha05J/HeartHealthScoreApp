@@ -20,6 +20,8 @@ import 'package:heart_health_score/features/dashboard/presentation/home_dashboar
 import 'package:heart_health_score/features/dashboard/presentation/placeholder_tab_screen.dart';
 import 'package:heart_health_score/features/wearable/presentation/connect_wearable_screen.dart';
 
+import '../../features/assessment/presentation/reports_history_screen.dart';
+
 abstract class AppRoutes {
   AppRoutes._();
 
@@ -43,6 +45,8 @@ abstract class AppRoutes {
   static const waterIntake = '/home/water-intake';
   static const workoutDetail = '/home/workout';
   static const mealTracker = '/home/log-meal';
+
+  static const reportsHistory = '/parameters/reports-history';
 }
 
 /// Root navigator — used for screens that should NOT show the persistent
@@ -154,6 +158,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: AppRoutes.parameters,
                 builder: (context, state) => const AssessmentScreen(),
+                routes: [
+                  GoRoute(
+                    // Full path resolves to AppRoutes.reportsHistory
+                    // ("/parameters/reports-history").
+                    path: 'reports-history',
+                    builder: (context, state) => const ReportsHistoryScreen(),
+                  ),
+                ],
               ),
             ],
           ),

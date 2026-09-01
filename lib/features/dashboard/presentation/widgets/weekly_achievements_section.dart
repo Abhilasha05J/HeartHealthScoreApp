@@ -53,7 +53,7 @@ class WeeklyAchievementsSection extends StatelessWidget {
         ),
         _AchievementCardShell(
           iconAsset: 'assets/icons/trend_up_green.png',
-          title: 'Vitals Stability',
+          title: 'Vitals',
           content: SizedBox(
             width: double.infinity,
             height: 40,

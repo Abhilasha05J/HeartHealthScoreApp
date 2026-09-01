@@ -53,10 +53,28 @@ class PlansScreen extends ConsumerWidget {
             return ListView(
               padding: const EdgeInsets.fromLTRB(24, 12, 24, 40),
               children: [
-                const Text(
-                  'Select a diagnostic package from baseline monitoring to advanced executive evaluations.',
-                  style: TextStyle(color: AppColors.black, fontSize: 17, fontWeight: FontWeight.w400, height: 1.35),
+                Row(
+                  children: [
+                    Image.asset(
+                      'assets/icons/plan.png',
+                      height: 28,
+                      fit: BoxFit.contain,
+                    ),
+                    const SizedBox(width: 10),
+
+                    const Text(
+                      'Plan Benefits',
+                      style: TextStyle(
+                        color: AppColors.black,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w400,
+                        height: 1.35,
+                      ),
+                    ),
+                  ],
                 ),
+
+
                 const SizedBox(height: 24),
                 PlanTierTabBar(
                   selected: selectedKey,

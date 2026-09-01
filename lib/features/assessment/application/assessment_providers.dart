@@ -148,7 +148,34 @@ class AssessmentController extends StateNotifier<AsyncValue<AssessmentDraft>> {
   // Draft & Submission
   // ─────────────────────────────────────────────────────────────────────
 
+  // Future<void> saveDraft() => _repository.saveDraft(_current);
+  //
+  // Future<void> submit() => _repository.submitAssessment(_current);
   Future<void> saveDraft() => _repository.saveDraft(_current);
 
-  Future<void> submit() => _repository.submitAssessment(_current);
+  /// Guards against submitting a draft whose visit demographics never
+  /// loaded — `_current` falls back to `const AssessmentDraft()` (age/sex
+  /// both null) whenever `state` isn't `AsyncValue.data(...)` yet, i.e.
+  /// prefill is still loading or previously failed. AppUser carries no
+  /// age/biologicalSex to fall back to (confirmed against /auth/me), so
+  /// the only correct recovery is re-fetching prefill before submitting,
+  /// not guessing/defaulting the values.
+  Future<void> submit() async {
+    var draft = state.value;
+
+    if (draft == null || draft.visit.age == null || draft.visit.biologicalSex == null) {
+      try {
+        draft = await _repository.loadPrefill();
+        state = AsyncValue.data(draft);
+      } catch (e) {
+        throw 'Could not load your profile details. Please check your connection and try again.';
+      }
+
+      if (draft.visit.age == null || draft.visit.biologicalSex == null) {
+        throw 'Your age and biological sex weren\'t found on your profile. Please complete onboarding first.';
+      }
+    }
+
+    return _repository.submitAssessment(draft);
+  }
 }
