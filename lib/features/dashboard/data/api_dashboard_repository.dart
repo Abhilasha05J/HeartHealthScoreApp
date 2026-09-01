@@ -104,7 +104,34 @@ class ApiDashboardRepository implements DashboardRepository {
       hasAssessmentData: false,
     );
   }
+  List<ScoreHistoryEntry> _scoreHistory(Map<String, dynamic> monitoringJson) {
+    final monitoring = monitoringJson['monitoring'] as Map<String, dynamic>?;
+    final history = monitoring?['history'] as Map<String, dynamic>?;
+    final trend = (history?['hhs_trend'] as List<dynamic>? ?? [])
+        .cast<Map<String, dynamic>>();
 
+    return [
+      for (final entry in trend)
+        ScoreHistoryEntry(
+          date: DateTime.parse(entry['date'] as String),
+          visitId: entry['visit_id'] as String? ?? '',
+          hhs: (entry['hhs'] as num?)?.toDouble() ?? 0,
+          confidence: (entry['confidence'] as num?)?.toDouble() ?? 0,
+          isSelfLogged: (entry['visit_id'] as String? ?? '').startsWith('SELF'),
+        ),
+    ];
+  }
+
+  _MonitoringInsights _insights(Map<String, dynamic> monitoringJson) {
+    final monitoring = monitoringJson['monitoring'] as Map<String, dynamic>?;
+    final insights = monitoring?['insights'] as Map<String, dynamic>?;
+    return _MonitoringInsights(
+      positive: (insights?['positive_progress'] as List<dynamic>? ?? [])
+          .cast<String>(),
+      attention: (insights?['attention_required'] as List<dynamic>? ?? [])
+          .cast<String>(),
+    );
+  }
   DashboardData _mapToDashboardData({
     required Map<String, dynamic> dashboardJson,
     required Map<String, dynamic> monitoringJson,
@@ -146,6 +173,9 @@ class ApiDashboardRepository implements DashboardRepository {
         (assessment['hhs'] as num?)?.toDouble() ??
         fallback.previousScore;
 
+    final scoreHistory = _scoreHistory(monitoringJson);
+    final insights = _insights(monitoringJson);
+
     final currentUser = _ref.read(currentUserProvider);
 
     return fallback.copyWith(
@@ -158,6 +188,10 @@ class ApiDashboardRepository implements DashboardRepository {
       confidenceLabel: assessment['confidence_label'] as String? ?? fallback.confidenceLabel,
       burdenBreakdown: burdenBreakdown.isNotEmpty ? burdenBreakdown : fallback.burdenBreakdown,
       domainSummary: domainSummary.isNotEmpty ? domainSummary : fallback.domainSummary,
+      scoreHistory: scoreHistory.isNotEmpty ? scoreHistory : fallback.scoreHistory,
+      positiveProgress: insights.positive.isNotEmpty ? insights.positive : fallback.positiveProgress,
+      attentionRequired: insights.attention.isNotEmpty ? insights.attention : fallback.attentionRequired, 
+
     );
   }
 
@@ -234,4 +268,12 @@ class ApiDashboardRepository implements DashboardRepository {
         return null;
     }
   }
+}
+
+
+
+class _MonitoringInsights {
+  const _MonitoringInsights({required this.positive, required this.attention});
+  final List<String> positive;
+  final List<String> attention;
 }

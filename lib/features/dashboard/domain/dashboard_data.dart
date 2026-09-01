@@ -23,6 +23,31 @@ class BurdenItem extends Equatable {
   @override
   List<Object?> get props => [label, value, status, highlighted];
 }
+/// A single point in the Heart Health Score trend, sourced from
+/// `GET /me/monitoring`'s `monitoring.history.hhs_trend`. Powers the
+/// Score History bottom sheet (chart + list) opened from the history
+/// icon on the score card.
+class ScoreHistoryEntry extends Equatable {
+  const ScoreHistoryEntry({
+    required this.date,
+    required this.visitId,
+    required this.hhs,
+    required this.confidence,
+    required this.isSelfLogged,
+  });
+
+  final DateTime date;
+  final String visitId;
+  final double hhs;
+  final double confidence;
+
+  /// True when `visit_id` starts with "SELF" rather than "VISIT" — used to
+  /// give self-logged points a lighter marker so formal visits stand out.
+  final bool isSelfLogged;
+
+  @override
+  List<Object?> get props => [date, visitId, hhs, confidence, isSelfLogged];
+}
 enum ParameterSeverity { normal, borderline, atRisk, missing, notApplicable }
 class DomainParameterDetail extends Equatable {
   const DomainParameterDetail({
@@ -172,6 +197,9 @@ class DashboardData extends Equatable {
     required this.rewardsProgress,
     this.maxScore = 100,
     this.hasAssessmentData = true,
+    this.scoreHistory = const [],
+    this.positiveProgress = const [],
+    this.attentionRequired = const [],
   });
 
   final String profileName;
@@ -181,6 +209,9 @@ class DashboardData extends Equatable {
   final double previousScore;
   final double maxScore;
   final bool hasAssessmentData;
+  final List<ScoreHistoryEntry> scoreHistory;
+  final List<String> positiveProgress;
+  final List<String> attentionRequired;
 
   final int confidencePercent;
   final String confidenceLabel;
@@ -216,6 +247,9 @@ class DashboardData extends Equatable {
     List<DomainSummaryItem>? domainSummary,
     WeeklyAchievements? weeklyAchievements,
     RewardsProgress? rewardsProgress,
+    List<ScoreHistoryEntry>? scoreHistory,
+    List<String>? positiveProgress,
+    List<String>? attentionRequired,
   }) {
     return DashboardData(
       hasAssessmentData: hasAssessmentData ?? this.hasAssessmentData,
@@ -234,6 +268,9 @@ class DashboardData extends Equatable {
       domainSummary: domainSummary ?? this.domainSummary,
       weeklyAchievements: weeklyAchievements ?? this.weeklyAchievements,
       rewardsProgress: rewardsProgress ?? this.rewardsProgress,
+      scoreHistory: scoreHistory ?? this.scoreHistory,
+      positiveProgress: positiveProgress ?? this.positiveProgress,
+      attentionRequired: attentionRequired ?? this.attentionRequired,
     );
   }
 

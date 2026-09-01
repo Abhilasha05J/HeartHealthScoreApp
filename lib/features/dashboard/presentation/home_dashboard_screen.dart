@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:heart_health_score/features/dashboard/presentation/widgets/dashboard_insights_section.dart';
 import 'package:heart_health_score/features/dashboard/presentation/widgets/domain_summary_card.dart';
 
 import 'package:heart_health_score/core/theme/app_colors.dart';
 import 'package:heart_health_score/core/theme/app_text_styles.dart';
 import 'package:heart_health_score/features/dashboard/application/dashboard_providers.dart';
 import 'package:heart_health_score/features/dashboard/presentation/widgets/rewards_milestone_section.dart';
+import 'package:heart_health_score/features/dashboard/presentation/widgets/score_history_sheet.dart';
 import 'package:heart_health_score/features/dashboard/presentation/widgets/weekly_achievements_section.dart';
 import 'package:heart_health_score/features/wearable/application/wearable_providers.dart';
 import 'package:heart_health_score/features/wearable/domain/wearable_models.dart' show WearableConnectionStatus;
@@ -104,15 +106,12 @@ class HomeDashboardScreen extends ConsumerWidget {
                     isSyncing: wearableState.isSyncing,
                     isConnected: wearableState.status == WearableConnectionStatus.connected,
                     onConnectWearable: () => ref.read(wearableControllerProvider.notifier).connectOrRefresh(),
-                    onViewHistory: () {
-                      // TODO(score-history): swap for context.push('/home/score-history')
-                      // once that screen + route exist. Snackbar is a safe
-                      // placeholder in the meantime, same pattern as the
-                      // wearable error states above.
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Score history is coming soon.')),
-                      );
-                    },
+                    onViewHistory: () => showScoreHistorySheet(context, data),
+                  ),
+                  const SizedBox(height: 24),
+                  DashboardInsightsSection(
+                    positiveProgress: data.positiveProgress,
+                    attentionRequired: data.attentionRequired,
                   ),
                   const SizedBox(height: 24),
                   Text('YOUR CONDITION', style: AppTextStyles.dashboardcardheading.copyWith(fontSize: 18)),
