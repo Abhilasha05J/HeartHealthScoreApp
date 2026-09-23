@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 
-import '../domain/assessment_models.dart';
+import 'package:heart_health_score/features/assessment/domain/assessment_models.dart';
 
 /// Real implementation of AssessmentRepository — calls backend APIs.
 ///

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../core/theme/app_colors.dart';
-import '../application/plan_providers.dart';
-import '../data/mock_plan_repository.dart';
-import '../domain/plan_data.dart';
+import 'package:heart_health_score/core/theme/app_colors.dart';
+import 'package:heart_health_score/features/plans/application/plan_providers.dart';
+import 'package:heart_health_score/features/plans/data/mock_plan_repository.dart';
+import 'package:heart_health_score/features/plans/domain/plan_data.dart';
 import 'widgets/notched_tier_card.dart';
 import 'widgets/package_card.dart';
 import 'widgets/plan_tier_tab_bar.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
+import 'package:heart_health_score/core/theme/app_colors.dart';
 
 /// The mint "+ New Workout" / "+ Add Exercise" pill pair.
 class ActionPillButtons extends StatelessWidget {

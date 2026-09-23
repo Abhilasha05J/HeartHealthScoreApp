@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../core/theme/app_colors.dart';
+import 'package:heart_health_score/core/theme/app_colors.dart';
 
 /// "< Today, 12 Aug >" pill with prev/next chevrons for paging the
 /// selected activity date by one day, PLUS the date label itself is now

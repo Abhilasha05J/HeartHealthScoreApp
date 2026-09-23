@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/app_colors.dart';
-import '../domain/plan_data.dart';
-import '../domain/plan_repository.dart';
+import 'package:heart_health_score/core/theme/app_colors.dart';
+import 'package:heart_health_score/features/plans/domain/plan_data.dart';
+import 'package:heart_health_score/features/plans/domain/plan_repository.dart';
 
 /// TODO(backend-integration): replace with `ApiPlanRepository` once a
 /// packages endpoint exists. Card copy is verbatim from the 3 screenshots;

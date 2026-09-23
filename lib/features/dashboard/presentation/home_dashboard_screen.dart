@@ -12,7 +12,7 @@ import 'package:heart_health_score/features/dashboard/presentation/widgets/score
 import 'package:heart_health_score/features/dashboard/presentation/widgets/weekly_achievements_section.dart';
 import 'package:heart_health_score/features/wearable/application/wearable_providers.dart';
 import 'package:heart_health_score/features/wearable/domain/wearable_models.dart' show WearableConnectionStatus;
-import '../../../core/router/app_router.dart';
+import 'package:heart_health_score/core/router/app_router.dart';
 import 'widgets/burden_breakdown_chart.dart';
 import 'widgets/condition_card.dart';
 import 'widgets/health_score_card.dart';

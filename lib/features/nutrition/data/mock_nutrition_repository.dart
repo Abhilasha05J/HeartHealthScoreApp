@@ -1,5 +1,5 @@
-import '../domain/nutrition_data.dart';
-import '../domain/nutrition_repository.dart';
+import 'package:heart_health_score/features/nutrition/domain/nutrition_data.dart';
+import 'package:heart_health_score/features/nutrition/domain/nutrition_repository.dart';
 
 /// TEMPORARY mock — in-memory only. Seeded exactly like the mockup: an
 /// empty day (all totals 0, no food/supplements logged, all

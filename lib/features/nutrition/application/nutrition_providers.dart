@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../data/mock_nutrition_repository.dart';
-import '../domain/nutrition_data.dart';
-import '../domain/nutrition_repository.dart';
+import 'package:heart_health_score/features/nutrition/data/mock_nutrition_repository.dart';
+import 'package:heart_health_score/features/nutrition/domain/nutrition_data.dart';
+import 'package:heart_health_score/features/nutrition/domain/nutrition_repository.dart';
 
 /// Transient UI state — which meal type is currently picked, feeding the
 /// next food item logged. Not part of `NutritionData` since it's not

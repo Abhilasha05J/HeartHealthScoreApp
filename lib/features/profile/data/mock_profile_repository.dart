@@ -1,5 +1,5 @@
-import '../domain/profile_data.dart';
-import '../domain/profile_repository.dart';
+import 'package:heart_health_score/features/profile/domain/profile_data.dart';
+import 'package:heart_health_score/features/profile/domain/profile_repository.dart';
 
 /// TODO(backend-integration): replace with `ApiProfileRepository` once the
 /// backend exposes a profile read/update endpoint. Seed values copied

@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart' show GoRouterHelper;
-import 'package:heart_health_score/core/theme/app_colors.dart';
-import 'package:heart_health_score/core/theme/app_text_styles.dart';
-
-import '../../application/workout_providers.dart';
-import '../../domain/workout_data.dart';
+import 'package:heart_health_score/features/workout/application/workout_providers.dart';
+import 'package:heart_health_score/features/workout/domain/workout_data.dart';
 import 'action_pill_buttons.dart';
 import 'activity_rings.dart';
 import 'date_nav_header.dart';

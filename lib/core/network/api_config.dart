@@ -12,7 +12,7 @@ abstract class ApiConfig {
   ApiConfig._();
 
   static const String baseUrl =
-      'http://ec2-43-204-143-123.ap-south-1.compute.amazonaws.com/api/v1';
+      'http://65.0.179.22/api/v1';
 
   static const Duration connectTimeout = Duration(seconds: 15);
   static const Duration receiveTimeout = Duration(seconds: 15);

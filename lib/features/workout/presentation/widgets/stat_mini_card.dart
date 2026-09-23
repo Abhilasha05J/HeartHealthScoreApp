@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
-import '../../domain/workout_data.dart';
+import 'package:heart_health_score/core/theme/app_colors.dart';
+import 'package:heart_health_score/features/workout/domain/workout_data.dart';
 import 'animated_gradient_divider.dart';
 
 class StatMiniCardRow extends StatelessWidget {

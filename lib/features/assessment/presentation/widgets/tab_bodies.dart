@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heart_health_score/core/theme/app_colors.dart';
-import '../../application/assessment_providers.dart';
-import '../../domain/assessment_models.dart';
+import 'package:heart_health_score/features/assessment/application/assessment_providers.dart';
+import 'package:heart_health_score/features/assessment/domain/assessment_models.dart';
 import 'assessment_widgets.dart';
 
 class PressureTabBody extends ConsumerWidget {

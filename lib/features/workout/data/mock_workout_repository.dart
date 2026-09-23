@@ -1,5 +1,5 @@
-import '../domain/workout_data.dart';
-import '../domain/workout_repository.dart';
+import 'package:heart_health_score/features/workout/domain/workout_data.dart';
+import 'package:heart_health_score/features/workout/domain/workout_repository.dart';
 
 /// TODO(backend-integration): replace with `ApiWorkoutRepository` once the
 /// backend exposes a daily-activity + workout-log endpoint. Values below are

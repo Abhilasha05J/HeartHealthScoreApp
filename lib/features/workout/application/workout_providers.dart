@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../data/mock_workout_repository.dart';
-import '../domain/workout_data.dart';
-import '../domain/workout_repository.dart';
+import 'package:heart_health_score/features/workout/data/mock_workout_repository.dart';
+import 'package:heart_health_score/features/workout/domain/workout_data.dart';
+import 'package:heart_health_score/features/workout/domain/workout_repository.dart';
 
 /// Single override point for swapping in a real API repository later —
 /// never import `MockWorkoutRepository` directly from a screen/controller.

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:heart_health_score/core/theme/app_text_styles.dart';
 
-import '../../../core/theme/app_colors.dart';
+import 'package:heart_health_score/core/theme/app_colors.dart';
 import 'widgets/workout_dashboard_body.dart';
 
 class WorkoutDetailScreen extends StatelessWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
+import 'package:heart_health_score/core/theme/app_colors.dart';
+import 'package:heart_health_score/core/theme/app_text_styles.dart';
 
 /// A tappable row: label on the left, a trailing value/action word on the
 /// right (e.g. "Meal type ... Select", "Food item ... Add"), with a thin

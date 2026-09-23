@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../data/mock_food_search_repository.dart';
-import '../domain/food_item.dart';
-import '../domain/food_search_repository.dart';
+import 'package:heart_health_score/features/nutrition/data/mock_food_search_repository.dart';
+import 'package:heart_health_score/features/nutrition/domain/food_item.dart';
+import 'package:heart_health_score/features/nutrition/domain/food_search_repository.dart';
 
 final foodSearchRepositoryProvider = Provider<FoodSearchRepository>((ref) {
   return MockFoodSearchRepository();

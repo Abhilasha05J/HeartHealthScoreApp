@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
+import 'package:heart_health_score/core/theme/app_colors.dart';
 
 /// The "Select Plan" / "View Details" pill button. Both use the same
 /// fill/shadow/text styling — per spec, text is black for every button

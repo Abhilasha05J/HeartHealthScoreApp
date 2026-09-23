@@ -4,10 +4,8 @@ import 'package:heart_health_score/features/dashboard/data/api_dashboard_reposit
 import 'package:heart_health_score/features/wearable/application/wearable_providers.dart';
 import 'package:heart_health_score/features/wearable/domain/wearable_formatters.dart';
 import 'package:heart_health_score/features/wearable/domain/wearable_models.dart';
-
-import '../data/mock_dashboard_repository.dart';
-import '../domain/dashboard_data.dart';
-import '../domain/dashboard_repository.dart';
+import 'package:heart_health_score/features/dashboard/domain/dashboard_data.dart';
+import 'package:heart_health_score/features/dashboard/domain/dashboard_repository.dart';
 
 
 final dashboardRepositoryProvider = Provider<DashboardRepository>((ref) {

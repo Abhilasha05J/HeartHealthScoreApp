@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/widgets/primary_button.dart';
-import '../../application/food_search_providers.dart';
-import '../../domain/food_item.dart';
-import '../../domain/nutrition_data.dart';
+import 'package:heart_health_score/core/theme/app_colors.dart';
+import 'package:heart_health_score/core/theme/app_text_styles.dart';
+import 'package:heart_health_score/core/widgets/primary_button.dart';
+import 'package:heart_health_score/features/nutrition/application/food_search_providers.dart';
+import 'package:heart_health_score/features/nutrition/domain/food_item.dart';
+import 'package:heart_health_score/features/nutrition/domain/nutrition_data.dart';
 
 /// Search bar + live results list for logging a meal, replacing the
 /// original manual "type in calories/protein/carbs/fat yourself" flow —

@@ -1,8 +1,8 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
-import '../../domain/workout_data.dart';
+import 'package:heart_health_score/core/theme/app_colors.dart';
+import 'package:heart_health_score/features/workout/domain/workout_data.dart';
 
 /// Three concentric progress rings (outer -> inner: steps green, active-time
 /// blue, calories purple) with a flame icon centered, matching the workout

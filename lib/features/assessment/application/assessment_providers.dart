@@ -1,8 +1,8 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../auth/application/auth_providers.dart';
-import '../data/api_assessment_repository.dart';
-import '../domain/assessment_models.dart';
+import 'package:heart_health_score/features/auth/application/auth_providers.dart';
+import 'package:heart_health_score/features/assessment/data/api_assessment_repository.dart';
+import 'package:heart_health_score/features/assessment/domain/assessment_models.dart';
 
 // ─────────────────────────────────────────────────────────────────────────
 // Repository & API Client (wire these up with your actual dependencies)

@@ -20,7 +20,7 @@ import 'package:heart_health_score/features/dashboard/presentation/home_dashboar
 import 'package:heart_health_score/features/dashboard/presentation/placeholder_tab_screen.dart';
 import 'package:heart_health_score/features/wearable/presentation/connect_wearable_screen.dart';
 
-import '../../features/assessment/presentation/reports_history_screen.dart';
+import 'package:heart_health_score/features/assessment/presentation/reports_history_screen.dart';
 
 abstract class AppRoutes {
   AppRoutes._();

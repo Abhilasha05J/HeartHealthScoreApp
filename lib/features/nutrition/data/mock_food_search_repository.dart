@@ -1,5 +1,5 @@
-import '../domain/food_item.dart';
-import '../domain/food_search_repository.dart';
+import 'package:heart_health_score/features/nutrition/domain/food_item.dart';
+import 'package:heart_health_score/features/nutrition/domain/food_search_repository.dart';
 
 /// TEMPORARY mock — a small hand-picked sample so the search UI is fully
 /// functional and demoable, NOT a real food database.

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../core/theme/app_colors.dart';
+import 'package:heart_health_score/core/theme/app_colors.dart';
 import 'widgets/workout_dashboard_body.dart';
 
 /// The "Home" branch content inside [HomeShell] — matches the mockup with

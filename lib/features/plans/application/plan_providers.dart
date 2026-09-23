@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../data/mock_plan_repository.dart';
-import '../domain/plan_data.dart';
-import '../domain/plan_repository.dart';
+import 'package:heart_health_score/features/plans/data/mock_plan_repository.dart';
+import 'package:heart_health_score/features/plans/domain/plan_data.dart';
+import 'package:heart_health_score/features/plans/domain/plan_repository.dart';
 
 final planRepositoryProvider = Provider<PlanRepository>((ref) {
   return MockPlanRepository();
