@@ -1,4 +1,7 @@
 # Miscellaneous
+android/key.properties
+*.jks
+*.keystore
 *.class
 *.log
 *.pyc
