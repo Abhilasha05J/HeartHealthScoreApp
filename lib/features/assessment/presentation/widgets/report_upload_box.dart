@@ -55,7 +55,6 @@ class ReportUploadBox extends ConsumerWidget {
       );
     } catch (e) {
       // Covers permission denial and picker failures alike — friendly
-      // message, not e.toString(), per SKILL.md error-handling rule.
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Couldn't upload that report. Please try again.")),

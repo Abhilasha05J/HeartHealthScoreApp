@@ -3,7 +3,6 @@
 /// These are the ONLY types the presentation/application layers should ever touch.
 /// The Health Connect / HealthKit response shapes (HealthDataPoint, etc.) must stay
 /// inside the data-layer repository implementation — never let them leak up here.
-/// (Same rule as OnboardingRepository / AuthRepository — see skill section 7.)
 
 enum WearableMetricType {
   restingHeartRate,

@@ -4,10 +4,7 @@ import 'api_config.dart';
 import 'token_storage.dart';
 
 /// Builds the single shared [Dio] instance for the app.
-///
-/// Only files under `lib/features/*/data/` and this file should ever
-/// import `dio` — see SKILL.md section 7. Screens/controllers depend on
-/// repository interfaces, never on Dio directly.
+
 class ApiClient {
   ApiClient(TokenStorage tokenStorage)
       : dio = Dio(

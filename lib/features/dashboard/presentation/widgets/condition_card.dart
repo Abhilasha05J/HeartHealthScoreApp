@@ -12,7 +12,8 @@ class ConditionCard extends StatelessWidget {
     required this.iconColor,
   });
 
-  final String value;
+  /// null → renders "No data".
+  final String? value;
   final String label;
   final String imagePath;
   final Color tintColor;
@@ -39,15 +40,17 @@ class ConditionCard extends StatelessWidget {
             ),
           ),
 
-       //   const Spacer(), // pushes the text to the bottom
+          //   const Spacer(), // pushes the text to the bottom
 
           Text(
-            value,
+            value ?? 'No data',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: AppTextStyles.pageHeading.copyWith(
-              fontSize: 20,
-              color: AppColors.inputText,
+              fontSize: value == null ? 16 : 20,
+              color: value == null
+                  ? AppColors.inputText.withOpacity(0.5)
+                  : AppColors.inputText,
             ),
           ),
 

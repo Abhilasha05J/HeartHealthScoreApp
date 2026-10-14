@@ -1,11 +1,9 @@
 import 'dart:ui';
-
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'app.dart';
 import 'core/firebase/firebase_bootstrap.dart';
 import 'core/network/api_config.dart';
@@ -41,3 +39,4 @@ Future<void> main() async {
 
   runApp(const ProviderScope(child: HeartHealthScoreApp()));
 }
+

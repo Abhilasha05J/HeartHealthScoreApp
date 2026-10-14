@@ -20,54 +20,101 @@ class WeeklyAchievementsSection extends StatelessWidget {
       crossAxisSpacing: 14,
       childAspectRatio: 1.1,
       children: [
-        _AchievementCardShell(
-          iconAsset: 'assets/icons/hydration_drop.png',
-          title: 'Hydration Meter',
-          content: _HydrationBarChart(last7DaysMl: achievements.hydrationLast7DaysMl),
-          caption: 'Last 7 Days',
-        ),
-        _AchievementCardShell(
-          iconAsset: 'assets/icons/workout_dumbbell.png',
-          title: 'Daily Activity',
-          content: RingProgressIndicator(
-            progress: achievements.dailyActivityConsistencyPercent / 100,
-            trackColor: AppColors.activityRingTrack,
-            progressColor: AppColors.activityRingProgress,
-            strokeWidth: 4,
-            size: 64,
-            child: Text(
-              '${achievements.dailyActivityConsistencyPercent}%',
-              style: AppTextStyles.cardTitle.copyWith(
-                fontSize: 14,
-                color: AppColors.activityRingText,
+        if (achievements.hydrationLast7DaysMl == null)
+          const _AchievementCardShell(
+            iconAsset: 'assets/icons/hydration_drop.png',
+            title: 'Hydration Meter',
+            content: _NoData(),
+            caption: '',
+          )
+        else
+          _AchievementCardShell(
+            iconAsset: 'assets/icons/hydration_drop.png',
+            title: 'Hydration Meter',
+            content: _HydrationBarChart(last7DaysMl: achievements.hydrationLast7DaysMl!),
+            caption: 'Last 7 Days',
+          ),
+        if (achievements.dailyActivityConsistencyPercent == null)
+          const _AchievementCardShell(
+            iconAsset: 'assets/icons/workout_dumbbell.png',
+            title: 'Daily Activity',
+            content: _NoData(),
+            caption: '',
+          )
+        else
+          _AchievementCardShell(
+            iconAsset: 'assets/icons/workout_dumbbell.png',
+            title: 'Daily Activity',
+            content: RingProgressIndicator(
+              progress: achievements.dailyActivityConsistencyPercent! / 100,
+              trackColor: AppColors.activityRingTrack,
+              progressColor: AppColors.activityRingProgress,
+              strokeWidth: 4,
+              size: 64,
+              child: Text(
+                '${achievements.dailyActivityConsistencyPercent}%',
+                style: AppTextStyles.cardTitle.copyWith(
+                  fontSize: 14,
+                  color: AppColors.activityRingText,
+                ),
               ),
             ),
+            caption: 'Consistency: ${achievements.dailyActivityConsistencyLabel}',
           ),
-          caption: 'Consistency: ${achievements.dailyActivityConsistencyLabel}',
-        ),
-        _AchievementCardShell(
-          iconAsset: 'assets/icons/moon_purple.png',
-          title: 'Sleep Quality',
-          content: _SleepQualityBar(score: achievements.sleepQualityScore),
-          caption: 'Restorative',
-        ),
-        _AchievementCardShell(
-          iconAsset: 'assets/icons/trend_up_green.png',
-          title: 'Vitals',
-          content: SizedBox(
-            width: double.infinity,
-            height: 40,
-            child: CustomPaint(
-              painter: _SparklinePainter(
-                color: AppColors.vitalsStableBorder,
-                strokeWidth: 1.6,
+        if (achievements.sleepQualityScore == null)
+          const _AchievementCardShell(
+            iconAsset: 'assets/icons/moon_purple.png',
+            title: 'Sleep Quality',
+            content: _NoData(),
+            caption: '',
+          )
+        else
+          _AchievementCardShell(
+            iconAsset: 'assets/icons/moon_purple.png',
+            title: 'Sleep Quality',
+            content: _SleepQualityBar(score: achievements.sleepQualityScore!),
+            caption: 'Restorative',
+          ),
+        if (achievements.vitalsStable == null)
+          const _AchievementCardShell(
+            iconAsset: 'assets/icons/trend_up_green.png',
+            title: 'Vitals',
+            content: _NoData(),
+            caption: '',
+          )
+        else
+          _AchievementCardShell(
+            iconAsset: 'assets/icons/trend_up_green.png',
+            title: 'Vitals',
+            content: SizedBox(
+              width: double.infinity,
+              height: 40,
+              child: CustomPaint(
+                painter: _SparklinePainter(
+                  color: AppColors.vitalsStableBorder,
+                  strokeWidth: 1.6,
+                ),
               ),
             ),
+            caption: achievements.vitalsStable! ? 'STABLE' : 'MONITOR',
+            captionColor: AppColors.vitalsStableText,
           ),
-          caption: achievements.vitalsStable ? 'STABLE' : 'MONITOR',
-          captionColor: AppColors.vitalsStableText,
-        ),
       ],
+    );
+  }
+}
+
+class _NoData extends StatelessWidget {
+  const _NoData();
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      'No data',
+      style: AppTextStyles.hint.copyWith(
+        fontSize: 14,
+        color: AppColors.inputText.withOpacity(0.5),
+      ),
     );
   }
 }

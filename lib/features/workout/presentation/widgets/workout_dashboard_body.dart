@@ -49,7 +49,6 @@ class WorkoutDashboardBody extends ConsumerWidget {
                     padding: const EdgeInsets.only(top: 80),
                     // User-facing copy is a placeholder — replace with a mapped,
                     // human-readable message once real error codes exist
-                    // (see skill §6.1 Error handling & resilience).
                     child: Center(child: Text('Could not load activity: $error')),
                   ),
                 ),

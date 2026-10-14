@@ -21,7 +21,6 @@ enum NotificationType {
   ///
   /// Keep this in sync with whatever string key the backend team uses in
   /// their FCM data payload — confirm the exact key/values with them before
-  /// wiring the real backend (see production-readiness note in the skill).
   static NotificationType fromRaw(String? raw) {
     switch (raw) {
       case 'score_ready':

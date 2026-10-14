@@ -45,7 +45,6 @@ class PlansScreen extends ConsumerWidget {
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, stack) => Center(
             // Placeholder copy — replace with a mapped, human-readable
-            // message once real error codes exist (skill §6.1).
             child: Text('Could not load plans: $error'),
           ),
           data: (tiers) {

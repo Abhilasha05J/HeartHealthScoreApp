@@ -1,8 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /// Persists the auth token pair in secure storage (Keychain on iOS,
-/// EncryptedSharedPreferences on Android) — never `shared_preferences`,
-/// per SKILL.md 6.6.
+/// EncryptedSharedPreferences on Android) — never `shared_preferences`
 ///
 /// This is the ONLY place that reads/writes tokens. Repositories and
 /// interceptors go through this class; nothing else should touch

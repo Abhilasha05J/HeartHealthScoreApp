@@ -1,3 +1,259 @@
+// import 'package:flutter/material.dart';
+// import 'package:flutter_riverpod/flutter_riverpod.dart';
+// import 'package:go_router/go_router.dart';
+// import 'package:heart_health_score/features/dashboard/presentation/widgets/dashboard_insights_section.dart';
+// import 'package:heart_health_score/features/dashboard/presentation/widgets/domain_summary_card.dart';
+//
+// import 'package:heart_health_score/core/theme/app_colors.dart';
+// import 'package:heart_health_score/core/theme/app_text_styles.dart';
+// import 'package:heart_health_score/features/dashboard/application/dashboard_providers.dart';
+// import 'package:heart_health_score/features/dashboard/presentation/widgets/rewards_milestone_section.dart';
+// import 'package:heart_health_score/features/dashboard/presentation/widgets/score_history_sheet.dart';
+// import 'package:heart_health_score/features/dashboard/presentation/widgets/weekly_achievements_section.dart';
+// import 'package:heart_health_score/features/wearable/application/wearable_providers.dart';
+// import 'package:heart_health_score/features/wearable/domain/wearable_models.dart' show WearableConnectionStatus;
+// import 'package:heart_health_score/core/router/app_router.dart';
+// import 'widgets/burden_breakdown_chart.dart';
+// import 'widgets/condition_card.dart';
+// import 'widgets/health_score_card.dart';
+//
+// class HomeDashboardScreen extends ConsumerWidget {
+//   const HomeDashboardScreen({super.key});
+//
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     //final dashboardAsync = ref.watch(dashboardDataProvider);
+//     final dashboardAsync = ref.watch(mergedDashboardDataProvider);
+//     final wearableState = ref.watch(wearableControllerProvider);
+//
+//     ref.listen(wearableControllerProvider, (previous, next) {
+//       if (previous?.status == next.status && previous?.errorMessage == next.errorMessage) return;
+//
+//       switch (next.status) {
+//         case WearableConnectionStatus.storeUnavailable:
+//           ScaffoldMessenger.of(context).showSnackBar(
+//             SnackBar(
+//               content: const Text('Health Connect isn\'t installed on this device.'),
+//               action: SnackBarAction(
+//                 label: 'Install',
+//                 onPressed: () => ref.read(wearableControllerProvider.notifier).openStoreInstallPage(),
+//               ),
+//             ),
+//           );
+//           break;
+//         case WearableConnectionStatus.permissionDenied:
+//           ScaffoldMessenger.of(context).showSnackBar(
+//             const SnackBar(content: Text('Permission wasn\'t granted. Tap Connect Wearable to try again.')),
+//           );
+//           break;
+//         case WearableConnectionStatus.error:
+//           if (next.errorMessage != null) {
+//             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(next.errorMessage!)));
+//           }
+//           break;
+//         default:
+//           break;
+//       }
+//     });
+//
+//     return Scaffold(
+//       backgroundColor: AppColors.scaffoldBackground,
+//       body: SafeArea(
+//         bottom: false,
+//         child: dashboardAsync.when(
+//           loading: () => const Center(child: CircularProgressIndicator()),
+//           error: (error, stackTrace) => _ErrorState(
+//             onRetry: () => ref.invalidate(dashboardDataProvider),
+//           ),
+//           data: (data) => RefreshIndicator(
+//             onRefresh: () async => ref.invalidate(dashboardDataProvider),
+//             child: SingleChildScrollView(
+//               physics: const AlwaysScrollableScrollPhysics(),
+//               padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Row(
+//                     children: [
+//                       const CircleAvatar(
+//                         radius: 28,
+//                         backgroundColor: Color(0xFFE0E0E0),
+//                         child: Icon(Icons.person, color: Colors.white, size: 32),
+//                       ),
+//                       const SizedBox(width: 14),
+//                       Column(
+//                         crossAxisAlignment: CrossAxisAlignment.start,
+//                         children: [
+//                           Text(
+//                             data.profileName.toUpperCase(),
+//                             style: AppTextStyles.cardTitle.copyWith(fontSize: 16),
+//                           ),
+//                           const SizedBox(height: 2),
+//                           Text('Age : ${data.age}', style: AppTextStyles.hint),
+//                         ],
+//                       ),
+//                     ],
+//                   ),
+//                   if (!data.hasAssessmentData) ...[
+//                     const SizedBox(height: 16),
+//                     _NoAssessmentBanner(
+//                       onTap: () => context.go(AppRoutes.parameters),
+//                     ),
+//                   ],
+//                   const SizedBox(height: 20),
+//                   HealthScoreCard(
+//                     data: data,
+//                     isSyncing: wearableState.isSyncing,
+//                     isConnected: wearableState.status == WearableConnectionStatus.connected,
+//                     onConnectWearable: () => ref.read(wearableControllerProvider.notifier).connectOrRefresh(),
+//                     onViewHistory: () => showScoreHistorySheet(context, data),
+//                   ),
+//                   const SizedBox(height: 24),
+//                   DashboardInsightsSection(
+//                     positiveProgress: data.positiveProgress,
+//                     attentionRequired: data.attentionRequired,
+//                   ),
+//                   const SizedBox(height: 24),
+//                   Text('YOUR CONDITION', style: AppTextStyles.dashboardcardheading.copyWith(fontSize: 18)),
+//                   const SizedBox(height: 14),
+//                   GridView.count(
+//                     crossAxisCount: 2,
+//                     shrinkWrap: true,
+//                     physics: const NeverScrollableScrollPhysics(),
+//                     mainAxisSpacing: 14,
+//                     crossAxisSpacing: 14,
+//                     childAspectRatio: 1.3,
+//                     children: [
+//                       ConditionCard(
+//                         value: '${data.restingHeartRateBpm} bpm',
+//                         label: 'Resting Heart Rate',
+//                         imagePath: 'assets/icons/heartrate.png',
+//                         tintColor: AppColors.conditionTintRed,
+//                         iconColor: AppColors.errorColor,
+//                       ),
+//                       ConditionCard(
+//                         value: data.sleepDurationLabel,
+//                         label: 'Sleep Duration',
+//                         imagePath: 'assets/icons/sleep.png',
+//                         tintColor: AppColors.conditionTintBlue,
+//                         iconColor: AppColors.accentColor,
+//                       ),
+//                       ConditionCard(
+//                         value: data.bloodPressureLabel,
+//                         label: 'Blood Pressure',
+//                         imagePath: 'assets/icons/bpr.png',
+//                         tintColor: AppColors.conditionTintBlue,
+//                         iconColor: AppColors.accentColor,
+//                       ),
+//                       ConditionCard(
+//                         value: '${data.stepCount}',
+//                         label: 'Step Count',
+//                         imagePath: 'assets/icons/steps.png',
+//                         tintColor: AppColors.conditionTintPurple,
+//                         iconColor: const Color(0xFF8B7BD8),
+//                       ),
+//                     ],
+//                   ),
+//                   const SizedBox(height: 28),
+//                   Text('WEEKLY ACHIEVEMENTS', style: AppTextStyles.dashboardcardheading.copyWith(fontSize: 18)),
+//                   const SizedBox(height: 14),
+//                   WeeklyAchievementsSection(achievements: data.weeklyAchievements),
+//                   const SizedBox(height: 28),
+//                   RewardsMilestoneCard(progress: data.rewardsProgress),
+//                   const SizedBox(height: 18),
+//                   Text('UNLOCKED REWARDS', style: AppTextStyles.dashboardcardheading.copyWith(fontSize: 18)),
+//                   const SizedBox(height: 14),
+//                   UnlockedRewardsSection(unlocked: data.rewardsProgress.unlockedBadges),
+//                   const SizedBox(height: 28),
+//                   Text('DOMAIN SUMMARY', style: AppTextStyles.dashboardcardheading.copyWith(fontSize: 18)),
+//                   const SizedBox(height: 18),
+//                   DomainSummarySection(items: data.domainSummary),
+//                   const SizedBox(height: 28),
+//                   Text('BURDEN BREAKDOWN', style: AppTextStyles.dashboardcardheading.copyWith(fontSize: 18)),
+//                   const SizedBox(height: 18),
+//                   BurdenBreakdownChart(items: data.burdenBreakdown),
+//                 ],
+//               ),
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+// /// Shown on Home instead of a blank/erroring score card + empty Burden
+// /// Breakdown/Domain Summary when the account hasn't submitted an
+// /// assessment yet ([DashboardData.hasAssessmentData] is false). Everything
+// /// else on the screen still renders as normal underneath it.
+// class _NoAssessmentBanner extends StatelessWidget {
+//   const _NoAssessmentBanner({required this.onTap});
+//
+//   final VoidCallback onTap;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return InkWell(
+//       onTap: onTap,
+//       borderRadius: BorderRadius.circular(14),
+//       child: Container(
+//         padding: const EdgeInsets.all(14),
+//         decoration: BoxDecoration(
+//           color: AppColors.accentColor.withOpacity(0.08),
+//           borderRadius: BorderRadius.circular(14),
+//           border: Border.all(color: AppColors.accentColor.withOpacity(0.25)),
+//         ),
+//         child: Row(
+//           children: [
+//             Icon(Icons.favorite_border_rounded, color: AppColors.accentColor, size: 22),
+//             const SizedBox(width: 12),
+//             Expanded(
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Text(
+//                     'Complete your assessment to see your Heart Health Score',
+//                     style: AppTextStyles.chipLabel.copyWith(fontSize: 13.5, fontWeight: FontWeight.w600),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             Icon(Icons.chevron_right_rounded, color: AppColors.accentColor),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+// class _ErrorState extends StatelessWidget {
+//   const _ErrorState({required this.onRetry});
+//
+//   final VoidCallback onRetry;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Center(
+//       child: Padding(
+//         padding: const EdgeInsets.all(24),
+//         child: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             const Icon(Icons.error_outline, size: 40, color: AppColors.errorColor),
+//             const SizedBox(height: 12),
+//             Text(
+//               'Couldn\'t load your health score. Please try again.',
+//               textAlign: TextAlign.center,
+//               style: AppTextStyles.hint,
+//             ),
+//             const SizedBox(height: 16),
+//             TextButton(onPressed: onRetry, child: const Text('Retry')),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -17,11 +273,39 @@ import 'widgets/burden_breakdown_chart.dart';
 import 'widgets/condition_card.dart';
 import 'widgets/health_score_card.dart';
 
-class HomeDashboardScreen extends ConsumerWidget {
+class HomeDashboardScreen extends ConsumerStatefulWidget {
   const HomeDashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeDashboardScreen> createState() => _HomeDashboardScreenState();
+}
+
+class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  /// Re-read Health Connect when the app returns to the foreground.
+  /// refresh() is a no-op unless already connected, so this never
+  /// triggers a permission dialog.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      ref.read(wearableControllerProvider.notifier).refresh();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     //final dashboardAsync = ref.watch(dashboardDataProvider);
     final dashboardAsync = ref.watch(mergedDashboardDataProvider);
     final wearableState = ref.watch(wearableControllerProvider);
@@ -66,7 +350,12 @@ class HomeDashboardScreen extends ConsumerWidget {
             onRetry: () => ref.invalidate(dashboardDataProvider),
           ),
           data: (data) => RefreshIndicator(
-            onRefresh: () async => ref.invalidate(dashboardDataProvider),
+            onRefresh: () async {
+              ref.invalidate(dashboardDataProvider);
+              // refresh() is a no-op when not connected, so pulling down
+              // never opens the Health Connect permission dialog.
+              await ref.read(wearableControllerProvider.notifier).refresh();
+            },
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
@@ -125,7 +414,7 @@ class HomeDashboardScreen extends ConsumerWidget {
                     childAspectRatio: 1.3,
                     children: [
                       ConditionCard(
-                        value: '${data.restingHeartRateBpm} bpm',
+                        value: data.restingHeartRateBpm == null ? null : '${data.restingHeartRateBpm} bpm',
                         label: 'Resting Heart Rate',
                         imagePath: 'assets/icons/heartrate.png',
                         tintColor: AppColors.conditionTintRed,
@@ -146,7 +435,7 @@ class HomeDashboardScreen extends ConsumerWidget {
                         iconColor: AppColors.accentColor,
                       ),
                       ConditionCard(
-                        value: '${data.stepCount}',
+                        value: data.stepCount?.toString(),
                         label: 'Step Count',
                         imagePath: 'assets/icons/steps.png',
                         tintColor: AppColors.conditionTintPurple,

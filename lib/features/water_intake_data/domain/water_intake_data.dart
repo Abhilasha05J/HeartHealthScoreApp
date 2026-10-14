@@ -33,7 +33,6 @@ class WaterLogEntry extends Equatable {
   List<Object?> get props => [amountMl, sourceLabel, loggedAt];
 }
 
-/// ASSUMPTION (flagged in the skill file too): the mockup shows both
 /// "Remind me every [N hours]" AND "Specific Days of Week" as selected
 /// (filled) at the same time, which doesn't work as a single mutually
 /// exclusive radio group. Modeled here as two independent settings

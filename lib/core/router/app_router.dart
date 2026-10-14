@@ -11,7 +11,6 @@ import 'package:heart_health_score/features/plans/presentation/plans_screen.dart
 import 'package:heart_health_score/features/profile/presentation/profile_screen.dart';
 import 'package:heart_health_score/features/water_intake_data/presentation/water_intake_screen.dart';
 import 'package:heart_health_score/features/workout/presentation/workout_detail_screen.dart';
-
 import 'package:heart_health_score/features/nutrition/presentation/nutrition_screen.dart';
 import 'package:heart_health_score/features/splash/presentation/splash_screen.dart';
 import 'package:heart_health_score/features/auth/presentation/auth_screen.dart';
@@ -19,7 +18,6 @@ import 'package:heart_health_score/features/dashboard/presentation/home_shell.da
 import 'package:heart_health_score/features/dashboard/presentation/home_dashboard_screen.dart';
 import 'package:heart_health_score/features/dashboard/presentation/placeholder_tab_screen.dart';
 import 'package:heart_health_score/features/wearable/presentation/connect_wearable_screen.dart';
-
 import 'package:heart_health_score/features/assessment/presentation/reports_history_screen.dart';
 
 abstract class AppRoutes {

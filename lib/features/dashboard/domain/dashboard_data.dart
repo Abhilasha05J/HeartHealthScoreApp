@@ -105,31 +105,34 @@ class DomainSummaryItem extends Equatable {
   ];
 }
 
-/// The 4 "Weekly Achievements" mini-cards on Home.
+/// The 4 "Weekly Achievements" mini-cards on Home. Every field is null
+/// when there is no real data for it — the UI renders "No data" for that
+/// card; never put sample/placeholder values here.
 class WeeklyAchievements extends Equatable {
   const WeeklyAchievements({
-    required this.hydrationLast7DaysMl,
-    required this.dailyActivityConsistencyPercent,
-    required this.sleepQualityScore,
-    required this.vitalsStable,
+    this.hydrationLast7DaysMl,
+    this.dailyActivityConsistencyPercent,
+    this.sleepQualityScore,
+    this.vitalsStable,
   });
 
-  /// Exactly 7 values, oldest → newest (today last). Used to draw the
-  /// Hydration Master bar chart; today's bar renders in the highlight
-  /// color, the other 6 in the track color.
-  final List<double> hydrationLast7DaysMl;
+  /// Exactly 7 values, oldest → newest (today last), or null if no data.
+  final List<double>? hydrationLast7DaysMl;
 
-  /// 0–100. Drives the Daily Activity ring + "Consistency: High/Low" caption.
-  final int dailyActivityConsistencyPercent;
+  /// 0–100, or null if no data.
+  final int? dailyActivityConsistencyPercent;
 
-  /// 0–100. Drives the Sleep Quality bar + big number.
-  final int sleepQualityScore;
+  /// 0–100, or null if no data.
+  final int? sleepQualityScore;
 
-  /// Drives the Vitals Stability "STABLE" / not-stable caption.
-  final bool vitalsStable;
+  /// null = no data.
+  final bool? vitalsStable;
 
-  String get dailyActivityConsistencyLabel =>
-      dailyActivityConsistencyPercent >= 80 ? 'High' : 'Low';
+  String? get dailyActivityConsistencyLabel {
+    final p = dailyActivityConsistencyPercent;
+    if (p == null) return null;
+    return p >= 80 ? 'High' : 'Low';
+  }
 
   @override
   List<Object?> get props => [
@@ -187,10 +190,10 @@ class DashboardData extends Equatable {
     required this.previousScore,
     required this.confidencePercent,
     required this.confidenceLabel,
-    required this.restingHeartRateBpm,
-    required this.sleepDurationLabel,
-    required this.bloodPressureLabel,
-    required this.stepCount,
+    this.restingHeartRateBpm,
+    this.sleepDurationLabel,
+    this.bloodPressureLabel,
+    this.stepCount,
     required this.burdenBreakdown,
     required this.domainSummary,
     required this.weeklyAchievements,
@@ -216,10 +219,13 @@ class DashboardData extends Equatable {
   final int confidencePercent;
   final String confidenceLabel;
 
-  final int restingHeartRateBpm;
-  final String sleepDurationLabel;
-  final String bloodPressureLabel;
-  final int stepCount;
+  /// Condition-grid values — null means "no data from Health Connect"
+  /// (not connected, not synced, or permission denied). The UI shows
+  /// "No data"; never default these to sample values.
+  final int? restingHeartRateBpm;
+  final String? sleepDurationLabel;
+  final String? bloodPressureLabel;
+  final int? stepCount;
 
   final List<BurdenItem> burdenBreakdown;
   final List<DomainSummaryItem> domainSummary;
@@ -294,4 +300,3 @@ class DashboardData extends Equatable {
     rewardsProgress,
   ];
 }
-
