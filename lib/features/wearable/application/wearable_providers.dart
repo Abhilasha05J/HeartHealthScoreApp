@@ -4,11 +4,14 @@
 // import 'package:heart_health_score/features/wearable/domain/wearable_repository.dart';
 //
 // /// Single swap point — same pattern as authRepositoryProvider /
+// /// onboardingRepositoryProvider (skill section 7).
+// ///
 // /// Now pointed at the real Health Connect / HealthKit implementation. If you
 // /// ever need to go back to seeded data for UI-only work (e.g. no test device
 // /// handy), swap back to:
 // ///   import 'package:heart_health_score/features/wearable/data/mock_wearable_repository.dart';
 // ///   (ref) => MockWearableRepository(),
+// ///
 // /// No screen or controller code changes needed either direction.
 // final wearableRepositoryProvider = Provider<WearableRepository>(
 //       (ref) => HealthWearableRepository(),
@@ -72,7 +75,7 @@
 //   /// failure is surfaced via [errorMessage] for a transient SnackBar, not by
 //   /// dropping back to a "disconnected" status.
 //   Future<void> refresh() async {
-//     if (state.status != WearableConnectionStatus.connected) return;
+//     if (state.status != WearableConnectionStatus.connected || state.isRefreshing) return;
 //     state = state.copyWith(isRefreshing: true, errorMessage: null);
 //     try {
 //       final snapshot = await _repository.fetchLatestSnapshot();
@@ -88,6 +91,7 @@
 //   Future<bool> openStoreInstallPage() => _repository.openPlatformStoreInstallPage();
 // }
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:heart_health_score/features/auth/application/auth_providers.dart';
 import 'package:heart_health_score/features/wearable/data/health_wearable_repository.dart';
 import 'package:heart_health_score/features/wearable/domain/wearable_models.dart';
 import 'package:heart_health_score/features/wearable/domain/wearable_repository.dart';
@@ -108,7 +112,12 @@ final wearableRepositoryProvider = Provider<WearableRepository>(
 
 final wearableControllerProvider =
 StateNotifierProvider<WearableController, WearableConnectionState>(
-      (ref) => WearableController(ref.watch(wearableRepositoryProvider)),
+      (ref) {
+    // Rebuilds (→ fresh, empty state) whenever the user signs in/out, so
+    // one account's wearable snapshot can never show under another.
+    ref.watch(currentUserProvider.select((u) => u == null));
+    return WearableController(ref.watch(wearableRepositoryProvider));
+  },
 );
 
 class WearableController extends StateNotifier<WearableConnectionState> {

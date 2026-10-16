@@ -254,6 +254,7 @@
 //     );
 //   }
 // }
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -262,6 +263,8 @@ import 'package:heart_health_score/features/dashboard/presentation/widgets/domai
 
 import 'package:heart_health_score/core/theme/app_colors.dart';
 import 'package:heart_health_score/core/theme/app_text_styles.dart';
+import 'package:heart_health_score/app_root.dart';
+import 'package:heart_health_score/features/auth/application/auth_providers.dart';
 import 'package:heart_health_score/features/dashboard/application/dashboard_providers.dart';
 import 'package:heart_health_score/features/dashboard/presentation/widgets/rewards_milestone_section.dart';
 import 'package:heart_health_score/features/dashboard/presentation/widgets/score_history_sheet.dart';
@@ -302,6 +305,34 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen>
     if (state == AppLifecycleState.resumed) {
       ref.read(wearableControllerProvider.notifier).refresh();
     }
+  }
+
+  Future<void> _confirmAndLogout() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Log out?'),
+        content: const Text('You will need to sign in again to see your health score.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.of(ctx).pop(true), child: const Text('Log out')),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    try {
+      // Revokes the session server-side (best effort) and clears the stored
+      // tokens + onboarding flag.
+      await ref.read(authRepositoryProvider).logout();
+    } catch (_) {
+      // Even if this throws, still sign out locally.
+    }
+    if (!mounted) return;
+
+    // Disposes every provider and restarts the app at Splash, which finds no
+    // session and routes to Auth. Nothing from this account survives in memory.
+    AppRoot.restart(context);
   }
 
   @override
@@ -370,16 +401,25 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen>
                         child: Icon(Icons.person, color: Colors.white, size: 32),
                       ),
                       const SizedBox(width: 14),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            data.profileName.toUpperCase(),
-                            style: AppTextStyles.cardTitle.copyWith(fontSize: 16),
-                          ),
-                          const SizedBox(height: 2),
-                          Text('Age : ${data.age}', style: AppTextStyles.hint),
-                        ],
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              data.profileName.toUpperCase(),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextStyles.cardTitle.copyWith(fontSize: 16),
+                            ),
+                            const SizedBox(height: 2),
+                            Text('Age : ${data.age}', style: AppTextStyles.hint),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: 'Log out',
+                        onPressed: _confirmAndLogout,
+                        icon: Image.asset('assets/icons/logout.png', width: 26, height: 26),
                       ),
                     ],
                   ),
