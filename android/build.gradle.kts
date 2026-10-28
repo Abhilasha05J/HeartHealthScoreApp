@@ -2,6 +2,17 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        listOf("spandan_ecg_android_sdk", "spandan_ecg_android_sdk_ui").forEach { repo ->
+            maven {
+                url = uri("https://maven.pkg.github.com/sunfox-technologies/$repo")
+                credentials {
+                    username = providers.gradleProperty("SPANDAN_GH_USER").orNull
+                    password = providers.gradleProperty("SPANDAN_GH_TOKEN").orNull
+                }
+                content { includeGroupByRegex("in\\.sunfox.*") }
+            }
+        }
+        maven { url = uri("https://jitpack.io") }
     }
 }
 

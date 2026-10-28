@@ -275,6 +275,9 @@ import 'package:heart_health_score/core/router/app_router.dart';
 import 'widgets/burden_breakdown_chart.dart';
 import 'widgets/condition_card.dart';
 import 'widgets/health_score_card.dart';
+import 'package:heart_health_score/features/dashboard/domain/dashboard_data.dart';
+import 'package:heart_health_score/features/ecg/application/ecg_providers.dart';
+import 'package:heart_health_score/features/ecg/domain/ecg_entities.dart';
 
 class HomeDashboardScreen extends ConsumerStatefulWidget {
   const HomeDashboardScreen({super.key});
@@ -305,6 +308,23 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen>
     if (state == AppLifecycleState.resumed) {
       ref.read(wearableControllerProvider.notifier).refresh();
     }
+  }
+  void _startEcg(DashboardData data) {
+    final s = ref.read(ecgDeviceStatusProvider).valueOrNull;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('ECG: ${s?.sdkState.name} / ${s?.connection.name} / ${s?.deviceVariant}')),
+    );
+    ref.read(ecgControllerProvider.notifier).startTest(
+      EcgPatientData.fromFullName(
+        patientId: 'TEMP-001', // TODO(backend-integration): real patient ID
+        fullName: data.profileName,
+        // ASSUMPTION: data.age is int/int?/String; tryParse covers all three.
+        age: int.tryParse('${data.age}') ?? 30,
+        gender: 'Female', // TEMP: no gender source wired yet
+        heightCm: 165, // TEMP: no height source wired yet
+        weightKg: 60, // TEMP: no weight source wired yet
+      ),
+    );
   }
 
   Future<void> _confirmAndLogout() async {
@@ -368,6 +388,22 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen>
           break;
         default:
           break;
+      }
+    });
+
+    final ecgSupported = ref.watch(ecgSupportedProvider);
+    final isEcgLaunching = ref.watch(ecgControllerProvider.select((s) => s.isLaunching));
+
+    ref.listen<EcgState>(ecgControllerProvider, (previous, next) {
+      if (next.error != null && next.error != previous?.error) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(next.error!)));
+        ref.read(ecgControllerProvider.notifier).clearError();
+      }
+      final report = next.lastReport;
+      if (report != null && report != previous?.lastReport) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('ECG report ready · ${report.characteristics.heartRate} bpm')),
+        );
       }
     });
 
@@ -436,6 +472,8 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen>
                     isConnected: wearableState.status == WearableConnectionStatus.connected,
                     onConnectWearable: () => ref.read(wearableControllerProvider.notifier).connectOrRefresh(),
                     onViewHistory: () => showScoreHistorySheet(context, data),
+                    onTakeEcg: ecgSupported ? () => _startEcg(data) : null,   // new
+                    isEcgLaunching: isEcgLaunching,
                   ),
                   const SizedBox(height: 24),
                   DashboardInsightsSection(

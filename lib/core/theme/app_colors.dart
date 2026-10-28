@@ -51,6 +51,9 @@ abstract class AppColors {
   static const Color improvementChipBg = Color(0xFFD1FAE5);
   static const Color improvementChipText = Color(0xFF059669);
 
+  static const Color spandanButtonBorder = Color(0xFFFECACA);
+  static const Color spandanButtonText = Color(0xFFF98080);
+
   static const Color darkSurface = Color(0xFFC1C1C1); // this screen's app bar
   static const Color lightGreyFill = Color(0xFFF2F2F2); // manual-entry text field bg
   static const Color cardBorder = Color(0xFFE0E0E0); // Set Reminder card outline

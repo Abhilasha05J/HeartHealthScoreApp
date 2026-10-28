@@ -4,6 +4,170 @@ import 'package:heart_health_score/core/theme/app_colors.dart';
 import 'package:heart_health_score/core/theme/app_text_styles.dart';
 import 'package:heart_health_score/features/dashboard/domain/dashboard_data.dart';
 
+// class HealthScoreCard extends StatelessWidget {
+//   const HealthScoreCard({
+//     super.key,
+//     required this.data,
+//     required this.onConnectWearable,
+//     required this.onViewHistory,
+//     this.isSyncing = false,
+//     this.isConnected = false,
+//   });
+//
+//   final DashboardData data;
+//   final VoidCallback onConnectWearable;
+//   final VoidCallback onViewHistory;
+//   final bool isSyncing;
+//   final bool isConnected;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+//       decoration: BoxDecoration(
+//         gradient: const LinearGradient(
+//           begin: Alignment.topLeft,
+//           end: Alignment.bottomRight,
+//           colors: [
+//             AppColors.scoreCardGradientTop,
+//             Colors.white,
+//             AppColors.scoreCardGradientTop,
+//           ],
+//           stops: [
+//             0.0,
+//             0.5,
+//             1.0,
+//           ],
+//         ),
+//         borderRadius: BorderRadius.circular(24),
+//       ),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.stretch,
+//         children: [
+//           Stack(
+//             alignment: Alignment.center,
+//             clipBehavior: Clip.none,
+//             children: [
+//               Text(
+//                 'HEART HEALTH SCORE',
+//                 textAlign: TextAlign.center,
+//                 style: AppTextStyles.sectionLabel.copyWith(
+//                   fontSize: 16,
+//                   fontWeight: FontWeight.w700,
+//                   color: AppColors.inputText,
+//                 ),
+//               ),
+//               Positioned(
+//                 right: 0,
+//                 child: InkWell(
+//                   onTap: onViewHistory,
+//                   borderRadius: BorderRadius.circular(20),
+//                   child: Padding(
+//                     padding: const EdgeInsets.all(4),
+//                     // FIX (1): the asset has no explicit size here before,
+//                     // so it rendered at its native pixel dimensions and
+//                     // got hard-clipped by the Stack. Constraining
+//                     // width/height + BoxFit.contain scales it down to fit
+//                     // instead of clipping it.
+//                     child: Image.asset(
+//                       'assets/icons/history.png',
+//                       width: 22,
+//                       height: 22,
+//                       fit: BoxFit.contain,
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//           const SizedBox(height: 6),
+//           SizedBox(
+//             height: _GaugeGeometry.boxHeight,
+//             child: Stack(
+//               clipBehavior: Clip.none,
+//               children: [
+//                 Positioned(
+//                   top: 0,
+//                   left: 0,
+//                   child: _LastScoreLabel(previousScore: data.previousScore),
+//                 ),
+//                 Positioned(
+//                   top: 0,
+//                   bottom: 0,
+//                   left: -20,
+//                   right: -20,
+//                   child: CustomPaint(
+//                     painter: _GaugePainter(fraction: data.scoreFraction),
+//                   ),
+//                 ),
+//                 // CURRENT + big number only — the chip used to live inside
+//                 // this Column too, which is why it floated wherever this
+//                 // block happened to sit rather than on the heartbeat line.
+//                 Positioned(
+//                   top: _GaugeGeometry.contentTop,
+//                   left: 0,
+//                   right: 0,
+//                   child: Center(
+//                     child: _CurrentScoreBlock(score: data.healthyHeartScore),
+//                   ),
+//                 ),
+//                 // FIX (4): positioned independently so its vertical CENTER
+//                 // lands exactly on the heartbeat line's y (same y the
+//                 // painter uses for the flat middle segment of the zigzag),
+//                 // regardless of how tall the CURRENT/number block above is.
+//                 Positioned(
+//                   top: _GaugeGeometry.baselineY - _GaugeGeometry.chipHalfHeight,
+//                   left: 0,
+//                   right: 0,
+//                   child: Center(
+//                     child: _ImprovementChip(delta: data.scoreDelta),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//           const SizedBox(height: 12),
+//           Center(
+//             child: _ConfidenceBadge(
+//               percent: data.confidencePercent,
+//               label: data.confidenceLabel,
+//             ),
+//           ),
+//           const SizedBox(height: 24),
+//           SizedBox(
+//             height: 54,
+//             child: ElevatedButton.icon(
+//               onPressed: isSyncing ? null : onConnectWearable,
+//               style: ElevatedButton.styleFrom(
+//                 backgroundColor: AppColors.accentColor,
+//                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+//                 elevation: 0,
+//               ),
+//               icon: isSyncing
+//                   ? const SizedBox(
+//                 width: 18,
+//                 height: 18,
+//                 child: CircularProgressIndicator(strokeWidth: 2.2, color: AppColors.white),
+//               )
+//                   : Icon(
+//                 isConnected ? Icons.sync_rounded : Icons.watch_outlined,
+//                 color: AppColors.white,
+//                 size: 20,
+//               ),
+//               label: Text(_label, style: AppTextStyles.buttonLabel),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+//
+//   String get _label {
+//     if (isSyncing) return 'Syncing...';
+//     if (isConnected) return 'Synced · Tap to Refresh';
+//     return 'Connect Wearable';
+//   }
+// }
 class HealthScoreCard extends StatelessWidget {
   const HealthScoreCard({
     super.key,
@@ -12,6 +176,8 @@ class HealthScoreCard extends StatelessWidget {
     required this.onViewHistory,
     this.isSyncing = false,
     this.isConnected = false,
+    this.onTakeEcg,
+    this.isEcgLaunching = false,
   });
 
   final DashboardData data;
@@ -19,6 +185,11 @@ class HealthScoreCard extends StatelessWidget {
   final VoidCallback onViewHistory;
   final bool isSyncing;
   final bool isConnected;
+
+  /// Opens the Spandan ECG flow. When null (e.g. iOS, no Spandan SDK) the ECG
+  /// button is not rendered and Connect Wearable takes the full width.
+  final VoidCallback? onTakeEcg;
+  final bool isEcgLaunching;
 
   @override
   Widget build(BuildContext context) {
@@ -134,28 +305,59 @@ class HealthScoreCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          SizedBox(
-            height: 54,
-            child: ElevatedButton.icon(
-              onPressed: isSyncing ? null : onConnectWearable,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.accentColor,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-                elevation: 0,
+          Row(
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: 54,
+                  child: ElevatedButton.icon(
+                    onPressed: isSyncing ? null : onConnectWearable,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.accentColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(28),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      elevation: 0,
+                    ),
+                    icon: isSyncing
+                        ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.2,
+                        color: AppColors.white,
+                      ),
+                    )
+                        : Icon(
+                      isConnected ? Icons.sync_rounded : Icons.watch_outlined,
+                      color: AppColors.white,
+                      size: 20,
+                    ),
+                    // Half-width now: shrink the text to fit instead of
+                    // cutting it off (no ellipsis, no wrapping).
+                    label: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        _label,
+                        maxLines: 1,
+                        softWrap: false,
+                        style: AppTextStyles.buttonLabel,
+                      ),
+                    ),
+                  ),
+                ),
               ),
-              icon: isSyncing
-                  ? const SizedBox(
-                width: 18,
-                height: 18,
-                child: CircularProgressIndicator(strokeWidth: 2.2, color: AppColors.white),
-              )
-                  : Icon(
-                isConnected ? Icons.sync_rounded : Icons.watch_outlined,
-                color: AppColors.white,
-                size: 20,
-              ),
-              label: Text(_label, style: AppTextStyles.buttonLabel),
-            ),
+              if (onTakeEcg != null) ...[
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _EcgButton(
+                    onPressed: isEcgLaunching ? null : onTakeEcg,
+                    isLoading: isEcgLaunching,
+                  ),
+                ),
+              ],
+            ],
           ),
         ],
       ),
@@ -169,6 +371,68 @@ class HealthScoreCard extends StatelessWidget {
   }
 }
 
+/// Outlined "Spandan ECG device" button shown beside Connect Wearable.
+class _EcgButton extends StatelessWidget {
+  const _EcgButton({required this.onPressed, this.isLoading = false});
+
+  final VoidCallback? onPressed;
+  final bool isLoading;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 54,
+      child: OutlinedButton(
+        onPressed: onPressed,
+        style: OutlinedButton.styleFrom(
+          backgroundColor: AppColors.white,
+          side: const BorderSide(color: AppColors.spandanButtonBorder, width: 1.5),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            isLoading
+                ? const SizedBox(
+              width: 22,
+              height: 22,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.2,
+                color: AppColors.spandanButtonText,
+              ),
+            )
+                : Image.asset(
+              'assets/icons/spandan.png',
+              width: 24,
+              height: 24,
+              cacheWidth: 72,
+              // The text label already carries the meaning.
+              excludeFromSemantics: true,
+            ),
+            const SizedBox(width: 8),
+            // Shrink the text to fit instead of cutting it off.
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  'Spandan ECG device',
+                  maxLines: 1,
+                  softWrap: false,
+                  style: AppTextStyles.buttonLabel.copyWith(
+                    color: AppColors.spandanButtonText,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 class _LastScoreLabel extends StatelessWidget {
   const _LastScoreLabel({required this.previousScore});
 
@@ -243,26 +507,6 @@ class _GaugePainter extends CustomPainter {
     _drawPointer(canvas, center);
   }
 
-  // void _drawTicks(Canvas canvas, Offset center) {
-  //   final paint = Paint()
-  //     ..strokeWidth = 3
-  //     ..strokeCap = StrokeCap.round;
-  //
-  //   for (int i = 0; i < _tickCount; i++) {
-  //     final t = i / (_tickCount - 1);
-  //     final angle = pi - (t * pi);
-  //     final outer = Offset(
-  //       center.dx + _GaugeGeometry.radiusOuter * cos(angle),
-  //       center.dy - _GaugeGeometry.radiusOuter * sin(angle),
-  //     );
-  //     final inner = Offset(
-  //       center.dx + (_GaugeGeometry.radiusOuter - _GaugeGeometry.tickLength) * cos(angle),
-  //       center.dy - (_GaugeGeometry.radiusOuter - _GaugeGeometry.tickLength) * sin(angle),
-  //     );
-  //     paint.color = _gaugeColorAt(t);
-  //     canvas.drawLine(inner, outer, paint);
-  //   }
-  // }
   void _drawTicks(Canvas canvas, Offset center) {
     final paint = Paint()
       ..strokeWidth = 3
@@ -332,30 +576,6 @@ class _GaugePainter extends CustomPainter {
     }
   }
 
-  // void _drawPointer(Canvas canvas, Offset center) {
-  //   final t = fraction.clamp(0.0, 1.0);
-  //   final angle = pi - (t * pi);
-  //   final pointerRadius = _GaugeGeometry.radiusOuter - _GaugeGeometry.tickLength - _GaugeGeometry.pointerInset;
-  //   final pos = Offset(
-  //     center.dx + pointerRadius * cos(angle),
-  //     center.dy - pointerRadius * sin(angle),
-  //   );
-  //
-  //   const double h = 11;
-  //   const double w = 11;
-  //
-  //   final path = Path()
-  //     ..moveTo(-h, 0)
-  //     ..lineTo(0, -w / 2)
-  //     ..lineTo(0, w / 2)
-  //     ..close();
-  //
-  //   canvas.save();
-  //   canvas.translate(pos.dx, pos.dy);
-  //   canvas.rotate(-angle);
-  //   canvas.drawPath(path, Paint()..color = _gaugeColorAt(t));
-  //   canvas.restore();
-  // }
   void _drawPointer(Canvas canvas, Offset center) {
     final t = fraction.clamp(0.0, 1.0);
     final angle = pi - (t * pi);
