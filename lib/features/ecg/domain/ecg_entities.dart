@@ -170,7 +170,7 @@ class EcgException implements Exception {
 
   String get userMessage => switch (failure) {
     EcgFailure.sdkNotInitialised =>
-    'ECG service is not ready yet. Please try again in a moment.',
+    'ECG service could not start. Check your internet connection and try again.',
     EcgFailure.invalidTest => 'This ECG test is not enabled for your account.',
     EcgFailure.deviceNotConnected =>
     'Connect your Spandan device via USB and try again.',

@@ -5,6 +5,7 @@ import 'package:heart_health_score/core/network/token_storage.dart';
 import 'package:heart_health_score/features/auth/domain/app_user.dart';
 import 'package:heart_health_score/features/auth/domain/auth_exception.dart';
 import 'package:heart_health_score/features/auth/domain/auth_repository.dart';
+import 'package:flutter/foundation.dart';
 
 /// Real backend implementation, talking to `/api/v1/auth/*`.
 ///
@@ -56,7 +57,7 @@ class ApiAuthRepository implements AuthRepository {
         'email': email,
         'password': password,
       });
-      return _handleSession(response.data as Map<String, dynamic>);
+      return _handleSession(response.data as Map<String, dynamic>, checkOnboarding: false);
     } on DioException catch (e) {
       throw _mapError(e, fallback: 'Unable to create your account. Please try again.');
     }
@@ -99,9 +100,11 @@ class ApiAuthRepository implements AuthRepository {
       }
       // Bridges the gap until the backend exposes real onboarding
       // status — see OnboardingStatusStore's doc comment.
-      final onboardingComplete = await _onboardingStatusStore.isComplete();
+      // final onboardingComplete = await _onboardingStatusStore.isComplete();
+      //return user.copyWith(onboardingComplete: onboardingComplete);
+      final onboardingComplete = await _resolveOnboarding(preferLocal: true);
       return user.copyWith(onboardingComplete: onboardingComplete);
-    } catch (_) {
+     } catch (_) {
       // Covers: refresh token also expired/revoked (interceptor already
       // cleared storage in that case), or /auth/me itself failing for
       // some other reason. Either way, no valid session to restore.
@@ -110,15 +113,70 @@ class ApiAuthRepository implements AuthRepository {
     }
   }
 
-  Future<AppUser> _handleSession(Map<String, dynamic> data) async {
+  // Future<AppUser> _handleSession(Map<String, dynamic> data) async {
+  //   final user = AppUser.fromJson(data['user'] as Map<String, dynamic>);
+  //
+  //   // This client is patient-only. Roles table (Swagger) shows
+  //   // admin/clinician/staff exist and can authenticate, but they belong
+  //   // on the web dashboard, not this app — reject before persisting any
+  //   // token for them.
+  //   // ASSUMPTION (flagged for confirmation): this app should refuse
+  //   // non-patient logins outright rather than showing a degraded UI.
+  //   if (user.role != UserRole.patient) {
+  //     throw const AuthException(
+  //       'This app is for patient accounts. Please use the clinical web dashboard to sign in.',
+  //     );
+  //   }
+  //
+  //   await _tokenStorage.saveSession(
+  //     accessToken: data['access_token'] as String,
+  //     refreshToken: data['refresh_token'] as String,
+  //     expiresIn: data['expires_in'] as int,
+  //   );
+  //   return user;
+  // }
+
+  /// Backend is the source of truth; local flag is only a fallback
+  /// (offline, or user tapped Skip in this session).
+  // Future<bool> _resolveOnboarding({bool preferLocal = false}) async {
+  //   if (preferLocal && await _onboardingStatusStore.isComplete()) return true;
+  //   try {
+  //     final res = await _dio.get('/me/dashboard');
+  //     final data = res.data;
+  //     final patient = data is Map<String, dynamic> ? data['patient'] : null;
+  //     final done = patient is Map<String, dynamic> && patient['age'] != null;
+  //     if (done) await _onboardingStatusStore.markComplete();
+  //     return done;
+  //   } on DioException catch (e) {
+  //     if (e.response?.statusCode == 404) return false; // no encounters yet
+  //     return _onboardingStatusStore.isComplete(); // network/other: fall back
+  //   }
+  // }
+  Future<bool> _resolveOnboarding({bool preferLocal = false}) async {
+    final local = await _onboardingStatusStore.isComplete();
+    debugPrint('[ONBOARD] start preferLocal=$preferLocal localFlag=$local');
+    if (preferLocal && local) return true;
+    try {
+      final res = await _dio.get('/me/dashboard');
+      debugPrint('[ONBOARD] status=${res.statusCode} body=${res.data}');
+      final data = res.data;
+      final patient = data is Map<String, dynamic> ? data['patient'] : null;
+      final done = patient is Map<String, dynamic> && patient['age'] != null;
+      debugPrint('[ONBOARD] done=$done');
+      if (done) await _onboardingStatusStore.markComplete();
+      return done;
+    } on DioException catch (e) {
+      debugPrint('[ONBOARD] DioException status=${e.response?.statusCode} type=${e.type} body=${e.response?.data}');
+      if (e.response?.statusCode == 404) return false;
+      return _onboardingStatusStore.isComplete();
+    } catch (e) {
+      debugPrint('[ONBOARD] other error: $e');
+      rethrow;
+    }
+  }
+  Future<AppUser> _handleSession(Map<String, dynamic> data, {bool checkOnboarding = true}) async {
     final user = AppUser.fromJson(data['user'] as Map<String, dynamic>);
 
-    // This client is patient-only. Roles table (Swagger) shows
-    // admin/clinician/staff exist and can authenticate, but they belong
-    // on the web dashboard, not this app — reject before persisting any
-    // token for them.
-    // ASSUMPTION (flagged for confirmation): this app should refuse
-    // non-patient logins outright rather than showing a degraded UI.
     if (user.role != UserRole.patient) {
       throw const AuthException(
         'This app is for patient accounts. Please use the clinical web dashboard to sign in.',
@@ -130,7 +188,10 @@ class ApiAuthRepository implements AuthRepository {
       refreshToken: data['refresh_token'] as String,
       expiresIn: data['expires_in'] as int,
     );
-    return user;
+
+    if (!checkOnboarding) return user; // brand-new account: definitely not onboarded
+    final done = await _resolveOnboarding();
+    return user.copyWith(onboardingComplete: done);
   }
 
   /// Maps the backend's error shape to a user-presentable [AuthException].

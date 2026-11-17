@@ -18,6 +18,9 @@ class UnsupportedEcgRepository implements EcgRepository {
   Stream<EcgDeviceStatus> watchStatus() => Stream.value(_status);
 
   @override
+  Future<void> retryInitialization() async {}
+
+  @override
   Stream<EcgReportEvent> get reportEvents => const Stream.empty();
 
   @override

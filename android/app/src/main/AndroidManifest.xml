@@ -1,4 +1,6 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.health.READ_STEPS" />
@@ -6,6 +8,10 @@
     <uses-permission android:name="android.permission.health.READ_RESTING_HEART_RATE" />
     <uses-permission android:name="android.permission.health.READ_SLEEP" />
     <uses-permission android:name="android.permission.health.READ_BLOOD_PRESSURE" />
+
+    <uses-feature
+        android:name="android.hardware.usb.host"
+        android:required="false" />
 
     <application
         android:label="@string/app_name"
@@ -37,6 +43,16 @@
                 <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
             </intent-filter>
         </activity>
+
+        <!-- Spandan SDK UI Activity override: ensures an AppCompat/Material ActionBar
+             theme is applied and replaces spandan-sdk-ui's default configChanges="uiMode"
+             so USB OTG attach/detach or orientation changes do not recreate the Activity. -->
+        <activity
+            android:name="in.sunfox.healthcare.commons.android.spandan_sdk_ui.SpandanEcgTestActivity"
+            android:exported="false"
+            android:theme="@style/SpandanTheme"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation|uiMode"
+            tools:replace="android:theme,android:configChanges" />
 
         <!-- Required by Health Connect on devices targeting Android 14 (API 34)+:
              an activity users can be routed to that explains why each permission

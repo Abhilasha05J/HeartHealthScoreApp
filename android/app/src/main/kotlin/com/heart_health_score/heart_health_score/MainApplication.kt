@@ -9,9 +9,9 @@ class MainApplication : Application() {
         super.onCreate()
         // Spandan SDK must be initialised in the Application class (per Sunfox doc).
         SpandanBridge.initialize(
-            app = this,
-            verifierToken = BuildConfig.SPANDAN_VERIFIER_TOKEN,
-            masterKey = BuildConfig.SPANDAN_MASTER_KEY,
+            this,
+            BuildConfig.SPANDAN_VERIFIER_TOKEN,
+            BuildConfig.SPANDAN_MASTER_KEY,
         )
     }
 }

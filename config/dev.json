@@ -1,5 +1,5 @@
 {
-  "API_BASE_URL": "http://65.0.179.22/api/v1",
+  "API_BASE_URL": "https://hhs.drishticps.org/api/v1",
   "ENV": "dev",
   "SPANDAN_MASTER_KEY": "4e3eddbe8e86487e",
   "SPANDAN_VERIFIER_TOKEN": "buxqsKxlPNzwXX20XMDpVydhqR2By0clsgG7ffYeQxA="

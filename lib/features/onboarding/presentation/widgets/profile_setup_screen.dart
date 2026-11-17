@@ -23,6 +23,7 @@ class ProfileSetupScreen extends ConsumerStatefulWidget {
 class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _ageController = TextEditingController();
   final _weightController = TextEditingController();
   final _heightController = TextEditingController();
@@ -33,6 +34,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     super.initState();
     final draft = ref.read(onboardingControllerProvider);
     _nameController.text = draft.fullName ?? '';
+    _phoneController.text = draft.phone ?? '';
     _ageController.text = draft.age?.toString() ?? '';
     _weightController.text = draft.weightKg?.toString() ?? '';
     _heightController.text = draft.heightCm?.toString() ?? '';
@@ -42,6 +44,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   @override
   void dispose() {
     _nameController.dispose();
+    _phoneController.dispose();
     _ageController.dispose();
     _weightController.dispose();
     _heightController.dispose();
@@ -53,6 +56,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
 
     ref.read(onboardingControllerProvider.notifier).updateProfile(
           fullName: _nameController.text.trim(),
+          phone: _phoneController.text.trim(),
           sex: _sex,
           age: int.tryParse(_ageController.text.trim()),
           weightKg: double.tryParse(_weightController.text.trim()),
@@ -60,6 +64,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         );
     context.push(AppRoutes.dailyActivity);
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -122,6 +127,25 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                       },
                     ),
                   ),
+                  const SizedBox(height: 22),
+                  LabeledGradientField(
+                    label: 'Mobile Number (optional)',
+                    child: GradientTextField(
+                      controller: _phoneController,
+                      hintText: '10-digit mobile number',
+                      keyboardType: TextInputType.phone,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(10),
+                      ],
+                      validator: (value) {
+                        final v = value?.trim() ?? '';
+                        if (v.isEmpty) return null; // optional (schema default "")
+                        if (v.length != 10) return 'Enter a valid 10-digit number';
+                        return null;
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -142,7 +166,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                           FilteringTextInputFormatter.allow(RegExp(r'^\d{0,3}\.?\d{0,1}')),
                         ],
                         validator: (value) {
-                          if (value == null || value.trim().isEmpty) return 'Required';
+                          final v = double.tryParse(value?.trim() ?? '');
+                          if (v == null) return 'Required';
+                          if (v < 20 || v > 300) return 'Enter weight between 20 and 300 kg';
                           return null;
                         },
                       ),
@@ -161,7 +187,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                           FilteringTextInputFormatter.allow(RegExp(r'^\d{0,3}\.?\d{0,1}')),
                         ],
                         validator: (value) {
-                          if (value == null || value.trim().isEmpty) return 'Required';
+                          final v = double.tryParse(value?.trim() ?? '');
+                          if (v == null) return 'Required';
+                          if (v < 100 || v > 250) return 'Enter height between 100 and 250 cm';
                           return null;
                         },
                       ),

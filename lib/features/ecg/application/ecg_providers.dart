@@ -5,8 +5,12 @@ import 'package:heart_health_score/features/ecg/data/unsupported_ecg_repository.
 import 'package:heart_health_score/features/ecg/domain/ecg_entities.dart';
 import 'package:heart_health_score/features/ecg/domain/ecg_repository.dart';
 
+import '../data/mock_ecg_repository.dart';
+
 /// The single swap point: Spandan on Android, unsupported stub elsewhere.
+ const _useMockEcg = bool.fromEnvironment('USE_MOCK_ECG', defaultValue: true);
 final ecgRepositoryProvider = Provider<EcgRepository>((ref) {
+  if (_useMockEcg) return MockEcgRepository();
   if (defaultTargetPlatform == TargetPlatform.android) {
     return SpandanEcgRepository();
   }
@@ -55,6 +59,22 @@ class EcgController extends StateNotifier<EcgState> {
     state = state.copyWith(isLaunching: true, clearError: true);
     try {
       // Only the 12-lead test is enabled on the UAT account.
+      var status = await _repo.getStatus();
+      if (status.sdkState == EcgSdkState.failed) {
+        await _repo.retryInitialization();
+        status = await _repo.getStatus();
+      }
+// Wait up to ~6s for init to finish (the button shows its spinner meanwhile).
+      for (var i = 0; i < 12 && status.sdkState == EcgSdkState.initializing; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 500));
+        status = await _repo.getStatus();
+      }
+      if (status.sdkState != EcgSdkState.ready) {
+        throw const EcgException(EcgFailure.sdkNotInitialised);
+      }
+      if (status.connection != EcgConnectionState.connected) {
+        throw const EcgException(EcgFailure.deviceNotConnected);
+      }
       await _repo.startTest(type: EcgTestType.twelveLead, patient: patient);
     } on EcgException catch (e) {
       state = state.copyWith(error: e.userMessage);

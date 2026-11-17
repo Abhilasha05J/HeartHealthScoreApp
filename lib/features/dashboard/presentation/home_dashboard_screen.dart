@@ -272,6 +272,7 @@ import 'package:heart_health_score/features/dashboard/presentation/widgets/weekl
 import 'package:heart_health_score/features/wearable/application/wearable_providers.dart';
 import 'package:heart_health_score/features/wearable/domain/wearable_models.dart' show WearableConnectionStatus;
 import 'package:heart_health_score/core/router/app_router.dart';
+import 'package:heart_health_score/features/ecg/presentation/ecg_report_sheet.dart';
 import 'widgets/burden_breakdown_chart.dart';
 import 'widgets/condition_card.dart';
 import 'widgets/health_score_card.dart';
@@ -393,6 +394,7 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen>
 
     final ecgSupported = ref.watch(ecgSupportedProvider);
     final isEcgLaunching = ref.watch(ecgControllerProvider.select((s) => s.isLaunching));
+    final lastEcgReport = ref.watch(ecgControllerProvider.select((s) => s.lastReport));
 
     ref.listen<EcgState>(ecgControllerProvider, (previous, next) {
       if (next.error != null && next.error != previous?.error) {
@@ -401,9 +403,7 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen>
       }
       final report = next.lastReport;
       if (report != null && report != previous?.lastReport) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('ECG report ready · ${report.characteristics.heartRate} bpm')),
-        );
+        showEcgReportSheet(context, report);
       }
     });
 
@@ -475,7 +475,15 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen>
                     onTakeEcg: ecgSupported ? () => _startEcg(data) : null,   // new
                     isEcgLaunching: isEcgLaunching,
                   ),
-                  const SizedBox(height: 24),
+                 // const SizedBox(height: 24),
+                  if (lastEcgReport != null) ...[
+                    const SizedBox(height: 16),
+                    LatestEcgCard(
+                      report: lastEcgReport,
+                      onTap: () => showEcgReportSheet(context, lastEcgReport),
+                    ),
+                  ],
+                 // const SizedBox(height: 24),
                   DashboardInsightsSection(
                     positiveProgress: data.positiveProgress,
                     attentionRequired: data.attentionRequired,

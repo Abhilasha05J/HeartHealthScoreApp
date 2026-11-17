@@ -66,6 +66,9 @@ class SpandanEcgRepository implements EcgRepository {
     }
   }
 
+
+  @override
+  Future<void> retryInitialization() => _method.invokeMethod<void>('retryInit');
   // ---- Event routing --------------------------------------------------------------
 
   void _onEvent(dynamic raw) {

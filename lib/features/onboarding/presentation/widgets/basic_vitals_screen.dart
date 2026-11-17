@@ -278,22 +278,37 @@ class _BasicVitalsScreenState extends ConsumerState<BasicVitalsScreen> {
     }
   }
 
+  // Future<void> _handleSkip() async {
+  //   // Skip still exits onboarding for good (this is the last onboarding
+  //   // screen), so it needs the same local "onboarding complete" flag as
+  //   // Complete Setup — otherwise a skipped session looks identical to an
+  //   // incomplete one on the next restoreSession(), and you're routed
+  //   // straight back into Profile Setup on every app reopen. See the
+  //   // fuller explanation on OnboardingStatusStore / completeSetup().
+  //   await ref.read(onboardingStatusStoreProvider).markComplete();
+  //   final currentUser = ref.read(currentUserProvider);
+  //   if (currentUser != null) {
+  //     ref.read(currentUserProvider.notifier).state =
+  //         currentUser.copyWith(onboardingComplete: true);
+  //   }
+  //   if (mounted) context.go(AppRoutes.home);
+  // }
   Future<void> _handleSkip() async {
-    // Skip still exits onboarding for good (this is the last onboarding
-    // screen), so it needs the same local "onboarding complete" flag as
-    // Complete Setup — otherwise a skipped session looks identical to an
-    // incomplete one on the next restoreSession(), and you're routed
-    // straight back into Profile Setup on every app reopen. See the
-    // fuller explanation on OnboardingStatusStore / completeSetup().
-    await ref.read(onboardingStatusStoreProvider).markComplete();
-    final currentUser = ref.read(currentUserProvider);
-    if (currentUser != null) {
-      ref.read(currentUserProvider.notifier).state =
-          currentUser.copyWith(onboardingComplete: true);
-    }
-    if (mounted) context.go(AppRoutes.home);
-  }
+    setState(() => _isSubmitting = true);
+    final success = await ref
+        .read(onboardingControllerProvider.notifier)
+        .completeSetup(includeVitals: false);
+    if (!mounted) return;
+    setState(() => _isSubmitting = false);
 
+    if (success) {
+      context.go(AppRoutes.home);
+    } else {
+      final message = ref.read(onboardingErrorProvider) ??
+          'Something went wrong. Please try again.';
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return OnboardingScaffold(

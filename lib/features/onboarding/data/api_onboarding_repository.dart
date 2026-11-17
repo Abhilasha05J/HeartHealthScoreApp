@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 
 import 'package:heart_health_score/features/onboarding/domain/onboarding_data.dart';
 import 'package:heart_health_score/features/onboarding/domain/onboarding_exception.dart';
 import 'package:heart_health_score/features/onboarding/domain/onboarding_repository.dart';
+import 'package:flutter/foundation.dart';
 
 /// Real backend implementation — `POST /api/v1/me/encounters`.
 ///
@@ -23,25 +26,56 @@ class ApiOnboardingRepository implements OnboardingRepository {
   final String? Function() userEmail;
 
   @override
-  Future<void> submitOnboarding(OnboardingData data) async {
+  // Future<void> submitOnboarding(OnboardingData data, {bool includeVitals = true}) async {
+  //   try {
+  //     // TODO(dashboard-integration): the response here is the SAME
+  //     // assessment shape /me/dashboard returns (hhs, category, burden,
+  //     // domain_rows, ...) — once Home's dashboard repository exists for
+  //     // real, consider changing this method to return that assessment
+  //     // directly so the app can show the just-computed score right after
+  //     // "Complete Setup" instead of a separate fetch. Deliberately not
+  //     // doing that now — it's a Home/dashboard-feature decision, not an
+  //     // onboarding one.
+  //     await _dio.post(
+  //       '/me/encounters',
+  //       data: data.toSubmissionJson(email: userEmail(), includeVitals: includeVitals),
+  //     );
+  //   } on DioException catch (e) {
+  //     if (e.response?.statusCode == 409) return;
+  //     throw _mapError(e);
+  //   }
+  // }
+  @override
+  Future<void> submitOnboarding(OnboardingData data, {bool includeVitals = true}) async {
+    final payload = data.toSubmissionJson(
+      email: userEmail(),
+      includeVitals: includeVitals,
+    );
+
+    if (kDebugMode) {
+      const encoder = JsonEncoder.withIndent('  ');
+      debugPrint('[ONBOARD-SUBMIT] includeVitals=$includeVitals');
+      debugPrint('[ONBOARD-SUBMIT] POST /me/encounters');
+      debugPrint('[ONBOARD-SUBMIT] payload:\n${encoder.convert(payload)}');
+    }
+
     try {
-      // TODO(dashboard-integration): the response here is the SAME
-      // assessment shape /me/dashboard returns (hhs, category, burden,
-      // domain_rows, ...) — once Home's dashboard repository exists for
-      // real, consider changing this method to return that assessment
-      // directly so the app can show the just-computed score right after
-      // "Complete Setup" instead of a separate fetch. Deliberately not
-      // doing that now — it's a Home/dashboard-feature decision, not an
-      // onboarding one.
-      await _dio.post(
-        '/me/encounters',
-        data: data.toSubmissionJson(email: userEmail()),
-      );
+      final res = await _dio.post('/me/encounters', data: payload);
+
+      if (kDebugMode) {
+        const encoder = JsonEncoder.withIndent('  ');
+        debugPrint('[ONBOARD-SUBMIT] response status=${res.statusCode}');
+        debugPrint('[ONBOARD-SUBMIT] response body:\n${encoder.convert(res.data)}');
+      }
     } on DioException catch (e) {
+      if (kDebugMode) {
+        debugPrint('[ONBOARD-SUBMIT] FAILED status=${e.response?.statusCode} '
+            'type=${e.type} body=${e.response?.data}');
+      }
+      if (e.response?.statusCode == 409) return;
       throw _mapError(e);
     }
   }
-
   OnboardingException _mapError(DioException e) {
     final status = e.response?.statusCode;
     final data = e.response?.data;

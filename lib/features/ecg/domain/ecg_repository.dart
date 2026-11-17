@@ -9,6 +9,8 @@ abstract class EcgRepository {
   /// Emits the current status first, then every change (SDK init, device attach/detach).
   Stream<EcgDeviceStatus> watchStatus();
 
+
+  Future<void> retryInitialization();
   /// Results of tests run in the SDK's own UI. Cancelling mid-test emits nothing.
   /// Reports that arrived while nobody was listening are replayed to the next listener.
   Stream<EcgReportEvent> get reportEvents;
